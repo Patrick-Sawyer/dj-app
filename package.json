@@ -1,5 +1,6 @@
 {
   "name": "dj-app",
+  "homepage": "https://www.disco-computer.com/dj",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

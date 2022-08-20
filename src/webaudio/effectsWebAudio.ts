@@ -1,6 +1,8 @@
 import { DECKS } from './deckWebAudio'
 import { CONTEXT, FADE_IN_OUT_TIME, isFireFox, MAIN_VOLUME, ZERO } from './webAudio'
 
+const DELAY_CHANGE_TIME = 0.01
+
 const addReverb = async (convolver: ConvolverNode) => {
   const response = await fetch('/audio/hall.wav')
   const arraybuffer = await response.arrayBuffer()
@@ -17,7 +19,7 @@ const handleTap = (delay: DelayNode) => {
 
       if (time < 5) {
         !isFireFox && delay.delayTime.cancelAndHoldAtTime(CONTEXT.currentTime)
-        delay.delayTime.exponentialRampToValueAtTime(time, CONTEXT.currentTime + 0.003)
+        delay.delayTime.linearRampToValueAtTime(time, CONTEXT.currentTime + DELAY_CHANGE_TIME)
       }
     }
     lastTap = now
@@ -43,6 +45,7 @@ export class Effects {
   reverb: ConvolverNode
   reverbVolume: GainNode
   changeReverb: (value: number) => void
+  setDelayTime: (delayTime: number) => void
 
   constructor () {
     this.reverb = CONTEXT.createConvolver()
@@ -91,7 +94,11 @@ export class Effects {
     this.handleX2 = () => {
       const { value } = this.delay.delayTime
       !isFireFox && this.delay.delayTime.cancelAndHoldAtTime(CONTEXT.currentTime)
-      this.delay.delayTime.exponentialRampToValueAtTime(value / 2, CONTEXT.currentTime + 0.003)
+      this.delay.delayTime.linearRampToValueAtTime(value / 2, CONTEXT.currentTime + DELAY_CHANGE_TIME)
+    }
+    this.setDelayTime = (delayTime: number) => {
+      !isFireFox && this.delay.delayTime.cancelAndHoldAtTime(CONTEXT.currentTime)
+      this.delay.delayTime.linearRampToValueAtTime(delayTime, CONTEXT.currentTime + DELAY_CHANGE_TIME)
     }
     this.handleTap = handleTap(this.delay)
     this.changeDeckAInput = (value: number) => {

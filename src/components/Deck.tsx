@@ -14,6 +14,9 @@ interface Props {
   glowColor?: string;
   deck: typeof DECKS.deckA;
   reverse?: boolean;
+  setBpm: (bpm: number) => void;
+  otherBPM?: string | number | undefined;
+  thisBPM?: string | number | undefined;
 }
 
 const limit = (value: number) => {
@@ -28,7 +31,7 @@ const accountForRotation = (last: number, current: number) => {
   return last
 }
 
-const jogPitchFuncGen = (setJogWheelValue: (value: number) => void) => {
+const jogFuncGen = (handleJogWheel: (value: number) => void) => {
   let lastPosition: number | null = null
   let lastDate: number | null = null
   let timeout: ReturnType<typeof setTimeout> | null = null
@@ -45,17 +48,17 @@ const jogPitchFuncGen = (setJogWheelValue: (value: number) => void) => {
       const time = date - lastDate
       const speed = limit(distance / time)
       const nextValue = 1 + speed * 70
-      setJogWheelValue(nextValue)
+      handleJogWheel(nextValue)
       lastPosition = position
       lastDate = date
       timeout = setTimeout(() => {
-        setJogWheelValue(1)
+        handleJogWheel(1)
       }, 150)
     }
   }
 }
 
-export function Deck ({ color, glowColor, deck, reverse }: Props) {
+export function Deck ({ color, glowColor, deck, reverse, setBpm, otherBPM, thisBPM }: Props) {
   const [playbackState, setPlaybackState] = useState(PlaybackStates.EMPTY)
   const [position, setPosition] = useState<number>(0)
   const [pitch, setPitch] = useState(1)
@@ -63,14 +66,16 @@ export function Deck ({ color, glowColor, deck, reverse }: Props) {
   const [metaData, setMetaData] = useState<TuneMetaData>({})
   const [waveform, setWaveform] = useState<number[]>()
   const [sensitivityIndex, setSensitivityIndex] = useState(0)
+  const [cuePoint, setCuePoint] = useState<number | null>(null)
+  useEffect(() => {
+    deck.setCuePoint = setCuePoint
+  }, [])
+
   deck.setPlaybackState = setPlaybackState
   deck.setWaveform = setWaveform
-  const handleCue = () => {
-
-  }
 
   useEffect(() => {
-    deck.updatePosition = debouncer(setPosition)
+    deck.updatePosition = setPosition
   }, [])
 
   const handleEject = () => {
@@ -95,7 +100,12 @@ export function Deck ({ color, glowColor, deck, reverse }: Props) {
     setSensitivityIndex(sensitivityIndex === (SENSITIVITIES.length - 1) ? 0 : (sensitivityIndex + 1))
   }
 
-  const bpm = metaData.bpm ? (parseInt(metaData.bpm.toString()) * pitch).toFixed(2) : 'Unknown'
+  const handleSync = () => {
+    if (!otherBPM || !deck.metaData.bpm) return
+    const nextPitch = Number(otherBPM) / Number(deck.metaData.bpm)
+    setPitch(nextPitch)
+    deck.setPlayBackSpeed(nextPitch)
+  }
 
   useEffect(() => {
     if (playbackState !== PlaybackStates.EMPTY && deck.metaData) {
@@ -103,29 +113,29 @@ export function Deck ({ color, glowColor, deck, reverse }: Props) {
     }
   }, [deck.metaData, playbackState])
 
-  const pitchJog = jogPitchFuncGen(deck.setJogWheelValue)
+  const pitchJog = jogFuncGen(deck.handleJogWheel)
+
+  useEffect(() => {
+    const bpm = Number(deck.metaData.bpm) * pitch || 0
+    setBpm(bpm)
+  }, [pitch, playbackState])
 
   return (
     <Wrapper reverse={reverse}>
-      <Filler />
       <Left>
         <Top>
           <TrackInfo {...metaData} duration={duration} color={color} position={position} />
-          <Waveform position={position} setPosition={setPosition} duration={duration} deck={deck} playbackState={playbackState} color={color} data={waveform}/>
+          <Waveform cuePoint={cuePoint} position={position} setPosition={setPosition} duration={duration} deck={deck} playbackState={playbackState} color={color} data={waveform}/>
         </Top>
         <Pitch>
           <JogWheel pitchJog={pitchJog} pitch={pitch} playbackState={playbackState} image={metaData.image} />
           <PitchLabel
             reverse={!reverse}
             color={color}
+            bottom={'20px'}
           >
           {(pitch >= 1 ? '+' : '') + (100 * pitch - 100).toFixed(2) + '%'}
           </PitchLabel>
-          {!!deck.loadedTrack && (
-            <BpmLabel reverse={reverse} color={color}>
-              {`BPM: ${bpm}`}
-            </BpmLabel>
-          )}
           <PitchButton reverse={reverse} color={color} onClick={changeSensitivity}>
             <PlusMinus>
               {'± '}
@@ -138,7 +148,7 @@ export function Deck ({ color, glowColor, deck, reverse }: Props) {
         <Buttons>
           <Button color={color} glowColor={glowColor} disabled={playbackState === PlaybackStates.EMPTY} width={'15%'} text={'rew'} onClick={deck.restart} />
           <Button color={color} glowColor={glowColor} disabled={playbackState === PlaybackStates.EMPTY} text={playbackState === PlaybackStates.PLAYING ? 'pause' : 'play'} width={'35%'} onClick={handlePlayPause} />
-          <Button color={color} glowColor={glowColor} disabled={playbackState === PlaybackStates.EMPTY} text={'cue'} width={'35%'} onClick={handleCue} />
+          <Button color={color} glowColor={glowColor} disabled={(playbackState === PlaybackStates.PLAYING && cuePoint === null) || playbackState === PlaybackStates.EMPTY} text={'cue'} width={'35%'} onClick={deck.handleCuePoint} />
           <Button color={color} glowColor={glowColor} width={'15%'} disabled={playbackState !== PlaybackStates.PAUSED} text={'Eject'} onClick={handleEject} />
         </Buttons>
       </Left>
@@ -149,47 +159,24 @@ export function Deck ({ color, glowColor, deck, reverse }: Props) {
         setPitch={setPitch}
         deck={deck}
         color={color}
+        showSync={!!thisBPM && !!otherBPM}
+        handleSync={handleSync}
       />
     </Wrapper>
   )
 }
-
-const Filler = styled.div`
-  flex: 1;
-  flex-grow: 1;
-  border-bottom: 1px solid ${Colors.darkBorder};
-  box-sizing: border-box;
-  width: 100%;
-  height: 100%;
-`
 
 const Wrapper = styled.div<{
   reverse?: boolean;
 }>`
   display: flex;
   flex-direction: row-reverse;
-  width: 100%;
   ${({ reverse }) => reverse && 'flex-direction: row;'}
 `
 
 const PlusMinus = styled.span`
   font-size: 15px;
   position: relative;
-`
-
-const BpmLabel = styled.span<{
-  color: string;
-  reverse?: boolean;
-}>`
-  font-size: 15px;
-  color: white;
-  opacity: 0.5;
-  font-size: 13px;
-  font-weight: 300;
-  display: flex;
-  position: absolute;
-  top: 20px;
-  ${({ reverse }) => reverse ? 'left: 15px' : 'right: 15px;'}
 `
 
 const PitchButton = styled.button<{
@@ -225,14 +212,16 @@ const PitchButton = styled.button<{
 const PitchLabel = styled.span<{
   color?: string;
   reverse?: boolean;
+  bottom?: string;
+  top?: string;
 }>`
   color: ${({ color }) => color};
   font-size: 15px;
   width: 55px;
   display: flex;
-  font-weight: 300;
   position: absolute;
-  bottom: 20px;
+  ${({ bottom }) => bottom && `bottom: ${bottom}`};
+  ${({ top }) => top && `top: ${top}`};
   ${({ reverse }) => reverse ? 'left: 25px;' : 'right: 25px;'}
 `
 
@@ -246,7 +235,7 @@ const Pitch = styled.div`
 
 const Left = styled.div`
   display: flex;
-  width: 440px;
+  width: 400px;
   flex-direction: column;
   background-color: ${Colors.darkGreyBackground};
   border: 1px solid ${Colors.darkBorder};
@@ -296,15 +285,3 @@ const SENSITIVITIES = [
     label: '100%'
   }
 ]
-
-const debouncer = (callback: (value: number) => void) => {
-  let lastEvent: number | null = null
-
-  return (value: number) => {
-    const now = Date.now()
-    if (!lastEvent || now - lastEvent > 20) {
-      callback(value)
-      lastEvent = now
-    }
-  }
-}

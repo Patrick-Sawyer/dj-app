@@ -19,6 +19,8 @@ export interface DeckType {
 
 function App () {
   const [tunes, setTunes] = useState<any[]>([])
+  const [deckABpm, setDeckABpm] = useState(0)
+  const [deckBBpm, setDeckBBpm] = useState(0)
 
   const uploadTrack = (tune: any) => {
     const tuneToAdd = URL.createObjectURL(tune)
@@ -26,18 +28,23 @@ function App () {
     setTunes(newTunes)
   }
 
+  const deleteTrack = (index: number) => {
+    const newTunes = [...tunes].filter((_, i) => i !== index)
+    setTunes(newTunes)
+  }
+
   return (
     <Outer>
       <Wrapper>
         <Decks>
-          <Deck reverse deck={DECKS.deckA} color={Colors.deckA} glowColor={Colors.deckAGlow}/>
+          <Deck otherBPM={deckBBpm} setBpm={setDeckABpm} thisBPM={deckABpm} reverse deck={DECKS.deckA} color={Colors.deckA} glowColor={Colors.deckAGlow}/>
           <Mixer decks={DECKS} />
-          <Deck deck={DECKS.deckB} color={Colors.deckB} glowColor={Colors.deckbGlow} />
+          <Deck otherBPM={deckABpm} setBpm={setDeckBBpm} thisBPM={deckBBpm} deck={DECKS.deckB} color={Colors.deckB} glowColor={Colors.deckbGlow} />
         </Decks>
-        <FX effects={EFFECTS} />
+        <FX deckABpm={deckABpm} deckBBpm={deckBBpm} effects={EFFECTS} />
         <Upload uploadTrack={uploadTrack} />
         <TableWrapper>
-          <TuneTable tunes={tunes}/>
+          <TuneTable deleteTrack={deleteTrack} tunes={tunes}/>
         </TableWrapper>
       </Wrapper>
     </Outer>
@@ -48,30 +55,29 @@ const Outer = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: column;
-
-  @media (min-width: 1144px) {
-    align-items: center;
-  } 
+  padding-top: 15px;
+  align-items: center;
+  width: 100%;
+  min-width: 1269px;
 `
 
 const Wrapper = styled.div`
   user-select: none;
   padding-bottom: 500px;
-  width: 100%;
   flex-direction: column;
-  align-items: center;
+
   display: flex;
 `
 
 const Decks = styled.div`
   display: flex;
-  width: 100%;
 `
 
 const TableWrapper = styled.div`
   margin-top: 30px;
   display: flex;
   justify-content: center;
+  width: 100%;
 `
 
 export default App

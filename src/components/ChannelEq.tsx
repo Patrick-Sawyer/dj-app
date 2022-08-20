@@ -1,8 +1,9 @@
 import styled from 'styled-components'
 import { Colors } from '../utils/theme'
-import { Knob } from './Knob'
+import { Knob, KnobText } from './Knob'
 import { EmbossedLabel } from './EmbossedLabel'
 import { DECKS } from '../webaudio/deckWebAudio'
+import { useState } from 'react'
 
 interface Props {
   color: string;
@@ -12,6 +13,8 @@ interface Props {
 }
 
 export function ChannelEq ({ deck, color, label, glowColor }: Props) {
+  const [cue, setCue] = useState(false)
+
   const handleGain = (nextValue: number) => {
     const value = (nextValue + 50) / 100
     deck.setMasterGain(value)
@@ -19,6 +22,10 @@ export function ChannelEq ({ deck, color, label, glowColor }: Props) {
 
   const handleFilter = (nextValue: number) => {
     deck.setFilter(nextValue)
+  }
+
+  const handleCueClick = () => {
+    setCue(!cue)
   }
 
   return (
@@ -29,6 +36,7 @@ export function ChannelEq ({ deck, color, label, glowColor }: Props) {
       <Knob glowColor={glowColor} color={color} text={'MID'} onChange={deck.changeMid} />
       <Knob glowColor={glowColor} color={color} text={'LOW'} onChange={deck.changeLow}/>
       <Knob glowColor={glowColor} color={color} onChange={handleFilter} text={'FILTER'} size={40} bypassValue={0}/>
+      <KnobText fontSize="14px" glowColor={Colors.orangeGlow} color={Colors.orange} bypassed={!cue} onClick={handleCueClick}>{'CUE'}</KnobText>
     </EqWrapper>
   )
 }

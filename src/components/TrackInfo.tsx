@@ -1,7 +1,8 @@
 import styled from 'styled-components'
+import { Ellipsis } from './Ellipsis'
 import { TuneMetaData } from './TuneTableRow'
 
-export function TrackInfo ({ artist = 'N/A', title = 'N/A', duration, color, position }: TuneMetaData & {
+export function TrackInfo ({ artist = '', title = '', duration, color, position }: TuneMetaData & {
   duration?: number;
   color: string;
   position: number;
@@ -13,30 +14,34 @@ export function TrackInfo ({ artist = 'N/A', title = 'N/A', duration, color, pos
     <Wrapper>
       <Body>
         <Row>
-          <Cell opacity={0.6} color={color}>
+          <Cell opacity={0.5} color={color}>
             {'Artist:'}
           </Cell>
           <Cell bold width={'100%'}>
-            {artist}
+            <Ellipsis>
+              {artist}
+            </Ellipsis>
           </Cell>
           <Cell opacity={0.5} color={color}>
-            {'Duration:'}
+            {'Dur:'}
           </Cell>
-          <Cell digital width={'100%'} fontSize={'14px'} textAlign={'right'}>
+          <Cell opacity={duration ? 1 : '0'} digital width={'100%'} fontSize={'14px'} textAlign={'right'}>
             {durationString}
           </Cell>
         </Row>
         <Row>
-          <Cell opacity={0.6} color={color}>
+          <Cell opacity={0.5} color={color}>
             {'Title:'}
           </Cell>
           <Cell bold width={'100%'}>
-            {title}
+            <Ellipsis>
+              {title}
+            </Ellipsis>
           </Cell>
           <Cell opacity={0.5} color={color}>
-            {'Position:'}
+            {'Pos:'}
           </Cell>
-          <Cell digital width={'100%'} fontSize={'14px'} textAlign={'right'}>
+          <Cell opacity={position && duration ? 1 : '0'} digital width={'100%'} fontSize={'14px'} textAlign={'right'}>
             {positionString}
           </Cell>
         </Row>
@@ -55,7 +60,6 @@ const getTimeAsString = (duration: number | undefined): string => {
 
 const Wrapper = styled.table`
   width: 100%;
-
   border-collapse: collapse;
   color: white;
   margin: 8px;
@@ -68,7 +72,7 @@ const Row = styled.tr``
 const Cell = styled.td<{
   bold?: boolean;
   color?: string;
-  opacity?: number;
+  opacity?: number | string;
   textAlign?: string;
   monospace?: boolean;
   digital?: boolean;

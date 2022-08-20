@@ -4,10 +4,12 @@ import { TuneTableRow } from './TuneTableRow'
 
 interface Props {
   tunes: any[];
+  deleteTrack: (index: number) => void;
 }
 
 export function TuneTable ({
-  tunes
+  tunes,
+  deleteTrack
 }: Props) {
   return (
     <Wrapper>
@@ -24,7 +26,7 @@ export function TuneTable ({
       </Head>
       <Body>
         {tunes.map((tune, index) => {
-          return <TuneTableRow tune={tune} key={index}/>
+          return <TuneTableRow deleteTrack={deleteTrack} tune={tune} key={index} index={index} />
         })}
       </Body>
     </Wrapper>
@@ -36,7 +38,7 @@ const Body = styled.tbody`
 `
 
 const Wrapper = styled.table`
-  width: 1144px;
+  width: 100%;
   text-align: left;
   border-collapse: collapse;
 `
@@ -111,5 +113,8 @@ const COLUMNS = [
   {
     name: 'BITRATE',
     width: '7%'
+  },
+  {
+    name: 'X'
   }
 ]

@@ -19,7 +19,13 @@ export interface TuneMetaData {
   image?: musicMetadata.IPicture;
 }
 
-export const TuneTableRow = ({ tune }: {tune: any}) => {
+interface Props {
+  tune: any;
+  deleteTrack: (index: number) => void;
+  index: number;
+}
+
+export const TuneTableRow = ({ tune, deleteTrack, index }: Props) => {
   const [data, setTuneData] = useState<TuneMetaData>({})
   const blobRef = useRef<Blob | null>(null)
   const { artist, title, genre, bitrate, bpm, key } = data
@@ -64,6 +70,10 @@ export const TuneTableRow = ({ tune }: {tune: any}) => {
       <Cell>{bpm}</Cell>
       <Cell>{key}</Cell>
       <Cell>{bitrate}</Cell>
+      <Cell onPointerDown={() => {
+        blobRef.current = null
+        deleteTrack(index)
+      }}>{'X'}</Cell>
     </Row>
   )
 }

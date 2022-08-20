@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { Colors } from '../utils/theme'
 import { DECKS } from '../webaudio/deckWebAudio'
+import { HighlightedLabel } from './HighlightedLabel'
 import { PitchBackground } from './PitchBackground'
 import { PitchSlider } from './PitchSlider'
 
@@ -12,6 +13,8 @@ interface Props {
   reverse?: boolean;
   color: string;
   lightOn: boolean;
+  showSync: boolean;
+  handleSync: () => void;
 }
 
 const SCROLL_LIMIT = 228
@@ -22,7 +25,9 @@ export function PitchControl ({
   sensitivity,
   reverse,
   color,
-  lightOn
+  lightOn,
+  showSync,
+  handleSync
 }: Props) {
   const [offset, setOffset] = useState<number>(0)
   const mouseState = useRef({
@@ -78,16 +83,27 @@ export function PitchControl ({
     <Wrapper reverse={reverse}>
       <Light reverse={reverse} color={color} lightOn={lightOn} />
       <Inner onMouseMove={handleMouseMove}>
-        <PitchBackground offset={offset} onClick={handleTrackClick} />
+        <PitchBackground reverse={reverse} offset={offset} onClick={handleTrackClick} />
         <PitchSlider
           offset={0 - offset}
           onMouseDown={handleMouseDown}
           reset={reset}
         />
       </Inner>
+      {showSync && (
+        <Sync onClick={handleSync}>
+          <HighlightedLabel color={color} text={'SYNC'} />
+        </Sync>
+      )}
     </Wrapper>
   )
 }
+
+const Sync = styled.div`
+  position: absolute;
+  bottom: 10px;
+  cursor: pointer;
+`
 
 const Wrapper = styled.div<{
   reverse?: boolean;
@@ -101,14 +117,14 @@ const Wrapper = styled.div<{
   box-sizing: border-box;
   ${({ reverse }) => reverse
 ? `
-    padding-right: 20px;
+    padding-right: 15px;
     flex-direction: row-reverse;
-    padding-left: 25px;
+    padding-left: 10px;
     border-right: 1px solid ${Colors.darkBorder};
     `
 : `
-  padding-left: 20px;
-  padding-right: 25px;
+  padding-left: 15px;
+  padding-right: 10px;
   border-left: 1px solid ${Colors.darkBorder};
 `}
 `
@@ -135,6 +151,6 @@ const Light = styled.div<{
   box-shadow: 0px 0px 3px 0px ${({ color }) => color};
   position: relative;
   top: 1px;
-  ${({ reverse }) => reverse ? 'left: 10px;' : 'right: 10px;'}
+  ${({ reverse }) => reverse ? 'left: 5px;' : 'right: 5px;'}
   opacity: ${({ lightOn }) => lightOn ? '1' : '0.2'};
 `

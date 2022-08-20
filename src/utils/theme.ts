@@ -17,5 +17,7 @@ export const Colors = {
   purple: '#8000ff',
   meter: '#80ff00',
   meterPeak: '#ff4000',
-  black: 'black'
+  black: 'black',
+  turquoise: '#23c471',
+  turquoiseGlow: 'rgba(35, 196, 113, 0.4)'
 }

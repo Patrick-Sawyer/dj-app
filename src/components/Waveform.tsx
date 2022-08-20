@@ -12,6 +12,7 @@ interface Props {
   deck: typeof DECKS.deckA;
   setPosition: (position: number) => void;
   position: number;
+  cuePoint: null | number;
 }
 
 const ZOOM_CHANGE_AMOUNT = 1.5
@@ -22,7 +23,7 @@ const OFFSET = 50
 // MOVE CALCULATION TO WEB AUDIO WORKLET
 // MAKE AVERAGE USE LESS CALCULATIONS
 
-export function Waveform ({ data, color, playbackState, deck, duration, setPosition, position }: Props) {
+export function Waveform ({ data, color, playbackState, deck, duration, setPosition, position, cuePoint }: Props) {
   const [zoom, setZoom] = useState(1)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -62,6 +63,13 @@ export function Waveform ({ data, color, playbackState, deck, duration, setPosit
                 width: data?.length ? data.length / (devicePixelRatio * zoom) : 0
               }}>
                 <WaveFormData zoom={zoom} color={color} data={data} />
+
+                {cuePoint !== null && (
+                  <CuePoint style={{
+                    left: `calc(${(cuePoint * 100).toFixed(3)}% - 5px)`
+                  }}/>
+                )}
+
               </div>
             </div>
             <Indicator />
@@ -73,6 +81,14 @@ export function Waveform ({ data, color, playbackState, deck, duration, setPosit
     </Wrapper>
   )
 }
+
+const CuePoint = styled.div`
+  position: absolute;
+  bottom: 2px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 10px solid white;
+`
 
 const Wrapper = styled.div`
   display: flex;

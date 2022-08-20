@@ -25,6 +25,20 @@ const createPositionTracker = (buffer: AudioBuffer): AudioBufferSourceNode => {
   return counterSource
 }
 
+const debouncedPositionScroller = (callback: (buffer: AudioBuffer, speed: number, position: number) => void) => {
+  let timeout: ReturnType<typeof setTimeout> | null = null
+
+  return (buffer: AudioBuffer, speed: number, position: number) => {
+    if (timeout) {
+      clearTimeout(timeout)
+      timeout = null
+    }
+    timeout = setTimeout(() => {
+      callback(buffer, speed, position)
+    }, 250)
+  }
+}
+
 export class Deck {
   gainNode: GainNode
   computedPlaybackSpeed: number
@@ -32,11 +46,11 @@ export class Deck {
   cuePoint: null | number
   play: () => void
   pause: () => void
-  setCuePoint: (nextCuePoint: number) => void
+  handleCuePoint: () => void
   rewind: (amount: number) => void
   fastForward: (amount: number) => void
   mainPlaybackSpeed: number
-  setJogWheelValue: (nextValue: number) => void
+  handleJogWheel: (nextValue: number) => void
   jogWheelValue: number
   metaData: TuneMetaData
   loadTrack: (nextTrack: any) => void
@@ -70,13 +84,15 @@ export class Deck {
   positionTracker: null | AudioBufferSourceNode
   positionReporter: AudioWorkletNode | null
   updatePosition: null | ((position: number) => void)
-  position: null | number
+  position: number
   backupBuffer: null | AudioBuffer
   loadAndPlayTrack: (buffer: AudioBuffer, speed: number, position: number) => void
+  setCuePoint: ((position: number | null) => void) | null
+  handleScroll: (buffer: AudioBuffer, speed: number, position: number) => void
 
   constructor () {
     this.loadedTrack = null
-    this.position = null
+    this.position = 0
     this.masterGain = CONTEXT.createGain()
     this.masterGain.gain.value = 0.4
     this.lowPassFilter = CONTEXT.createBiquadFilter()
@@ -147,11 +163,13 @@ export class Deck {
       this.positionTracker.connect(this.positionReporter)
       this.positionReporter.connect(CONTEXT.destination)
       this.positionTracker.playbackRate.value = speed
-      this.positionTracker.start(position)
-      this.loadedTrack.start(position)
+      this.positionTracker.start(0, position)
+      this.loadedTrack.start(0, position)
     }
     this.eject = () => {
       if (this.playbackState === PlaybackStates.PAUSED) {
+        this.cuePoint = null
+        this.setCuePoint && this.setCuePoint(null)
         this.playbackState = PlaybackStates.EMPTY
         this.setPlaybackState && this.setPlaybackState(PlaybackStates.EMPTY)
         this.metaData = {}
@@ -208,8 +226,8 @@ export class Deck {
     this.computedPlaybackSpeed = 1
     this.jogWheelValue = 1
 
-    this.setJogWheelValue = (nextValue: number) => {
-      if (this.loadedTrack) {
+    this.handleJogWheel = (nextValue: number) => {
+      if (this.loadedTrack && this.playbackState === PlaybackStates.PLAYING) {
         this.jogWheelValue = nextValue
         this.computedPlaybackSpeed = this.mainPlaybackSpeed * nextValue
         this.loadedTrack.playbackRate.cancelScheduledValues(CONTEXT.currentTime)
@@ -219,8 +237,16 @@ export class Deck {
       } else {
         this.computedPlaybackSpeed = this.mainPlaybackSpeed
         this.jogWheelValue = 1
+        if (this.position === null || !this.backupBuffer || this.playbackState !== PlaybackStates.PAUSED || !this.loadedTrack) return
+        this.loadedTrack?.disconnect()
+        this.positionTracker?.disconnect()
+        const nextPosition = limit((nextValue - 1) / 100 + this.position)
+        this.updatePosition && this.updatePosition(nextPosition)
+        this.position = nextPosition
+        this.handleScroll(this.backupBuffer, isFireFox ? ZERO : 0, nextPosition * this.backupBuffer.duration)
       }
     }
+    this.handleScroll = debouncedPositionScroller(this.loadAndPlayTrack)
     this.setPlayBackSpeed = (speed: number) => {
       const newSpeed = isFireFox && speed < ZERO ? ZERO : speed
       this.mainPlaybackSpeed = newSpeed
@@ -232,11 +258,23 @@ export class Deck {
         }
       }
     }
-
     this.cuePoint = null
-    this.setCuePoint = (nextCuePoint: number) => {
-      this.cuePoint = nextCuePoint
+    this.handleCuePoint = () => {
+      if (this.playbackState === PlaybackStates.PAUSED) {
+        this.cuePoint = this.position
+        this.setCuePoint && this.setCuePoint(this.position)
+      } else if (this.playbackState === PlaybackStates.PLAYING && this.backupBuffer && this.cuePoint !== null) {
+        this.pause()
+        setTimeout(() => {
+          if (!this.cuePoint || this.backupBuffer === null) return
+          this.updatePosition && this.updatePosition(this.cuePoint)
+          this.loadedTrack?.disconnect()
+          this.positionTracker?.disconnect()
+          this.loadAndPlayTrack(this.backupBuffer, isFireFox ? ZERO : 0, this.cuePoint * this.backupBuffer.duration)
+        }, 100)
+      }
     }
+    this.setCuePoint = null
     this.rewind = (amount: number) => {
 
     }
@@ -245,10 +283,14 @@ export class Deck {
     }
     this.restart = () => {
       if (!this.backupBuffer) return
-      this.updatePosition && this.updatePosition(0)
-      this.loadedTrack?.disconnect()
-      this.positionTracker?.disconnect()
-      this.loadAndPlayTrack(this.backupBuffer, this.playbackState === PlaybackStates.PLAYING ? this.playbackRate : isFireFox ? ZERO : 0, 0)
+      this.pause()
+      setTimeout(() => {
+        if (!this.backupBuffer) return
+        this.updatePosition && this.updatePosition(0)
+        this.loadedTrack?.disconnect()
+        this.positionTracker?.disconnect()
+        this.loadAndPlayTrack(this.backupBuffer, this.playbackState === PlaybackStates.PLAYING ? this.playbackRate : isFireFox ? ZERO : 0, 0)
+      }, 100)
     }
     this.setFilter = (nextValue: number) => {
       const isLowPass = nextValue <= 0
@@ -323,4 +365,10 @@ const calculateAverage = (array: Float32Array) => {
     total += Math.abs(value)
   })
   return Math.pow(total / array.length, 0.6)
+}
+
+const limit = (value: number) => {
+  if (value < 0) return 0
+  if (value > 1) return 1
+  return value
 }

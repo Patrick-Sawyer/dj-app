@@ -105,8 +105,9 @@ export const KnobText = styled.span<{
   glowColor?: string;
   bypassed?: boolean;
   color?: string;
+  fontSize?: string;
 }>`
-  font-size: 10px;
+  font-size: ${props => props.fontSize || '10px'};
   text-transform: uppercase;
   margin-top: 8px;
   letter-spacing: 1px;
