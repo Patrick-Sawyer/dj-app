@@ -62,13 +62,6 @@ export function FX ({
           doubleClickValue={-50}
         />
         <Knob
-          color={Colors.turquoise}
-          size={40}
-          text="SAMPLES"
-          fromZero
-          doubleClickValue={-50}
-        />
-        <Knob
           color={Colors.orange}
           size={40}
           text="Reverb"
@@ -114,9 +107,6 @@ export function FX ({
             EFFECTS.setDelayTime(60 / deckBBpm)
           }}
         />
-        <Touchpad text={'SIREN'} color={Colors.turquoise} glowColor={Colors.turquoiseGlow} onClick={effects.handleX2}/>
-        <Touchpad text={'HOLD TIGHT'} color={Colors.turquoise} glowColor={Colors.turquoiseGlow} onClick={effects.handleX2}/>
-        <Touchpad text={'RAVE'} color={Colors.turquoise} glowColor={Colors.turquoiseGlow} onClick={effects.handleX2}/>
       </Row>
     </Wrapper>
   )

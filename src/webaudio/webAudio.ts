@@ -8,7 +8,14 @@ MASTER_VOLUME.gain.value = isFireFox ? 1 : 1.3
 const MAIN_COMPRESSOR = CONTEXT.createDynamicsCompressor()
 MAIN_VOLUME.connect(MASTER_VOLUME)
 MASTER_VOLUME.connect(MAIN_COMPRESSOR)
-MAIN_COMPRESSOR.connect(CONTEXT.destination)
+// MAIN_COMPRESSOR.connect(CONTEXT.destination)
+const SPLITTER = CONTEXT.createChannelSplitter(4)
+MAIN_COMPRESSOR.connect(SPLITTER)
+const MERGER = CONTEXT.createChannelMerger(CONTEXT.destination.maxChannelCount)
+CONTEXT.destination.channelInterpretation = 'discrete'
+SPLITTER.connect(MERGER, 0, 0)
+SPLITTER.connect(MERGER, 1, 1)
+MERGER.connect(CONTEXT.destination)
 
 export const ZERO = 0.0001
 export const FADE_IN_OUT_TIME = isFireFox ? 0.1 : 0.05

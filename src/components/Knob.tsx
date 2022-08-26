@@ -31,6 +31,8 @@ export function Knob ({
   const [bypassed, setBypassed] = useState(false)
 
   const handleMouseDown = (e: any) => {
+    e.preventDefault()
+    e.stopPropagation()
     mouseDown.current = true
     const { pageY } = e
     mouseStartPosition.current = pageY
@@ -42,6 +44,7 @@ export function Knob ({
 
     const handleMouseMove = (e: any) => {
       e.preventDefault()
+      e.stopPropagation()
       if (mouseDown.current) {
         const { pageY } = e
         const diff = (mouseStartPosition.current - pageY) / 3
@@ -52,6 +55,8 @@ export function Knob ({
     }
 
     const handleMouseUp = (e: any) => {
+      e.preventDefault()
+      e.stopPropagation()
       document.body.style.cursor = 'auto'
       mouseDown.current = false
       const { pageY } = e

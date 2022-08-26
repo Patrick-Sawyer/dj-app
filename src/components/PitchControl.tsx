@@ -37,18 +37,24 @@ export function PitchControl ({
   })
 
   const handleMouseDown = (e: any) => {
+    e.preventDefault()
+    e.stopPropagation()
     mouseState.current.mouseDown = true
     mouseState.current.startPosition = e.pageY
     mouseState.current.offsetAtStart = offset
   }
 
   const handleMouseUp = (e: any) => {
+    e.preventDefault()
+    e.stopPropagation()
     mouseState.current.mouseDown = false
     mouseState.current.startPosition = e.pageY
   }
 
   const handleMouseMove = (e: any) => {
     if (mouseState.current.mouseDown) {
+      e.preventDefault()
+      e.stopPropagation()
       const diff = e.pageY - mouseState.current.startPosition
       const value = mouseState.current.offsetAtStart - diff
       const limited = value >= SCROLL_LIMIT ? SCROLL_LIMIT : value <= -SCROLL_LIMIT ? -SCROLL_LIMIT : value

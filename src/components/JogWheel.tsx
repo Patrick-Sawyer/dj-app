@@ -105,6 +105,7 @@ export function JogWheel ({ playbackState, image, pitch, pitchJog }: Props) {
 
   const handleMouseMove = (e: MouseEvent) => {
     e.preventDefault()
+    e.stopPropagation()
     const { pageX, pageY } = e
     const { block, isClickable } = wheelPosition(e)
 
@@ -126,6 +127,7 @@ export function JogWheel ({ playbackState, image, pitch, pitchJog }: Props) {
 
   const handleMouseDown = (e: any) => {
     e.preventDefault()
+    e.stopPropagation()
     const { pageX, pageY } = e
     const { isClickable } = wheelPosition(e)
     if (!isClickable) return
@@ -150,6 +152,8 @@ export function JogWheel ({ playbackState, image, pitch, pitchJog }: Props) {
 
   useEffect(() => {
     const handleMouseUp = (e: MouseEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
       mouseState.current.isMouseDown = false
       mouseState.current.lastEndPosition = mouseState.current.currentPosition
       document.body.style.cursor = 'default'
