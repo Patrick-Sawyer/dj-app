@@ -50,7 +50,7 @@ const SliderWrapper = styled.div`
 const Wrapper = styled.div`
   border-bottom: 1px solid ${Colors.darkBorder};
   @media screen and (max-width: 1000px) {
-    width: 160px;
+    width: 170px;
   }
 `;
 

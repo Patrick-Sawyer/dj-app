@@ -1,38 +1,45 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react'
-import styled from 'styled-components'
-import { Colors } from '../utils/theme'
-import { EmbossedLabel } from './EmbossedLabel'
+import { ChangeEvent, useEffect, useRef, useState } from "react";
+import styled from "styled-components";
+import { Colors } from "../utils/theme";
+import { EmbossedLabel } from "./EmbossedLabel";
 
 interface Props {
   onChange: (value: number) => void;
   text?: string;
 }
 
-export function Slider ({
-  onChange,
-  text
-}: Props) {
-  const ref = useRef<HTMLInputElement>(null)
-  const [value, setValue] = useState(0)
+export function Slider({ onChange, text }: Props) {
+  const ref = useRef<HTMLInputElement>(null);
+  const [value, setValue] = useState(0);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setValue(parseInt(e.target.value))
-  }
+    setValue(parseInt(e.target.value));
+  };
 
   useEffect(() => {
     if (ref.current) {
-      const color = 191 + (50 + value) * 1.26
-      ref.current.style.setProperty('--SliderColor', `hsl(${color}, 100%, 50%)`)
+      const color = 191 + (50 + value) * 1.26;
+      ref.current.style.setProperty(
+        "--SliderColor",
+        `hsl(${color}, 100%, 50%)`
+      );
     }
-    onChange(value)
-  }, [value])
+    onChange(value);
+  }, [value]);
 
   return (
     <Wrapper>
-      {!!text && <EmbossedLabel text={text}/>}
-      <Input ref={ref} type="range" min="-50" value={value} onChange={handleChange} max="50" />
+      {!!text && <EmbossedLabel text={text} />}
+      <Input
+        ref={ref}
+        type="range"
+        min="-50"
+        value={value}
+        onChange={handleChange}
+        max="50"
+      />
     </Wrapper>
-  )
+  );
 }
 
 const Wrapper = styled.div`
@@ -41,7 +48,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-`
+`;
 
 const Input = styled.input<{
   vertical?: boolean;
@@ -99,4 +106,4 @@ const Input = styled.input<{
     cursor: pointer;
     box-shadow: inset 0px -6px 11px -2px ${Colors.dirtyBrown};
   }
-`
+`;

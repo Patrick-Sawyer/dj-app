@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { Colors } from "../utils/theme";
 import { DECKS } from "../webaudio/deckWebAudio";
+import { CONTEXT } from "../webaudio/webAudio";
 import { HighlightedLabel } from "./HighlightedLabel";
 import { PitchBackground } from "./PitchBackground";
 import { PitchSlider } from "./PitchSlider";
@@ -17,8 +18,8 @@ interface Props {
   handleSync: () => void;
 }
 
-export const HEIGHT = 550;
-const SCROLL_LIMIT = HEIGHT / 2 - 47;
+const HEIGHT = CONTEXT.destination.channelCount >= 4 ? 550 : 520;
+
 export function PitchControl({
   deck,
   setPitch,
@@ -30,6 +31,7 @@ export function PitchControl({
   handleSync,
 }: Props) {
   const [offset, setOffset] = useState<number>(0);
+
   const mouseState = useRef({
     mouseDown: false,
     startPosition: 0,
@@ -49,6 +51,7 @@ export function PitchControl({
 
   const handleMouseMove = (e: any) => {
     if (mouseState.current.mouseDown) {
+      const SCROLL_LIMIT = HEIGHT / 2 - 47;
       const diff = e.pageY - mouseState.current.startPosition;
       const value = mouseState.current.offsetAtStart - diff;
       const limited =
@@ -79,7 +82,7 @@ export function PitchControl({
   };
 
   useEffect(() => {
-    const nextPitch = 1 - (offset * sensitivity) / SCROLL_LIMIT;
+    const nextPitch = 1 - (offset * sensitivity) / (HEIGHT / 2 - 47);
     deck.setPlayBackSpeed(nextPitch);
     setPitch(nextPitch);
   }, [offset, sensitivity]);
@@ -106,7 +109,7 @@ export function PitchControl({
         </Text>
       </PlusMinus>
 
-      <Inner onPointerMove={handleMouseMove}>
+      <Inner height={HEIGHT} onPointerMove={handleMouseMove}>
         <PitchBackground
           onClick={handleTrackClick}
           height={HEIGHT}
@@ -143,28 +146,30 @@ const Wrapper = styled.div<{
   justify-content: center;
   border-bottom: 1px solid ${Colors.darkBorder};
   box-sizing: border-box;
+  padding: 0 7px;
   ${({ reverse }) =>
     reverse
       ? `
-    padding-right: 15px;
     flex-direction: row-reverse;
-    padding-left: 10px;
     border-right: 1px solid ${Colors.darkBorder};
-    `
-      : `
-  padding-left: 15px;
-  padding-right: 10px;
-  border-left: 1px solid ${Colors.darkBorder};
-`}
+  `
+      : `border-left: 1px solid ${Colors.darkBorder};`}
 
   @media screen and (max-width: 1100px) {
     padding-left: 5px;
     padding-right: 5px;
   }
+
+  @media screen and (max-width: 1000px) {
+    > div {
+    }
+  }
 `;
 
-const Inner = styled.div`
-  height: ${HEIGHT}px;
+const Inner = styled.div<{
+  height: number;
+}>`
+  height: ${({ height }) => height}px;
   width: 50px;
   justify-content: center;
   display: flex;
@@ -202,7 +207,7 @@ const PlusMinus = styled.div<{
   align-items: center;
   height: ${({ height }) => height - 80}px;
 
-  @media screen and (max-width: 1000px) {
+  @media screen and (max-width: 1100px) {
     display: none;
   }
 `;

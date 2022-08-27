@@ -211,7 +211,6 @@ export function JogWheel({ playbackState, image, pitch, pitchJog }: Props) {
 }
 
 const Wrapper = styled.div`
-  height: 100%;
   display: flex;
   align-items: center;
   position: relative;

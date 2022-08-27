@@ -4,6 +4,7 @@ import { Knob, KnobText } from "./Knob";
 import { EmbossedLabel } from "./EmbossedLabel";
 import { DECKS } from "../webaudio/deckWebAudio";
 import { useState } from "react";
+import { CONTEXT } from "../webaudio/webAudio";
 
 interface Props {
   color: string;
@@ -64,15 +65,17 @@ export function ChannelEq({ deck, color, label, glowColor }: Props) {
         size={40}
         bypassValue={0}
       />
-      <KnobText
-        fontSize="14px"
-        glowColor={Colors.orangeGlow}
-        color={Colors.orange}
-        bypassed={!cue}
-        onClick={handleCueClick}
-      >
-        {"CUE"}
-      </KnobText>
+      {CONTEXT.destination.channelCount >= 4 && (
+        <KnobText
+          fontSize="14px"
+          glowColor={Colors.orangeGlow}
+          color={Colors.orange}
+          bypassed={!cue}
+          onClick={handleCueClick}
+        >
+          {"CUE"}
+        </KnobText>
+      )}
     </EqWrapper>
   );
 }

@@ -291,14 +291,14 @@ const Pitch = styled.div`
   justify-content: center;
   height: 100%;
   position: relative;
+  bottom: 5px;
 `;
 
 const Left = styled.div`
   display: flex;
-  flex: 1;
+  height: 100%;
   flex-direction: column;
   background-color: ${Colors.darkGreyBackground};
-  border: 1px solid ${Colors.darkBorder};
 `;
 
 const Top = styled.div`
@@ -306,11 +306,21 @@ const Top = styled.div`
   flex-direction: column;
   background-color: black;
   padding: 10px 10px 15px 10px;
+
   gap: 5px;
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  min-height: 120px;
+  border: ${1 / devicePixelRatio}px solid rgba(255, 255, 255, 0.7);
+  height: 115px;
+  min-height: 115px;
+  max-height: 115px;
   justify-content: space-between;
   position: relative;
+
+  @media screen and (max-width: 1000px) {
+    padding-top: 5px;
+    height: 100px;
+    min-height: 100px;
+    max-height: 100px;
+  }
 `;
 
 const Buttons = styled.div`
