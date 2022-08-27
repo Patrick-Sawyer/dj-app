@@ -17,9 +17,8 @@ interface Props {
   handleSync: () => void;
 }
 
-const SCROLL_LIMIT = 228;
 export const HEIGHT = 550;
-
+const SCROLL_LIMIT = HEIGHT / 2 - 47;
 export function PitchControl({
   deck,
   setPitch,
@@ -87,13 +86,31 @@ export function PitchControl({
 
   return (
     <Wrapper reverse={reverse}>
-      <Light reverse={reverse} color={color} lightOn={lightOn} />
+      <PlusMinus height={HEIGHT} reverse={!!reverse}>
+        <Text
+          onPointerDown={(e) => {
+            handleTrackClick(true);
+          }}
+        >
+          {"-"}
+        </Text>
+        <VerticalLine />
+        <Light reverse={reverse} color={color} lightOn={lightOn} />
+        <VerticalLine />
+        <Text
+          onPointerDown={(e) => {
+            handleTrackClick(false);
+          }}
+        >
+          {"+"}
+        </Text>
+      </PlusMinus>
+
       <Inner onPointerMove={handleMouseMove}>
         <PitchBackground
-          reverse={reverse}
-          offset={offset}
           onClick={handleTrackClick}
           height={HEIGHT}
+          offset={offset}
         />
         <PitchSlider
           offset={0 - offset}
@@ -164,13 +181,56 @@ const Light = styled.div<{
   background-color: ${({ color }) => color};
   height: 8px;
   width: 8px;
+  min-height: 8px;
+  max-height: 8px;
+  min-width: 8px;
+  max-width: 8px;
   border-radius: 8px;
+  margin-top: 25px;
+  margin-bottom: 25px;
   box-shadow: 0px 0px 3px 0px ${({ color }) => color};
-  position: relative;
-  top: 1px;
-  ${({ reverse }) => (reverse ? "left: 5px;" : "right: 5px;")}
   opacity: ${({ lightOn }) => (lightOn ? "1" : "0.2")};
-  @media screen and (max-width: 1100px) {
+`;
+
+const PlusMinus = styled.div<{
+  reverse: boolean;
+  height: number;
+}>`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: ${({ height }) => height - 80}px;
+
+  @media screen and (max-width: 1000px) {
     display: none;
+  }
+`;
+
+const VerticalLine = styled.div`
+  width: 1px;
+  height: 100%;
+  opacity: 0.3;
+  background-color: white;
+`;
+
+const Text = styled.div`
+  color: white;
+  font-weight: 100;
+  font-size: 30px;
+  line-height: 20px;
+  padding-top: 20px;
+  transition: 0.1s;
+  padding-bottom: 20px;
+  opacity: 0.6;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 1;
+    font-weight: 200;
+  }
+
+  &:active {
+    opacity: 0.3;
   }
 `;
