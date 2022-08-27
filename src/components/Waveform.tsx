@@ -1,8 +1,8 @@
-import { useRef, useState } from 'react'
-import styled from 'styled-components'
-import { Colors } from '../utils/theme'
-import { DECKS, PlaybackStates } from '../webaudio/deckWebAudio'
-import { WaveFormData } from './WaveformData'
+import { useRef, useState } from "react";
+import styled from "styled-components";
+import { Colors } from "../utils/theme";
+import { DECKS, PlaybackStates } from "../webaudio/deckWebAudio";
+import { WaveFormData } from "./WaveformData";
 
 interface Props {
   data?: number[];
@@ -15,71 +15,94 @@ interface Props {
   cuePoint: null | number;
 }
 
-const ZOOM_CHANGE_AMOUNT = 1.5
-const MAX_ZOOM = 1
-const MIN_ZOOM = 300
-const OFFSET = 50
+const ZOOM_CHANGE_AMOUNT = 1.5;
+const MAX_ZOOM = 1;
+const MIN_ZOOM = 300;
+const OFFSET = 50;
 
 // MOVE CALCULATION TO WEB AUDIO WORKLET
 // MAKE AVERAGE USE LESS CALCULATIONS
 
-export function Waveform ({ data, color, playbackState, deck, duration, setPosition, position, cuePoint }: Props) {
-  const [zoom, setZoom] = useState(1)
-  const ref = useRef<HTMLDivElement>(null)
+export function Waveform({
+  data,
+  color,
+  playbackState,
+  deck,
+  duration,
+  setPosition,
+  position,
+  cuePoint,
+}: Props) {
+  const [zoom, setZoom] = useState(1);
+  const ref = useRef<HTMLDivElement>(null);
 
   const decreaseZoom = () => {
-    const nextState = Math.round(zoom * ZOOM_CHANGE_AMOUNT)
+    const nextState = Math.round(zoom * ZOOM_CHANGE_AMOUNT);
     if (nextState <= MIN_ZOOM) {
-      setZoom(nextState)
+      setZoom(nextState);
     }
-  }
+  };
 
   const increaseZoom = () => {
-    const nextState = Math.round(zoom / ZOOM_CHANGE_AMOUNT)
+    const nextState = Math.round(zoom / ZOOM_CHANGE_AMOUNT);
     if (nextState >= MAX_ZOOM) {
-      setZoom(nextState)
+      setZoom(nextState);
     }
-  }
+  };
 
   return (
     <Wrapper>
       <WaveformWrapper>
-        <MiniButton disabled={zoom > 60} marginRight color={color} onClick={decreaseZoom}>
-          {'-'}
+        <MiniButton
+          disabled={zoom > 60}
+          marginRight
+          color={color}
+          onClick={decreaseZoom}
+        >
+          {"-"}
         </MiniButton>
-          <FullWaveform
-            ref={ref}
-          >
-            <div style={{
-              display: 'inline-block',
-              paddingLeft: `${OFFSET}px`
+        <FullWaveform ref={ref}>
+          <div
+            style={{
+              display: "inline-block",
+              paddingLeft: `${OFFSET}px`,
             }}
-            >
-              <div style={{
+          >
+            <div
+              style={{
                 right: `${(position * 100).toFixed(3)}%`,
-                position: 'relative',
+                position: "relative",
                 borderLeft: `1px solid ${Colors.lightGrey}`,
                 borderRight: `1px solid ${Colors.lightGrey}`,
-                width: data?.length ? data.length / (devicePixelRatio * zoom) : 0
-              }}>
-                <WaveFormData zoom={zoom} color={color} data={data} />
+                width: data?.length
+                  ? data.length / (devicePixelRatio * zoom)
+                  : 0,
+              }}
+            >
+              <WaveFormData zoom={zoom} color={color} data={data} />
 
-                {cuePoint !== null && (
-                  <CuePoint style={{
-                    left: `calc(${(cuePoint * 100).toFixed(3)}% - 5px)`
-                  }}/>
-                )}
-
-              </div>
+              {cuePoint !== null && (
+                <CuePoint
+                  style={{
+                    left: `calc(${(cuePoint * 100).toFixed(3)}% - 5px)`,
+                  }}
+                />
+              )}
             </div>
-            <Indicator />
-          </FullWaveform>
-        <MiniButton disabled={zoom === 1} onClick={increaseZoom} marginLeft color={color}>
-          {'+'}
+          </div>
+          <Indicator />
+        </FullWaveform>
+        <MiniButton
+          disabled={zoom === 1}
+          onClick={increaseZoom}
+          marginLeft
+          color={color}
+        >
+          {"+"}
         </MiniButton>
       </WaveformWrapper>
     </Wrapper>
-  )
+  );
 }
 
 const CuePoint = styled.div`
@@ -88,14 +111,14 @@ const CuePoint = styled.div`
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
   border-bottom: 10px solid white;
-`
+`;
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 10px;
-`
+  padding: 0 12px;
+`;
 
 const WaveformWrapper = styled.div`
   width: 100%;
@@ -103,10 +126,10 @@ const WaveformWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-`
+`;
 
 const FullWaveform = styled.div`
-  width: 360px;
+  width: 100%;
   height: 50px;
   overflow: hidden;
   background-color: ${Colors.darkGreyBackground};
@@ -114,8 +137,7 @@ const FullWaveform = styled.div`
   border-radius: 2px;
   box-sizing: border-box;
   position: relative;
-
-`
+`;
 
 const Indicator = styled.div`
   height: 60px;
@@ -124,7 +146,7 @@ const Indicator = styled.div`
   top: 0px;
   left: ${OFFSET}px;
   background-color: white;
-`
+`;
 
 export const MiniButton = styled.span<{
   marginLeft?: boolean;
@@ -137,11 +159,13 @@ export const MiniButton = styled.span<{
   font-weight: 300;
   font-size: 25px;
   opacity: 0.4;
-  cursor: ${({ disabled }) => disabled ? 'not-allowed' : 'pointer'};
-  ${({ marginLeft }) => marginLeft && 'margin-left: 15px;'}
-  ${({ marginRight }) => marginRight && 'margin-right: 15px;'}
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+  ${({ marginLeft }) => marginLeft && "margin-left: 15px;"}
+  ${({ marginRight }) => marginRight && "margin-right: 15px;"}
 
-  ${({ disabled }) => !disabled && `
+  ${({ disabled }) =>
+    !disabled &&
+    `
       &:hover {
         opacity: 1;
       }
@@ -150,4 +174,8 @@ export const MiniButton = styled.span<{
         opacity: 0.4;
       }
   `}
-`
+
+  @media screen and (max-width: 1000px) {
+    display: none;
+  }
+`;

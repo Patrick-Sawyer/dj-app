@@ -1,4 +1,5 @@
 body {
   background-color: #3b3b3b;
   overscroll-behavior-x: none;
+  -webkit-tap-highlight-color: transparent;
 }

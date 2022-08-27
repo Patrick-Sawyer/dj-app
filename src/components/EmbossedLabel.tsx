@@ -1,28 +1,39 @@
-import styled from 'styled-components'
-import { Colors } from '../utils/theme'
+import styled from "styled-components";
+import { Colors } from "../utils/theme";
 
 interface Props {
   text: string;
   fontSize?: string;
+  hideOnSmallScreen?: boolean;
 }
 
-export function EmbossedLabel ({
+export function EmbossedLabel({
   text,
-  fontSize = '13px'
+  fontSize = "13px",
+  hideOnSmallScreen = false,
 }: Props) {
   return (
-    <Text fontSize={fontSize}>
-    {text}
+    <Text hide={hideOnSmallScreen} fontSize={fontSize}>
+      {text}
     </Text>
-  )
+  );
 }
 
 const Text = styled.span<{
   fontSize?: string;
+  hide: boolean;
 }>`
-  font-size: ${props => props.fontSize || '13px'};
+  font-size: ${(props) => props.fontSize || "13px"};
   text-shadow: 0px 1px 1px #57524f;
   color: ${Colors.darkBorder};
   font-weight: 500;
   white-space: no-wrap;
-`
+
+  ${({ hide }) =>
+    hide &&
+    `
+    @media screen and (max-width: 1000px) {
+      display: none;
+    }
+  `}
+`;
