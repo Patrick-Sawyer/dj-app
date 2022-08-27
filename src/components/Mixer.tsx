@@ -1,15 +1,17 @@
 import styled from "styled-components";
 import { Colors } from "../utils/theme";
 import { DECKS } from "../webaudio/deckWebAudio";
+import { audioRouter } from "../webaudio/webAudio";
 import { ChannelEq } from "./ChannelEq";
 import { MainLevels } from "./MainLevels";
 import { Slider } from "./Slider";
 
 interface Props {
   decks: typeof DECKS;
+  router: typeof audioRouter;
 }
 
-export function Mixer({ decks }: Props) {
+export function Mixer({ decks, router }: Props) {
   const onCrossfadeChange = (value: number) => {
     const volumeB = Math.sqrt((value + 50) / 100);
     const volumeA = Math.sqrt(1 - (value + 50) / 100);
@@ -27,6 +29,8 @@ export function Mixer({ decks }: Props) {
           glowColor={Colors.deckAGlow}
           label="DECK-A"
           color={Colors.deckA}
+          router={router}
+          isDeckA
         />
         <MainLevels decks={decks} />
         <ChannelEq
@@ -34,6 +38,7 @@ export function Mixer({ decks }: Props) {
           label="DECK-B"
           glowColor={Colors.deckbGlow}
           color={Colors.deckB}
+          router={router}
         />
       </Eq>
       <SliderWrapper>

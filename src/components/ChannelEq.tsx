@@ -3,17 +3,31 @@ import { Colors } from "../utils/theme";
 import { Knob, KnobText } from "./Knob";
 import { EmbossedLabel } from "./EmbossedLabel";
 import { DECKS } from "../webaudio/deckWebAudio";
-import { useState } from "react";
-import { CONTEXT } from "../webaudio/webAudio";
+import { useEffect, useState } from "react";
+import {
+  audioRouter,
+  CONTEXT,
+  FADE_IN_OUT_TIME,
+  ZERO,
+} from "../webaudio/webAudio";
 
 interface Props {
   color: string;
   label: string;
   glowColor: string;
   deck: typeof DECKS.deckA;
+  router: typeof audioRouter;
+  isDeckA?: boolean;
 }
 
-export function ChannelEq({ deck, color, label, glowColor }: Props) {
+export function ChannelEq({
+  deck,
+  color,
+  label,
+  glowColor,
+  router,
+  isDeckA,
+}: Props) {
   const [cue, setCue] = useState(false);
 
   const handleGain = (nextValue: number) => {
@@ -28,6 +42,17 @@ export function ChannelEq({ deck, color, label, glowColor }: Props) {
   const handleCueClick = () => {
     setCue(!cue);
   };
+
+  useEffect(() => {
+    if (CONTEXT.state === "suspended") CONTEXT.resume();
+    router[isDeckA ? "deckA" : "deckB"].gain.cancelScheduledValues(
+      CONTEXT.currentTime
+    );
+    router[isDeckA ? "deckA" : "deckB"].gain.exponentialRampToValueAtTime(
+      cue ? 1 : ZERO,
+      CONTEXT.currentTime + FADE_IN_OUT_TIME
+    );
+  }, [cue]);
 
   return (
     <EqWrapper>
@@ -65,7 +90,7 @@ export function ChannelEq({ deck, color, label, glowColor }: Props) {
         size={40}
         bypassValue={0}
       />
-      {CONTEXT.destination.channelCount >= 4 && (
+      {CONTEXT.destination.maxChannelCount >= 4 && (
         <KnobText
           fontSize="14px"
           glowColor={Colors.orangeGlow}

@@ -1,5 +1,11 @@
 import { TuneMetaData } from "../components/TuneTableRow";
-import { CONTEXT, FADE_IN_OUT_TIME, isFireFox, ZERO } from "./webAudio";
+import {
+  audioRouter,
+  CONTEXT,
+  FADE_IN_OUT_TIME,
+  isFireFox,
+  ZERO,
+} from "./webAudio";
 
 const workerPath = "worklet/audioWorklet.js";
 CONTEXT.audioWorklet.addModule(workerPath);
@@ -475,3 +481,6 @@ const limit = (value: number) => {
   if (value > 1) return 1;
   return value;
 };
+
+DECKS.deckA.masterGain.connect(audioRouter.deckA);
+DECKS.deckB.masterGain.connect(audioRouter.deckB);

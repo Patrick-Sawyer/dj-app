@@ -9,6 +9,8 @@ import { DECKS } from "./webaudio/deckWebAudio";
 import { FX } from "./components/FX";
 import { EFFECTS } from "./webaudio/effectsWebAudio";
 import { Upload } from "./components/Upload";
+import { AudioConfig } from "./components/AudioConfig";
+import { audioRouter } from "./webaudio/webAudio";
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
 window.process = window.process || require("process");
@@ -44,7 +46,7 @@ function App() {
             color={Colors.deckA}
             glowColor={Colors.deckAGlow}
           />
-          <Mixer decks={DECKS} />
+          <Mixer router={audioRouter} decks={DECKS} />
           <Deck
             otherBPM={deckABpm}
             setBpm={setDeckBBpm}
@@ -55,7 +57,10 @@ function App() {
           />
         </Decks>
         <FX deckABpm={deckABpm} deckBBpm={deckBBpm} effects={EFFECTS} />
-        <Upload uploadTrack={uploadTrack} />
+        <ConfigAndUpload>
+          <Upload uploadTrack={uploadTrack} />
+          <AudioConfig decks={DECKS} router={audioRouter} />
+        </ConfigAndUpload>
       </Wrapper>
       <TableWrapper>
         <TuneTable deleteTrack={deleteTrack} tunes={tunes} />
@@ -63,6 +68,14 @@ function App() {
     </Outer>
   );
 }
+
+const ConfigAndUpload = styled.div`
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 15px;
+  padding: 0 5px;
+`;
 
 const Outer = styled.div`
   display: flex;
@@ -89,7 +102,7 @@ const Decks = styled.div`
 `;
 
 const TableWrapper = styled.div`
-  margin-top: 30px;
+  margin-top: 15px;
   display: flex;
   justify-content: center;
   width: 100%;
