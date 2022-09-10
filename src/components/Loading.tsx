@@ -38,10 +38,10 @@ const Wrapper = styled.div<{
   right: 0;
   position: absolute;
   border-radius: 50%;
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: rgba(0, 0, 0, 0.92);
   transform: scale(1.1);
   opacity: ${({ loading }) => (loading ? 1 : 0)};
-  transition: 0.1s;
+  transition: 0.2s;
 
   > div {
     animation: lds-spinner 1.2s linear infinite;
