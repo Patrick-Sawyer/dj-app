@@ -322,7 +322,7 @@ const Top = styled.div`
   padding: 10px 10px 15px 10px;
 
   gap: 5px;
-  border: ${1 / devicePixelRatio}px solid rgba(255, 255, 255, 0.7);
+
   height: 115px;
   min-height: 115px;
   max-height: 115px;
