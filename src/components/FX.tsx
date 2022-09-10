@@ -170,16 +170,22 @@ const Pad = styled.div<{
   cursor: ${({ disabled }) => (disabled ? "auto" : "pointer")};
   border: 1px solid transparent;
 
-  span {
-    opacity: 0.3;
+  @media screen and (pointer: coarse) {
+    &:active {
+      border: 1px solid ${({ color }) => color};
+      box-shadow: 0 0 4px 0 ${({ glowColor }) => glowColor};
+    }
   }
 
-  &:active {
-    border: 1px solid ${({ color }) => color};
-    box-shadow: 0 0 4px 0 ${({ glowColor }) => glowColor};
+  @media screen and (pointer: fine) {
+    &:hover {
+      border: 1px solid ${({ color }) => color};
+      box-shadow: 0 0 4px 0 ${({ glowColor }) => glowColor};
+    }
 
-    span {
-      opacity: 1;
+    &:active {
+      border: 1px solid transparent;
+      box-shadow: none;
     }
   }
 

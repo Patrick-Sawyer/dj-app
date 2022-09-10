@@ -42,10 +42,10 @@ const Wrapper = styled.div<{
   right: 0;
   position: absolute;
   border-radius: 50%;
-  background-color: black;
+  background-color: rgba(0, 0, 0, 0.9);
   transform: scale(1.1);
   opacity: ${({ loading }) => (loading ? 1 : 0)};
-  transition: 0.4s;
+  transition: 0.5s;
 
   > div {
     animation: lds-spinner 1.2s linear infinite;
@@ -115,7 +115,7 @@ const Line = styled.div`
   background-color: white;
   border-radius: 10px;
   position: relative;
-  top: 25px;
+  top: 15px;
 `;
 
 const Inner = styled.div`
