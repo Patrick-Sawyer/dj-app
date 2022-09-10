@@ -45,7 +45,7 @@ const Wrapper = styled.div<{
   background-color: black;
   transform: scale(1.1);
   opacity: ${({ loading }) => (loading ? 1 : 0)};
-  transition: 1s;
+  transition: 0.4s;
 
   > div {
     animation: lds-spinner 1.2s linear infinite;
