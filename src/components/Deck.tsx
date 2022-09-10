@@ -92,12 +92,6 @@ export function Deck({
       setMetaData({});
       return;
     }
-
-    alert(
-      deck.playbackState === PlaybackStates.EMPTY
-        ? "Deck empty fool"
-        : "Playing track fool"
-    );
   };
 
   const handlePlayPause = () => {

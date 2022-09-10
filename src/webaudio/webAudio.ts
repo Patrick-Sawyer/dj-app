@@ -57,8 +57,8 @@ class AudioRouter {
     this.cueMixVolume.gain.value = 0;
 
     this.setCueMix = (value: number) => {
-      const cueVolume = Math.sqrt((value + 50) / 100);
-      const mixVolume = Math.sqrt(1 - (value + 50) / 100);
+      const mixVolume = Math.sqrt((value + 50) / 100);
+      const cueVolume = Math.sqrt(1 - (value + 50) / 100);
       this.cueVolume.gain.cancelScheduledValues(0);
       this.cueMixVolume.gain.cancelScheduledValues(0);
       if (isFireFox) {

@@ -40,8 +40,6 @@ export const TuneTableRow = ({ tune, deleteTrack, index }: Props) => {
     } else if (DECKS.deckB.playbackState === PlaybackStates.EMPTY) {
       DECKS.deckB.loadTrack(blobRef.current);
       DECKS.deckB.metaData = data;
-    } else {
-      alert("Eject a deck fool");
     }
   };
 
