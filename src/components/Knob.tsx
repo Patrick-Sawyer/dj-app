@@ -84,6 +84,7 @@ export function Knob({
         glowColor={glowColor}
         active={active}
         rotate={rotate}
+        key={index}
       />
     );
   });
@@ -175,7 +176,6 @@ const LightInner = styled.div<{
   width: 4px;
   border-radius: 2px;
   position: relative;
-  transition: 0.1s;
   top: 3.5px;
   box-shadow: 0px 0px 2px 1px ${({ glowColor }) => glowColor};
 
@@ -211,7 +211,6 @@ export const KnobText = styled.span<{
   text-transform: uppercase;
   margin-top: 8px;
   letter-spacing: 1px;
-  transition: 0.1s;
   font-weight: 500;
   ${({ glowColor, bypassed }) =>
     glowColor && !bypassed && `text-shadow: 0 0 5px ${glowColor};`}
@@ -269,7 +268,6 @@ const Dot = styled.div`
   left: 50%;
   transform: translateX(-50%);
   position: absolute;
-  transition: 0.1s;
 `;
 
 const DotWrapper = styled.div`

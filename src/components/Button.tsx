@@ -66,16 +66,8 @@ const Wrapper = styled.button<{
     cursor: pointer;
     color: ${color};
 
-    &:hover {
-      border: 1px solid ${color};
-    }
-
     &:active {
-      text-shadow: none;
-      box-shadow: none;
       border: 1px solid ${color};
-      background-color: transparent;
-      color: rgba(255,255,255,0.2);
     }
   `}
 

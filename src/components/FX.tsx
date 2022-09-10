@@ -35,12 +35,11 @@ const Touchpad = ({
       >
         <span>{overlayText}</span>
       </Pad>
-      <KnobText
-        color={disabled ? "#171717" : color}
-        glowColor={disabled ? "transparent" : glowColor}
-      >
-        {text}
-      </KnobText>
+      {!disabled && (
+        <KnobText color={color} glowColor={glowColor}>
+          {text}
+        </KnobText>
+      )}
     </TouchpadWrapper>
   );
 };
@@ -168,7 +167,7 @@ const Pad = styled.div<{
   justify-content: center;
   font-weight: 300;
   margin-top: 2px;
-  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+  cursor: ${({ disabled }) => (disabled ? "auto" : "pointer")};
   border: 1px solid transparent;
 
   span {
@@ -198,10 +197,3 @@ const TouchpadWrapper = styled.div<{
   opacity: ${({ disabled }) => (disabled ? 0.2 : 1)};
   justify-content: space-between;
 `;
-
-// size?: number;
-//   text?: string;
-//   color: string;
-//   onChange?: (nextValue: number) => void;
-//   glowColor?: string;
-//   setBypass?: (nextValue: boolean) => void;

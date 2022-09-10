@@ -63,26 +63,14 @@ const HeadCell = styled.th<{
   padding: 10px;
   font-weight: 600;
   ${({ width }) => width && `width: ${width};`}
+  background: ${Colors.deckbGlow};
   animation-name: colors;
   animation-duration: 5s;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
   animation-play-state: running;
-  -webkit-animation: 5s colors infinite;
 
   @keyframes colors {
-    0% {
-      background: ${Colors.deckbGlow};
-    }
-    50% {
-      background: ${Colors.deckAGlow};
-    }
-    100% {
-      background: ${Colors.deckbGlow};
-    }
-  }
-
-  @-webkit-keyframes colors {
     0% {
       background: ${Colors.deckbGlow};
     }
