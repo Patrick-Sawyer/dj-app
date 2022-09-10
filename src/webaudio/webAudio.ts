@@ -61,14 +61,25 @@ class AudioRouter {
       const mixVolume = Math.sqrt(1 - (value + 50) / 100);
       this.cueVolume.gain.cancelScheduledValues(0);
       this.cueMixVolume.gain.cancelScheduledValues(0);
-      this.cueVolume.gain.exponentialRampToValueAtTime(
-        cueVolume < ZERO ? ZERO : cueVolume,
-        CONTEXT.currentTime + FADE_IN_OUT_TIME
-      );
-      this.cueMixVolume.gain.exponentialRampToValueAtTime(
-        mixVolume < ZERO ? ZERO : mixVolume,
-        CONTEXT.currentTime + FADE_IN_OUT_TIME
-      );
+      if (isFireFox) {
+        this.cueVolume.gain.linearRampToValueAtTime(
+          cueVolume < ZERO ? ZERO : cueVolume,
+          CONTEXT.currentTime + FADE_IN_OUT_TIME
+        );
+        this.cueMixVolume.gain.linearRampToValueAtTime(
+          mixVolume < ZERO ? ZERO : mixVolume,
+          CONTEXT.currentTime + FADE_IN_OUT_TIME
+        );
+      } else {
+        this.cueVolume.gain.exponentialRampToValueAtTime(
+          cueVolume < ZERO ? ZERO : cueVolume,
+          CONTEXT.currentTime + FADE_IN_OUT_TIME
+        );
+        this.cueMixVolume.gain.exponentialRampToValueAtTime(
+          mixVolume < ZERO ? ZERO : mixVolume,
+          CONTEXT.currentTime + FADE_IN_OUT_TIME
+        );
+      }
     };
     this.audioMerger = CONTEXT.createChannelMerger(
       CONTEXT.destination.maxChannelCount

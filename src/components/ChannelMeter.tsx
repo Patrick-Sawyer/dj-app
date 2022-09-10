@@ -66,9 +66,10 @@ const Light = styled.div<{
 
 const Wrapper = styled.div`
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   gap: 5px;
   padding: 7px;
   width: 100%;
   background-color: ${Colors.darkGreyBackground};
+  transform: scaleY(-1);
 `;

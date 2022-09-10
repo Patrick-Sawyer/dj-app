@@ -8,6 +8,7 @@ import {
   audioRouter,
   CONTEXT,
   FADE_IN_OUT_TIME,
+  isFireFox,
   ZERO,
 } from "../webaudio/webAudio";
 
@@ -48,10 +49,19 @@ export function ChannelEq({
     router[isDeckA ? "deckA" : "deckB"].gain.cancelScheduledValues(
       CONTEXT.currentTime
     );
-    router[isDeckA ? "deckA" : "deckB"].gain.exponentialRampToValueAtTime(
-      cue ? 1 : ZERO,
-      CONTEXT.currentTime + FADE_IN_OUT_TIME
-    );
+    const level = cue ? 1 : ZERO;
+    const time = CONTEXT.currentTime + FADE_IN_OUT_TIME;
+    if (isFireFox) {
+      router[isDeckA ? "deckA" : "deckB"].gain.linearRampToValueAtTime(
+        level,
+        time
+      );
+    } else {
+      router[isDeckA ? "deckA" : "deckB"].gain.exponentialRampToValueAtTime(
+        level,
+        time
+      );
+    }
   }, [cue]);
 
   return (

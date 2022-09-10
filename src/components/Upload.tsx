@@ -39,18 +39,28 @@ const Text = styled.span`
   font-size: 13px;
   color: white;
   white-space: no-wrap;
-  opacity: 0.3;
+
   transition: 0.1s;
   font-weight: 300;
   position: relative;
   bottom: 1px;
 
-  &:hover {
-    opacity: 0.8;
+  @media (pointer: fine) {
+    opacity: 0.3;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    &:active {
+      opacity: 0.3;
+    }
   }
 
-  &:active {
-    opacity: 0.3;
+  @media screen and (pointer: coarse) {
+    &:active {
+      opacity: 0.3;
+    }
   }
 `;
 

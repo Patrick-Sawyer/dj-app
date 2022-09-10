@@ -5,13 +5,13 @@ import { TrackInfo } from "./TrackInfo";
 import { JogWheel } from "./JogWheel";
 import { Waveform } from "./Waveform";
 import { DECKS, PlaybackStates } from "../webaudio/deckWebAudio";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TuneMetaData } from "./TuneTableRow";
 import { PitchControl } from "./PitchControl";
 
 interface Props {
   color: string;
-  glowColor?: string;
+  glowColor: string;
   deck: typeof DECKS.deckA;
   reverse?: boolean;
   setBpm: (bpm: number) => void;
@@ -31,29 +31,31 @@ const accountForRotation = (last: number, current: number) => {
   return last;
 };
 
-const jogFuncGen = (handleJogWheel: (value: number) => void) => {
+const DEBOUNCE_TIME = 150;
+
+const jogFuncGen = (handleJogWheel: (value: number, zoom: number) => void) => {
   let lastPosition: number | null = null;
   let lastDate: number | null = null;
   let timeout: ReturnType<typeof setTimeout> | null = null;
 
-  return (position: number) => {
+  return (position: number, zoom: number) => {
     const date = new Date().getTime();
     if (!lastPosition || !lastDate) {
       lastPosition = position;
       lastDate = date;
-    } else if (date - lastDate > 40) {
+    } else if (date - lastDate > DEBOUNCE_TIME) {
       if (timeout) clearTimeout(timeout);
       const withRotation = accountForRotation(lastPosition, position);
       const distance = position - withRotation;
       const time = date - lastDate;
       const speed = limit(distance / time);
       const nextValue = 1 + speed * 70;
-      handleJogWheel(nextValue);
+      handleJogWheel(nextValue, zoom);
       lastPosition = position;
       lastDate = date;
       timeout = setTimeout(() => {
-        handleJogWheel(1);
-      }, 150);
+        handleJogWheel(1, zoom);
+      }, DEBOUNCE_TIME);
     }
   };
 };
@@ -75,16 +77,14 @@ export function Deck({
   const [waveform, setWaveform] = useState<number[]>();
   const [sensitivityIndex, setSensitivityIndex] = useState(0);
   const [cuePoint, setCuePoint] = useState<number | null>(null);
-  useEffect(() => {
-    deck.setCuePoint = setCuePoint;
-  }, []);
-
+  const ref = useRef<HTMLDivElement>(null);
+  const zoom = useRef({
+    value: 1,
+  });
   deck.setPlaybackState = setPlaybackState;
   deck.setWaveform = setWaveform;
-
-  useEffect(() => {
-    deck.updatePosition = setPosition;
-  }, []);
+  deck.setCuePoint = setCuePoint;
+  deck.updatePosition = setPosition;
 
   const handleEject = () => {
     if (deck.playbackState === PlaybackStates.PAUSED) {
@@ -125,6 +125,10 @@ export function Deck({
 
   const pitchJog = jogFuncGen(deck.handleJogWheel);
 
+  const handlePitchJog = (value: number) => {
+    pitchJog(value, zoom.current.value);
+  };
+
   useEffect(() => {
     const bpm = Number(deck.metaData.bpm) * pitch || 0;
     setBpm(bpm);
@@ -150,15 +154,18 @@ export function Deck({
               playbackState={playbackState}
               color={color}
               data={waveform}
+              zoomInParent={zoom}
             />
           </WaveformWrapper>
         </Top>
-        <Pitch>
+        <Pitch ref={ref}>
           <JogWheel
-            pitchJog={pitchJog}
+            pitchJog={handlePitchJog}
             pitch={pitch}
             playbackState={playbackState}
             image={metaData.image}
+            parentRef={ref}
+            color={glowColor}
           />
           <PitchLabel reverse={!reverse} color={color} bottom={"20px"}>
             {(pitch >= 1 ? "+" : "") + (100 * pitch - 100).toFixed(2) + "%"}
@@ -176,7 +183,10 @@ export function Deck({
           <Button
             color={color}
             glowColor={glowColor}
-            disabled={playbackState === PlaybackStates.EMPTY}
+            disabled={
+              playbackState === PlaybackStates.LOADING ||
+              playbackState === PlaybackStates.EMPTY
+            }
             width={"15%"}
             text={"rew"}
             onClick={deck.restart}
@@ -184,7 +194,10 @@ export function Deck({
           <Button
             color={color}
             glowColor={glowColor}
-            disabled={playbackState === PlaybackStates.EMPTY}
+            disabled={
+              playbackState === PlaybackStates.LOADING ||
+              playbackState === PlaybackStates.EMPTY
+            }
             text={playbackState === PlaybackStates.PLAYING ? "pause" : "play"}
             width={"35%"}
             onClick={handlePlayPause}
@@ -193,6 +206,7 @@ export function Deck({
             color={color}
             glowColor={glowColor}
             disabled={
+              playbackState === PlaybackStates.LOADING ||
               (playbackState === PlaybackStates.PLAYING && cuePoint === null) ||
               playbackState === PlaybackStates.EMPTY
             }

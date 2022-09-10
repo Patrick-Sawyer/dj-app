@@ -61,7 +61,7 @@ export class Deck {
   rewind: (amount: number) => void;
   fastForward: (amount: number) => void;
   mainPlaybackSpeed: number;
-  handleJogWheel: (nextValue: number) => void;
+  handleJogWheel: (nextValue: number, zoom: number) => void;
   jogWheelValue: number;
   metaData: TuneMetaData;
   loadTrack: (nextTrack: any) => void;
@@ -158,6 +158,8 @@ export class Deck {
     this.playbackState = PlaybackStates.EMPTY;
     this.loadTrack = async (blob: Blob) => {
       if (CONTEXT.state === "suspended") CONTEXT.resume();
+      this.playbackState = PlaybackStates.LOADING;
+      this.setPlaybackState && this.setPlaybackState(PlaybackStates.LOADING);
       blob.arrayBuffer().then(async (arrayBuffer) => {
         const audioBuffer = await CONTEXT.decodeAudioData(arrayBuffer);
         this.backupBuffer = audioBuffer;
@@ -166,38 +168,44 @@ export class Deck {
         this.setWaveform && this.setWaveform(waveformData);
         this.waveformData = waveformData;
       });
-      this.playbackState = PlaybackStates.PAUSED;
-      this.setPlaybackState && this.setPlaybackState(PlaybackStates.PAUSED);
     };
     this.loadAndPlayTrack = (
       buffer: AudioBuffer,
       speed: number,
       position: number
     ) => {
-      this.loadedTrack = CONTEXT.createBufferSource();
-      this.loadedTrack.buffer = buffer;
-      this.loadedTrack.connect(this.masterGain);
-      this.loadedTrack.onended = this.onEnded;
-      this.loadedTrack.playbackRate.value = speed;
-      this.positionTracker = createPositionTracker(buffer);
-      this.positionReporter = new AudioWorkletNode(
-        CONTEXT,
-        "position-reporting-processor"
-      );
-      this.positionReporter.port.onmessage = (e) => {
-        if (
-          this.playbackState === PlaybackStates.PLAYING &&
-          this.updatePosition
-        ) {
-          this.updatePosition(e.data);
-          this.position = e.data;
-        }
-      };
-      this.positionTracker.connect(this.positionReporter);
-      this.positionReporter.connect(CONTEXT.destination);
-      this.positionTracker.playbackRate.value = speed;
-      this.positionTracker.start(0, position);
-      this.loadedTrack.start(0, position);
+      this.playbackState = PlaybackStates.LOADING;
+      this.setPlaybackState && this.setPlaybackState(PlaybackStates.LOADING);
+      setTimeout(() => {
+        this.loadedTrack = CONTEXT.createBufferSource();
+        this.loadedTrack.buffer = buffer;
+        this.loadedTrack.connect(this.masterGain);
+        this.loadedTrack.onended = this.onEnded;
+        this.loadedTrack.playbackRate.value = speed;
+        this.positionTracker = createPositionTracker(buffer);
+        this.positionReporter = new AudioWorkletNode(
+          CONTEXT,
+          "position-reporting-processor"
+        );
+        this.positionReporter.port.onmessage = (e) => {
+          if (
+            this.playbackState === PlaybackStates.PLAYING &&
+            this.updatePosition
+          ) {
+            this.updatePosition(e.data);
+            this.position = e.data;
+          }
+        };
+        this.positionTracker.connect(this.positionReporter);
+        this.positionReporter.connect(CONTEXT.destination);
+        this.positionTracker.playbackRate.value = speed;
+        this.positionTracker.start(0, position);
+        this.loadedTrack.start(0, position);
+        setTimeout(() => {
+          this.playbackState = PlaybackStates.PAUSED;
+          this.setPlaybackState && this.setPlaybackState(PlaybackStates.PAUSED);
+        }, 100);
+      }, 100);
     };
     this.eject = () => {
       if (this.playbackState === PlaybackStates.PAUSED) {
@@ -268,7 +276,7 @@ export class Deck {
     this.computedPlaybackSpeed = 1;
     this.jogWheelValue = 1;
 
-    this.handleJogWheel = (nextValue: number) => {
+    this.handleJogWheel = (nextValue: number, zoom: number) => {
       if (this.loadedTrack && this.playbackState === PlaybackStates.PLAYING) {
         this.jogWheelValue = nextValue;
         this.computedPlaybackSpeed = this.mainPlaybackSpeed * nextValue;
@@ -300,7 +308,9 @@ export class Deck {
           return;
         this.loadedTrack?.disconnect();
         this.positionTracker?.disconnect();
-        const nextPosition = limit((nextValue - 1) / 100 + this.position);
+        const nextPosition = limit(
+          ((nextValue - 1) * zoom) / 100 + this.position
+        );
         this.updatePosition && this.updatePosition(nextPosition);
         this.position = nextPosition;
         this.handleScroll(

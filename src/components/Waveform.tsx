@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { RefObject, useRef, useState } from "react";
 import styled from "styled-components";
 import { Colors } from "../utils/theme";
 import { DECKS, PlaybackStates } from "../webaudio/deckWebAudio";
@@ -13,6 +13,7 @@ interface Props {
   setPosition: (position: number) => void;
   position: number;
   cuePoint: null | number;
+  zoomInParent: RefObject<{ value: number }>;
 }
 
 const ZOOM_CHANGE_AMOUNT = 1.5;
@@ -32,6 +33,7 @@ export function Waveform({
   setPosition,
   position,
   cuePoint,
+  zoomInParent,
 }: Props) {
   const [zoom, setZoom] = useState(1);
   const ref = useRef<HTMLDivElement>(null);
@@ -39,6 +41,9 @@ export function Waveform({
   const decreaseZoom = () => {
     const nextState = Math.round(zoom * ZOOM_CHANGE_AMOUNT);
     if (nextState <= MIN_ZOOM) {
+      if (zoomInParent.current) {
+        zoomInParent.current.value = nextState;
+      }
       setZoom(nextState);
     }
   };
@@ -46,6 +51,9 @@ export function Waveform({
   const increaseZoom = () => {
     const nextState = Math.round(zoom / ZOOM_CHANGE_AMOUNT);
     if (nextState >= MAX_ZOOM) {
+      if (zoomInParent.current) {
+        zoomInParent.current.value = nextState;
+      }
       setZoom(nextState);
     }
   };

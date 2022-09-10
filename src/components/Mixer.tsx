@@ -50,6 +50,7 @@ export function Mixer({ decks, router }: Props) {
 
 const SliderWrapper = styled.div`
   padding: 15px 20px;
+  touch-action: none;
 `;
 
 const Wrapper = styled.div`

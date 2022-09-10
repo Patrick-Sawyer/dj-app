@@ -73,15 +73,20 @@ const Input = styled.input<{
   }
 
   &::-webkit-slider-thumb {
-    margin-top: -20px;
-    width: 19px;
-    height: 47px;
+    margin-top: -25px;
+    width: 25px;
+    height: 60px;
     background: ${Colors.knobBackground};
     border: 1px solid var(--SliderColor);
-    border-radius: 3px;
+    border-radius: 1px;
     cursor: pointer;
     -webkit-appearance: none;
     box-shadow: inset 0px -6px 11px -2px ${Colors.dirtyBrown};
+
+    @media screen and (pointer: coarse) {
+      width: 40px;
+      border-radius: 7px;
+    }
   }
 
   &:focus::-webkit-slider-runnable-track {
@@ -98,12 +103,17 @@ const Input = styled.input<{
   }
 
   &::-moz-range-thumb {
-    width: 19px;
-    height: 47px;
+    width: 25px;
+    height: 60px;
     background: ${Colors.knobBackground};
-    border-radius: 3px;
+    border-radius: 1px;
     border: 1.5px solid var(--SliderColor);
     cursor: pointer;
     box-shadow: inset 0px -6px 11px -2px ${Colors.dirtyBrown};
+
+    @media screen and (pointer: coarse) {
+      width: 40px;
+      border-radius: 7px;
+    }
   }
 `;

@@ -1,8 +1,9 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, RefObject } from "react";
 import styled from "styled-components";
 import { Colors } from "../utils/theme";
 import { PlaybackStates } from "../webaudio/deckWebAudio";
 import * as musicMetadata from "music-metadata-browser";
+import { Loading } from "./Loading";
 
 interface NotchProps {
   rotate: number;
@@ -44,6 +45,8 @@ interface Props {
   image?: musicMetadata.IPicture;
   pitch: number;
   pitchJog: (pitch: number) => void;
+  parentRef: RefObject<HTMLDivElement>;
+  color: string;
 }
 
 interface MouseState {
@@ -60,7 +63,14 @@ interface MouseState {
   };
 }
 
-export function JogWheel({ playbackState, image, pitch, pitchJog }: Props) {
+export function JogWheel({
+  playbackState,
+  image,
+  pitch,
+  pitchJog,
+  parentRef,
+  color,
+}: Props) {
   const [imageUrl, setImageUrl] = useState<string>(
     "https://picsum.photos/200/300"
   );
@@ -89,8 +99,8 @@ export function JogWheel({ playbackState, image, pitch, pitchJog }: Props) {
   const wheelPosition = ({ pageX, pageY }: MouseEvent) => {
     const distanceFromCenter = calcDistance(pageX, pageY);
     const isInJogWheel = distanceFromCenter <= diameter / 2;
-    const isInInnerWheel = distanceFromCenter < (diameter * 0.75) / 2;
-    const block = distanceFromCenter < 25;
+    const isInInnerWheel = distanceFromCenter < (diameter * 0.3) / 2;
+    const block = distanceFromCenter < 10;
     const isClickable = isInJogWheel && !isInInnerWheel;
 
     return {
@@ -103,8 +113,10 @@ export function JogWheel({ playbackState, image, pitch, pitchJog }: Props) {
 
   const handleMouseMove = (e: MouseEvent) => {
     const { block, isClickable } = wheelPosition(e);
-    if (ref.current) {
-      ref.current.style.cursor = isClickable ? "pointer" : "default";
+
+    if (parentRef.current) {
+      parentRef.current.style.cursor =
+        isClickable || mouseState.current.isMouseDown ? "pointer" : "auto";
     }
 
     if (block) return;
@@ -197,11 +209,12 @@ export function JogWheel({ playbackState, image, pitch, pitchJog }: Props) {
           ))}
           <Animated animated={playbackState === PlaybackStates.PLAYING}>
             <Inner>
-              <ImageWrapper>
-                {playbackState !== PlaybackStates.EMPTY && (
+              {playbackState !== PlaybackStates.EMPTY && (
+                <ImageWrapper>
                   <Image src={imageUrl} />
-                )}
-              </ImageWrapper>
+                  <Loading loading={playbackState === PlaybackStates.LOADING} />
+                </ImageWrapper>
+              )}
             </Inner>
           </Animated>
         </Wheel>
@@ -323,6 +336,7 @@ const ImageWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
   background-color: black;
 `;
 
