@@ -11,12 +11,10 @@ const workerPath = "worklet/audioWorklet.js";
 CONTEXT.audioWorklet.addModule(workerPath);
 
 export enum PlaybackStates {
-  // eslint-disable-next-line no-unused-vars
   EMPTY = "empty",
-  // eslint-disable-next-line no-unused-vars
   PLAYING = "playing",
-  // eslint-disable-next-line no-unused-vars
   PAUSED = "paused",
+  LOADING = "loading",
 }
 
 const createPositionTracker = (buffer: AudioBuffer): AudioBufferSourceNode => {
