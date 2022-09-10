@@ -11,18 +11,22 @@ const Thing = () => {
 export const Loading = ({ loading }: { loading: boolean }) => {
   return (
     <Wrapper loading={loading}>
-      <Thing />
-      <Thing />
-      <Thing />
-      <Thing />
-      <Thing />
-      <Thing />
-      <Thing />
-      <Thing />
-      <Thing />
-      <Thing />
-      <Thing />
-      <Thing />
+      {loading && (
+        <>
+          <Thing />
+          <Thing />
+          <Thing />
+          <Thing />
+          <Thing />
+          <Thing />
+          <Thing />
+          <Thing />
+          <Thing />
+          <Thing />
+          <Thing />
+          <Thing />
+        </>
+      )}
     </Wrapper>
   );
 };
@@ -38,10 +42,10 @@ const Wrapper = styled.div<{
   right: 0;
   position: absolute;
   border-radius: 50%;
-  background-color: rgba(0, 0, 0, 0.92);
+  background-color: black;
   transform: scale(1.1);
   opacity: ${({ loading }) => (loading ? 1 : 0)};
-  transition: 0.2s;
+  transition: 1s;
 
   > div {
     animation: lds-spinner 1.2s linear infinite;
