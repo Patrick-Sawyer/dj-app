@@ -94,6 +94,8 @@ export function AudioConfig({ decks, router }: Props) {
           color={Colors.orange}
           glowColor={Colors.orangeGlow}
           onChange={router.changeHeadphonesVolume}
+          fromZero
+          initValue={0}
         />
       </Pair>
       <Pair>

@@ -16,9 +16,12 @@ export function MainLevels({ decks }: Props) {
       <EmbossedLabel text={"MAIN"} />
       <Knob
         color={Colors.orange}
+        glowColor={Colors.orangeGlow}
         text={"LEVEL"}
         onChange={changeMasterVolume}
         size={40}
+        fromZero
+        initValue={0}
       />
       <Levels>
         <ChannelMeter deck={decks.deckA} />

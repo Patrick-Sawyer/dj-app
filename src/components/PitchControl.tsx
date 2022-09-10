@@ -18,7 +18,7 @@ interface Props {
   handleSync: () => void;
 }
 
-const HEIGHT = CONTEXT.destination.channelCount >= 4 ? 550 : 520;
+const HEIGHT = CONTEXT.destination.maxChannelCount >= 4 ? 550 : 520;
 
 export function PitchControl({
   deck,

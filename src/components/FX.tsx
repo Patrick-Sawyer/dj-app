@@ -23,6 +23,7 @@ const Touchpad = ({
 }: TouchpadProps) => {
   return (
     <TouchpadWrapper
+      disabled={disabled}
       onPointerDown={() => {
         if (!disabled && onClick) onClick();
       }}
@@ -59,6 +60,7 @@ export function FX({ effects, deckABpm, deckBBpm }: Props) {
         </Top>
         <Knob
           color={Colors.deckA}
+          glowColor={Colors.deckAGlow}
           size={40}
           text="Deck A"
           fromZero
@@ -67,6 +69,7 @@ export function FX({ effects, deckABpm, deckBBpm }: Props) {
         />
         <Knob
           color={Colors.deckB}
+          glowColor={Colors.deckbGlow}
           size={40}
           text="Deck B"
           fromZero
@@ -75,6 +78,7 @@ export function FX({ effects, deckABpm, deckBBpm }: Props) {
         />
         <Knob
           color={Colors.orange}
+          glowColor={Colors.orangeGlow}
           size={40}
           text="Reverb"
           fromZero
@@ -83,6 +87,7 @@ export function FX({ effects, deckABpm, deckBBpm }: Props) {
         />
         <Knob
           color={Colors.orange}
+          glowColor={Colors.orangeGlow}
           size={40}
           text="Delay"
           fromZero
@@ -91,6 +96,7 @@ export function FX({ effects, deckABpm, deckBBpm }: Props) {
         />
         <Knob
           color={Colors.orange}
+          glowColor={Colors.orangeGlow}
           size={40}
           text="Dry / Wet"
           fromZero
@@ -169,7 +175,7 @@ const Pad = styled.div<{
     opacity: 0.3;
   }
 
-  &:hover {
+  &:active {
     border: 1px solid ${({ color }) => color};
     box-shadow: 0 0 4px 0 ${({ glowColor }) => glowColor};
 
@@ -178,24 +184,18 @@ const Pad = styled.div<{
     }
   }
 
-  &:active {
-    border: 1px solid transparent;
-    box-shadow: none;
-
-    span {
-      opacity: 0.3;
-    }
-  }
-
   @media screen and (max-width: 1000px) {
     width: 70px;
   }
 `;
 
-const TouchpadWrapper = styled.div`
+const TouchpadWrapper = styled.div<{
+  disabled: boolean;
+}>`
   display: flex;
   flex-direction: column;
   align-items: center;
+  opacity: ${({ disabled }) => (disabled ? 0.2 : 1)};
   justify-content: space-between;
 `;
 

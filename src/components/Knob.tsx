@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, memo } from "react";
 import styled from "styled-components";
 import { Colors } from "../utils/theme";
 
@@ -12,7 +12,42 @@ interface Props {
   fromZero?: boolean;
   bypassValue?: number;
   doubleClickValue?: number;
+  numberOfLights?: number;
+  initValue?: number;
 }
+
+interface LightProps {
+  color: string;
+  glowColor?: string;
+  active: boolean;
+  rotate: number;
+}
+
+const Light = memo(({ color, glowColor, active, rotate }: LightProps) => {
+  return (
+    <LightOuter rotate={rotate}>
+      <LightInner active={active} color={color} glowColor={glowColor} />
+    </LightOuter>
+  );
+}); // TODO: only when active props change
+
+const isActive = (
+  numberOfLights: number,
+  index: number,
+  percentage: number,
+  fromZero: boolean
+) => {
+  const useIndex = fromZero || percentage > 0 ? index : numberOfLights - index;
+
+  return (
+    index === 0 ||
+    useIndex <=
+      Math.floor(
+        (numberOfLights * (fromZero ? percentage + 50 : Math.abs(percentage))) /
+          100
+      )
+  );
+};
 
 export function Knob({
   text,
@@ -24,11 +59,34 @@ export function Knob({
   fromZero = false,
   bypassValue = -50,
   doubleClickValue = 0,
+  numberOfLights = 20,
+  initValue,
 }: Props) {
-  const [percentage, setPercentage] = useState(fromZero ? -50 : 0);
+  const [percentage, setPercentage] = useState(
+    initValue !== undefined ? initValue : fromZero ? -50 : 0
+  );
   const mouseDown = useRef(false);
   const mouseStartPosition = useRef(0);
   const [bypassed, setBypassed] = useState(false);
+
+  const Lights = new Array(numberOfLights).fill(null).map((_, index) => {
+    let rotate = (index * 360) / numberOfLights;
+    let active =
+      !bypassed && isActive(numberOfLights, index, percentage, fromZero);
+
+    if (fromZero) {
+      rotate = rotate + 180;
+    }
+
+    return (
+      <Light
+        color={color}
+        glowColor={glowColor}
+        active={active}
+        rotate={rotate}
+      />
+    );
+  });
 
   const handleMouseDown = (e: any) => {
     mouseDown.current = true;
@@ -80,35 +138,7 @@ export function Knob({
           setPercentage(doubleClickValue);
         }}
       >
-        {!bypassed && (
-          <Svg
-            viewBox="0 0 20 20"
-            flip={!fromZero && percentage < 0}
-            fromZero={fromZero}
-          >
-            <defs>
-              <mask id="circlemask">
-                <rect fill="white" width="100%" height="100%" />
-                <circle r="8.8" cx="10" cy="10" fill="black" />
-              </mask>
-            </defs>
-
-            <g mask="url(#circlemask)">
-              <circle cx="10" cy="10" r="10" fill={"transparent"} />
-              <circle
-                cx="10"
-                cy="10"
-                stroke={color}
-                r="5"
-                strokeWidth="10"
-                transform={"rotate(-90) translate(-20)"}
-                strokeDasharray={`calc(31.4 * ${Math.abs(
-                  fromZero ? percentage + 50 : percentage
-                )} / 100) 31.4`}
-              />
-            </g>
-          </Svg>
-        )}
+        {Lights}
         <Inner size={size}>
           <DotWrapper
             style={{
@@ -135,15 +165,40 @@ export function Knob({
   );
 }
 
-const Svg = styled.svg<{
-  flip: boolean;
-  fromZero: boolean;
+const LightInner = styled.div<{
+  color: string;
+  glowColor?: string;
+  active: boolean;
+}>`
+  background-color: ${({ color }) => color};
+  height: 4px;
+  width: 4px;
+  border-radius: 2px;
+  position: relative;
+  transition: 0.1s;
+  top: 3.5px;
+  box-shadow: 0px 0px 2px 1px ${({ glowColor }) => glowColor};
+
+  ${({ active }) => !active && `opacity: 0;`}
+`;
+
+const LightOuter = styled.div<{
+  rotate?: number;
 }>`
   position: absolute;
-  padding: 4px;
-
-  transform: ${({ flip, fromZero }) =>
-    flip ? "scaleX(-1);" : fromZero ? "rotate(180deg)" : ""};
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  ${({ rotate }) =>
+    !!rotate &&
+    `
+    transform: rotate(${rotate}deg);
+  `}
 `;
 
 export const KnobText = styled.span<{
@@ -204,12 +259,11 @@ const Inner = styled.div<{
   box-shadow: inset 0px -6px 11px -2px ${Colors.dirtyBrown};
 `;
 
-const Dot = styled.div<{
-  color: string;
-}>`
+const Dot = styled.div`
   height: 4px;
   width: 4px;
-  background-color: ${({ color }) => color};
+  background-color: black;
+  opacity: 0.7;
   border-radius: 2px;
   top: 5px;
   left: 50%;

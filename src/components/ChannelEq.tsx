@@ -63,24 +63,28 @@ export function ChannelEq({
         text={"GAIN"}
         onChange={handleGain}
         size={25}
+        numberOfLights={15}
       />
       <Knob
         glowColor={glowColor}
         color={color}
         text={"HIGH"}
         onChange={deck.changeHigh}
+        numberOfLights={17}
       />
       <Knob
         glowColor={glowColor}
         color={color}
         text={"MID"}
         onChange={deck.changeMid}
+        numberOfLights={17}
       />
       <Knob
         glowColor={glowColor}
         color={color}
         text={"LOW"}
         onChange={deck.changeLow}
+        numberOfLights={17}
       />
       <Knob
         glowColor={glowColor}
