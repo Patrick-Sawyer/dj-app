@@ -1,38 +1,44 @@
 import styled from "styled-components";
+import { Colors } from "../utils/theme";
 
-const Thing = () => {
+interface Props {
+  isLoading: boolean;
+  color: string;
+}
+
+interface LineProps {
+  color: string;
+}
+
+const Thing = ({ color }: LineProps) => {
   return (
     <Inner>
-      <Line />
+      <Line color={color} />
     </Inner>
   );
 };
 
-export const Loading = ({ loading }: { loading: boolean }) => {
+export const Loading = ({ isLoading, color }: Props) => {
   return (
-    <Wrapper loading={loading}>
-      {loading && (
-        <>
-          <Thing />
-          <Thing />
-          <Thing />
-          <Thing />
-          <Thing />
-          <Thing />
-          <Thing />
-          <Thing />
-          <Thing />
-          <Thing />
-          <Thing />
-          <Thing />
-        </>
-      )}
+    <Wrapper isLoading={isLoading}>
+      <Thing color={color} />
+      <Thing color={color} />
+      <Thing color={color} />
+      <Thing color={color} />
+      <Thing color={color} />
+      <Thing color={color} />
+      <Thing color={color} />
+      <Thing color={color} />
+      <Thing color={color} />
+      <Thing color={color} />
+      <Thing color={color} />
+      <Thing color={color} />
     </Wrapper>
   );
 };
 
 const Wrapper = styled.div<{
-  loading: boolean;
+  isLoading: boolean;
 }>`
   height: 100%;
   width: 100%;
@@ -42,13 +48,14 @@ const Wrapper = styled.div<{
   right: 0;
   position: absolute;
   border-radius: 50%;
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: rgba(0, 0, 0, 0.7);
   transform: scale(1.1);
-  opacity: ${({ loading }) => (loading ? 1 : 0)};
-  transition: 0.5s;
+  opacity: ${({ isLoading }) => (isLoading ? 1 : 0)};
+  transition: 0.1s;
 
   > div {
-    animation: lds-spinner 1.2s linear infinite;
+    animation: ${({ isLoading }) =>
+      isLoading ? `lds-spinner 1.2s linear infinite` : "none"};
   }
 
   & div:nth-child(1) {
@@ -109,13 +116,15 @@ const Wrapper = styled.div<{
   }
 `;
 
-const Line = styled.div`
-  width: 20px;
+const Line = styled.div<LineProps>`
+  width: 5px;
   height: 20px;
   background-color: white;
+  transform: scale(0.5);
   border-radius: 10px;
   position: relative;
-  top: 15px;
+  top: 25px;
+  box-shadow: 0 0 10px 2px ${({ color }) => color};
 `;
 
 const Inner = styled.div`

@@ -159,7 +159,7 @@ export function Deck({
             playbackState={playbackState}
             image={metaData.image}
             parentRef={ref}
-            color={glowColor}
+            color={color}
           />
           <PitchLabel reverse={!reverse} color={color} bottom={"20px"}>
             {(pitch >= 1 ? "+" : "") + (100 * pitch - 100).toFixed(2) + "%"}

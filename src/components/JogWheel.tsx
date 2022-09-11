@@ -212,7 +212,10 @@ export function JogWheel({
               {playbackState !== PlaybackStates.EMPTY && (
                 <ImageWrapper>
                   <Image src={imageUrl} />
-                  <Loading loading={playbackState === PlaybackStates.LOADING} />
+                  <Loading
+                    isLoading={playbackState === PlaybackStates.LOADING}
+                    color={color}
+                  />
                 </ImageWrapper>
               )}
             </Inner>
