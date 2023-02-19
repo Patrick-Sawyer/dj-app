@@ -14,8 +14,6 @@ interface Props {
   reverse?: boolean;
   color: string;
   lightOn: boolean;
-  showSync: boolean;
-  handleSync: () => void;
 }
 
 const HEIGHT = CONTEXT.destination.maxChannelCount >= 4 ? 550 : 520;
@@ -27,8 +25,6 @@ export function PitchControl({
   reverse,
   color,
   lightOn,
-  showSync,
-  handleSync,
 }: Props) {
   const [offset, setOffset] = useState<number>(0);
 
@@ -121,20 +117,9 @@ export function PitchControl({
           reset={reset}
         />
       </Inner>
-      {showSync && (
-        <Sync onClick={handleSync}>
-          <HighlightedLabel color={color} text={"SYNC"} />
-        </Sync>
-      )}
     </Wrapper>
   );
 }
-
-const Sync = styled.div`
-  position: absolute;
-  bottom: 10px;
-  cursor: pointer;
-`;
 
 const Wrapper = styled.div<{
   reverse?: boolean;

@@ -1,9 +1,11 @@
 import { TuneMetaData } from "../components/TuneTableRow";
+import { Effects } from "./effectsWebAudio";
 import {
   audioRouter,
   CONTEXT,
   FADE_IN_OUT_TIME,
   isFireFox,
+  MAIN_VOLUME,
   ZERO,
 } from "./webAudio";
 
@@ -51,7 +53,7 @@ const debouncedPositionScroller = (
 };
 
 export class Deck {
-  gainNode: GainNode;
+  output: GainNode;
   computedPlaybackSpeed: number;
   setPlayBackSpeed: (newSpeed: number) => void;
   cuePoint: null | number;
@@ -71,7 +73,6 @@ export class Deck {
   waveformData: number[] | null;
   audioElement: HTMLMediaElement | null;
   loadedTrack: AudioBufferSourceNode | null;
-  currentVolume: number;
   handlePlayPause: () => void;
   setPlaybackState: null | ((nextState: PlaybackStates) => void);
   masterGain: GainNode;
@@ -105,8 +106,13 @@ export class Deck {
   ) => void;
   setCuePoint: ((position: number | null) => void) | null;
   handleScroll: (buffer: AudioBuffer, speed: number, position: number) => void;
+  effects: Effects;
+  outputWithEffects: GainNode;
+  wetEffects: GainNode;
+  dryValue: GainNode;
 
   constructor() {
+    this.effects = new Effects();
     this.loadedTrack = null;
     this.position = 0;
     this.masterGain = CONTEXT.createGain();
@@ -135,8 +141,19 @@ export class Deck {
       knee: 20,
     });
     this.audioAnalyser = CONTEXT.createAnalyser();
-    this.gainNode = CONTEXT.createGain();
-    this.gainNode.gain.value = ZERO;
+    this.output = CONTEXT.createGain();
+    this.output.gain.value = ZERO;
+    this.output.connect(this.effects.input);
+    this.outputWithEffects = CONTEXT.createGain();
+    this.outputWithEffects.gain.value = 1;
+    this.wetEffects = CONTEXT.createGain();
+    this.effects.output.connect(this.wetEffects);
+    this.wetEffects.gain.value = ZERO;
+    this.wetEffects.connect(this.outputWithEffects);
+    this.dryValue = CONTEXT.createGain();
+    this.dryValue.gain.value = 1;
+    this.output.connect(this.dryValue);
+    this.dryValue.connect(this.outputWithEffects);
     this.masterGain.connect(this.lowPassFilter);
     this.lowPassFilter.connect(this.highPassFilter);
     this.highPassFilter.connect(this.lowEQ);
@@ -146,9 +163,9 @@ export class Deck {
     this.meterCompressor = CONTEXT.createDynamicsCompressor();
     this.highEQ.connect(this.meterCompressor);
     this.meterCompressor.connect(this.audioAnalyser);
-    this.compressor.connect(this.gainNode);
-    // this.audioAnalyser.connect(this.gainNode);
-    this.currentVolume = 0.7;
+    this.compressor.connect(this.output);
+    // this.audioAnalyser.connect(this.output);
+
     this.audioElement = null;
     this.playbackRate = 1;
     this.positionTracker = null;
@@ -164,7 +181,10 @@ export class Deck {
         const audioBuffer = await CONTEXT.decodeAudioData(arrayBuffer);
         this.backupBuffer = audioBuffer;
         this.loadAndPlayTrack(audioBuffer, ZERO, 0);
-        const waveformData = calculateWaveformData(audioBuffer);
+        const waveformData = calculateWaveformData(
+          audioBuffer.getChannelData(0),
+          audioBuffer.sampleRate / 120
+        );
         this.setWaveform && this.setWaveform(waveformData);
         this.waveformData = waveformData;
       });
@@ -200,11 +220,12 @@ export class Deck {
         this.positionReporter.connect(CONTEXT.destination);
         this.positionTracker.playbackRate.value = speed;
         this.positionTracker.start(0, position);
+        this.position = position;
         this.loadedTrack.start(0, position);
         setTimeout(() => {
           this.playbackState = PlaybackStates.PAUSED;
           this.setPlaybackState && this.setPlaybackState(PlaybackStates.PAUSED);
-        }, 100);
+        }, 200);
       }, 100);
     };
     this.eject = () => {
@@ -246,9 +267,9 @@ export class Deck {
           this.positionTracker.playbackRate.value = this.playbackRate;
         this.playbackState = PlaybackStates.PLAYING;
         this.setPlaybackState && this.setPlaybackState(PlaybackStates.PLAYING);
-        this.gainNode.gain.value = ZERO;
-        this.gainNode.gain.exponentialRampToValueAtTime(
-          this.currentVolume,
+        this.output.gain.value = ZERO;
+        this.output.gain.exponentialRampToValueAtTime(
+          1,
           CONTEXT.currentTime + FADE_IN_OUT_TIME
         );
       }
@@ -257,8 +278,8 @@ export class Deck {
       if (this.loadedTrack) {
         this.setPlaybackState && this.setPlaybackState(PlaybackStates.PAUSED);
         this.playbackState = PlaybackStates.PAUSED;
-        this.gainNode.gain.cancelScheduledValues(0);
-        this.gainNode.gain.exponentialRampToValueAtTime(
+        this.output.gain.cancelScheduledValues(0);
+        this.output.gain.exponentialRampToValueAtTime(
           ZERO,
           CONTEXT.currentTime + FADE_IN_OUT_TIME
         );
@@ -423,8 +444,9 @@ export class Deck {
     this.metaData = {};
     this.setVolume = (nextVolume: number) => {
       const value = nextVolume > 1 ? 1 : nextVolume < ZERO ? ZERO : nextVolume;
-      this.gainNode.gain.cancelScheduledValues(0);
-      this.gainNode.gain.exponentialRampToValueAtTime(
+
+      this.outputWithEffects.gain.cancelScheduledValues(0);
+      this.outputWithEffects.gain.exponentialRampToValueAtTime(
         value,
         CONTEXT.currentTime + FADE_IN_OUT_TIME
       );
@@ -460,9 +482,7 @@ export const DECKS = {
   deckB: new Deck(),
 };
 
-const calculateWaveformData = (audioBuffer: AudioBuffer) => {
-  const data = audioBuffer.getChannelData(0);
-  const numberPerBatch = audioBuffer.sampleRate / 120;
+const calculateWaveformData = (data: Float32Array, numberPerBatch: number) => {
   const dataToReturn = new Array(Math.round(data.length / numberPerBatch));
 
   for (let i = 0; i < dataToReturn.length; i++) {
@@ -490,5 +510,7 @@ const limit = (value: number) => {
   return value;
 };
 
-DECKS.deckA.masterGain.connect(audioRouter.deckA);
-DECKS.deckB.masterGain.connect(audioRouter.deckB);
+DECKS.deckA.output.connect(audioRouter.deckA);
+DECKS.deckB.output.connect(audioRouter.deckB);
+DECKS.deckA.outputWithEffects.connect(MAIN_VOLUME);
+DECKS.deckB.outputWithEffects.connect(MAIN_VOLUME);

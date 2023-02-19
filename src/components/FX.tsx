@@ -1,6 +1,7 @@
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Colors } from "../utils/theme";
-import { EFFECTS } from "../webaudio/effectsWebAudio";
+import { Deck } from "../webaudio/deckWebAudio";
 import { EmbossedLabel } from "./EmbossedLabel";
 import { Knob, KnobText } from "./Knob";
 
@@ -11,6 +12,7 @@ interface TouchpadProps {
   glowColor?: string;
   disabled?: boolean;
   overlayText?: string;
+  hideBelow?: number;
 }
 
 const Touchpad = ({
@@ -20,9 +22,11 @@ const Touchpad = ({
   glowColor = Colors.orangeGlow,
   disabled = false,
   overlayText,
+  hideBelow,
 }: TouchpadProps) => {
   return (
     <TouchpadWrapper
+      hideBelow={hideBelow}
       disabled={disabled}
       onPointerDown={() => {
         if (!disabled && onClick) onClick();
@@ -45,110 +49,225 @@ const Touchpad = ({
 };
 
 interface Props {
-  effects: typeof EFFECTS;
-  deckABpm: number;
-  deckBBpm: number;
+  deckA: Deck;
+  deckB: Deck;
+  deckAPitch: number;
+  deckBPitch: number;
+  deckAInitBpm?: number;
+  deckBInitBpm?: number;
+  setDeckAPitch: (val: number) => void;
+  setDeckBPitch: (val: number) => void;
 }
 
-export function FX({ effects, deckABpm, deckBBpm }: Props) {
+const convertVal = (val: number): number => {
+  return (val + 50) / 100;
+};
+
+export function FX({
+  deckA,
+  deckB,
+  deckBPitch,
+  deckAPitch,
+  deckAInitBpm,
+  deckBInitBpm,
+  setDeckAPitch,
+  setDeckBPitch,
+}: Props) {
+  const deckABpm = deckAInitBpm ? deckAInitBpm * deckAPitch : undefined;
+  const deckBBpm = deckBInitBpm ? deckBInitBpm * deckBPitch : undefined;
+
   return (
     <Wrapper>
       <Row>
-        <Top>
-          <EmbossedLabel fontSize="22px" text="FX" />
-        </Top>
-        <Knob
-          color={Colors.deckA}
-          glowColor={Colors.deckAGlow}
-          size={40}
-          text="Deck A"
-          fromZero
-          onChange={effects.changeDeckAInput}
-          doubleClickValue={-50}
-        />
-        <Knob
-          color={Colors.deckB}
-          glowColor={Colors.deckbGlow}
-          size={40}
-          text="Deck B"
-          fromZero
-          onChange={effects.changeDeckBInput}
-          doubleClickValue={-50}
-        />
-        <Knob
-          color={Colors.orange}
-          glowColor={Colors.orangeGlow}
-          size={40}
-          text="Reverb"
-          fromZero
-          onChange={effects.changeReverb}
-          doubleClickValue={-50}
-        />
-        <Knob
-          color={Colors.orange}
-          glowColor={Colors.orangeGlow}
-          size={40}
-          text="Delay"
-          fromZero
-          onChange={effects.changeFeedback}
-          doubleClickValue={-50}
-        />
-        <Knob
-          color={Colors.orange}
-          glowColor={Colors.orangeGlow}
-          size={40}
-          text="Dry / Wet"
-          fromZero
-          onChange={effects.changeDryWet}
-          doubleClickValue={-50}
-        />
-        <Touchpad text={"Tap"} onClick={effects.handleTap} />
-        <Touchpad text={"X2"} onClick={effects.handleX2} />
-        <Touchpad
-          disabled={deckABpm === 0}
-          text={"SYNC A"}
-          overlayText={deckABpm ? deckABpm.toFixed(2) : ""}
-          color={Colors.deckA}
-          glowColor={Colors.deckAGlow}
-          onClick={() => {
-            EFFECTS.setDelayTime(60 / deckABpm);
-          }}
-        />
-        <Touchpad
-          disabled={deckBBpm === 0}
-          overlayText={deckBBpm ? deckBBpm.toFixed(2) : ""}
-          text={"SYNC B"}
-          color={Colors.deckB}
-          glowColor={Colors.deckbGlow}
-          onClick={() => {
-            EFFECTS.setDelayTime(60 / deckBBpm);
-          }}
-        />
+        <Section>
+          <Knob
+            color={Colors.deckA}
+            glowColor={Colors.deckAGlow}
+            size={40}
+            text="Dry / Wet"
+            fromZero
+            onChange={(input) => {
+              const wetValue = convertVal(input);
+              const dryValue = 1 - wetValue;
+              deckA.wetEffects.gain.value = wetValue;
+              deckA.dryValue.gain.value = dryValue;
+            }}
+            doubleClickValue={-50}
+          />
+          <Knob
+            color={Colors.deckA}
+            glowColor={Colors.deckAGlow}
+            size={40}
+            text="Reverb"
+            fromZero
+            onChange={(input) => {
+              const value = convertVal(input);
+              deckA.effects.reverbLevel.gain.value = value;
+            }}
+            doubleClickValue={-50}
+          />
+          <Knob
+            color={Colors.deckA}
+            glowColor={Colors.deckAGlow}
+            size={40}
+            text="Delay"
+            fromZero
+            onChange={(input) => {
+              const value = convertVal(input);
+              deckA.effects.delay.feedback.gain.value = value;
+            }}
+            doubleClickValue={-50}
+          />
+          {deckABpm ? (
+            <Touchpad
+              text={"SYNC DELAY"}
+              overlayText={deckABpm.toFixed(2)}
+              color={Colors.deckA}
+              glowColor={Colors.deckAGlow}
+              onClick={() => {
+                deckA.effects.delay.handleChange(60 / deckABpm);
+              }}
+            />
+          ) : (
+            <Touchpad
+              text={"TAP DELAY"}
+              color={Colors.deckA}
+              glowColor={Colors.deckAGlow}
+              onClick={() => {
+                deckA.effects.delay.tapDelay();
+              }}
+            />
+          )}
+          <Touchpad
+            text={"X2"}
+            hideBelow={830}
+            color={Colors.deckA}
+            glowColor={Colors.deckAGlow}
+            onClick={() => {
+              deckA.effects.delay.handle2X();
+            }}
+          />
+          <Touchpad
+            disabled={!deckBBpm || !deckABpm || !deckAInitBpm}
+            text={"SYNC TO B"}
+            hideBelow={970}
+            overlayText={deckBBpm ? deckBBpm.toFixed(2) : ""}
+            color={deckABpm === deckBBpm ? Colors.deckA : Colors.deckB}
+            glowColor={
+              deckABpm === deckBBpm ? Colors.deckAGlow : Colors.deckbGlow
+            }
+            onClick={() => {
+              if (deckBBpm && deckAInitBpm) {
+                const nextPitch = Number(deckBBpm) / Number(deckA.metaData.bpm);
+                deckA.setPlayBackSpeed(nextPitch);
+                deckA.effects.delay.handleChange(60 / deckBBpm);
+                setDeckAPitch(nextPitch);
+              }
+            }}
+          />
+        </Section>
+        <Section>
+          <Knob
+            color={Colors.deckB}
+            glowColor={Colors.deckbGlow}
+            size={40}
+            text="Dry / Wet"
+            fromZero
+            onChange={(input) => {
+              const wetValue = convertVal(input);
+              const dryValue = 1 - wetValue;
+              deckB.wetEffects.gain.value = wetValue;
+              deckB.dryValue.gain.value = dryValue;
+            }}
+            doubleClickValue={-50}
+          />
+          <Knob
+            color={Colors.deckB}
+            glowColor={Colors.deckbGlow}
+            size={40}
+            text="Reverb"
+            fromZero
+            onChange={(input) => {
+              const value = convertVal(input);
+              deckB.effects.reverbLevel.gain.value = value;
+            }}
+            doubleClickValue={-50}
+          />
+          <Knob
+            color={Colors.deckB}
+            glowColor={Colors.deckbGlow}
+            size={40}
+            text="Delay"
+            fromZero
+            onChange={(input) => {
+              const value = convertVal(input);
+              deckB.effects.delay.feedback.gain.value = value;
+            }}
+            doubleClickValue={-50}
+          />
+          {deckBBpm ? (
+            <Touchpad
+              text={"SYNC DELAY"}
+              overlayText={deckBBpm.toFixed(2)}
+              color={Colors.deckB}
+              glowColor={Colors.deckbGlow}
+              onClick={() => {
+                deckB.effects.delay.handleChange(60 / deckBBpm);
+              }}
+            />
+          ) : (
+            <Touchpad
+              text={"TAP DELAY"}
+              color={Colors.deckB}
+              glowColor={Colors.deckbGlow}
+              onClick={() => {
+                deckB.effects.delay.tapDelay();
+              }}
+            />
+          )}
+          <Touchpad
+            text={"X2"}
+            hideBelow={830}
+            color={Colors.deckB}
+            glowColor={Colors.deckbGlow}
+            onClick={() => {
+              deckB.effects.delay.handle2X();
+            }}
+          />
+          <Touchpad
+            disabled={!deckBBpm || !deckABpm || !deckBInitBpm}
+            text={"SYNC TO A"}
+            hideBelow={970}
+            overlayText={deckABpm ? deckABpm.toFixed(2) : ""}
+            color={deckABpm === deckBBpm ? Colors.deckB : Colors.deckA}
+            glowColor={
+              deckABpm === deckBBpm ? Colors.deckbGlow : Colors.deckAGlow
+            }
+            onClick={() => {
+              if (deckABpm && deckBInitBpm) {
+                const nextPitch = Number(deckABpm) / Number(deckBInitBpm);
+                deckB.setPlayBackSpeed(nextPitch);
+                deckB.effects.delay.handleChange(60 / deckABpm);
+                setDeckBPitch(nextPitch);
+              }
+            }}
+          />
+        </Section>
       </Row>
     </Wrapper>
   );
 }
+
 const Wrapper = styled.div`
   position: relative;
-`;
-
-const Top = styled.span`
-  position: relative;
-  padding: 18px 5px;
-
-  @media screen and (max-width: 900px) {
-    display: none;
-  }
 `;
 
 const Row = styled.div`
   display: flex;
   gap: 15px;
-  margin-top: 25px;
   border-bottom: 1px solid ${Colors.darkBorder};
-  padding-bottom: 20px;
-  justify-content: center;
-  width: 100%;
+  padding: 20px;
+  justify-content: space-between;
 `;
 
 const Pad = styled.div<{
@@ -189,17 +308,35 @@ const Pad = styled.div<{
     }
   }
 
-  @media screen and (max-width: 1000px) {
+  @media screen and (max-width: 1040px) {
     width: 70px;
+  }
+
+  @media screen and (max-width: 1005px) {
+    width: 60px;
   }
 `;
 
 const TouchpadWrapper = styled.div<{
   disabled: boolean;
+  hideBelow?: number;
 }>`
   display: flex;
   flex-direction: column;
   align-items: center;
   opacity: ${({ disabled }) => (disabled ? 0.2 : 1)};
   justify-content: space-between;
+
+  ${({ hideBelow }) =>
+    hideBelow &&
+    `
+    @media screen and (max-width: ${hideBelow}px) {
+      display: none;
+    }
+  `}
+`;
+
+const Section = styled.div`
+  display: flex;
+  gap: 15px;
 `;

@@ -7,7 +7,6 @@ import { Mixer } from "./components/Mixer";
 import { Colors } from "./utils/theme";
 import { DECKS } from "./webaudio/deckWebAudio";
 import { FX } from "./components/FX";
-import { EFFECTS } from "./webaudio/effectsWebAudio";
 import { Upload } from "./components/Upload";
 import { AudioConfig } from "./components/AudioConfig";
 import { audioRouter } from "./webaudio/webAudio";
@@ -19,8 +18,10 @@ export interface DeckType {}
 
 function App() {
   const [tunes, setTunes] = useState<any[]>([]);
-  const [deckABpm, setDeckABpm] = useState(0);
-  const [deckBBpm, setDeckBBpm] = useState(0);
+  const [deckApitch, setDeckAPitch] = useState(1);
+  const [deckAInitBpm, setDeckAInitBpm] = useState<number>();
+  const [deckBInitBpm, setDeckBInitBpm] = useState<number>();
+  const [deckBpitch, setDeckBPitch] = useState(1);
 
   const uploadTrack = (tune: any) => {
     const tuneToAdd = URL.createObjectURL(tune);
@@ -38,25 +39,34 @@ function App() {
       <Wrapper>
         <Decks>
           <Deck
-            otherBPM={deckBBpm}
-            setBpm={setDeckABpm}
-            thisBPM={deckABpm}
             reverse
             deck={DECKS.deckA}
             color={Colors.deckA}
             glowColor={Colors.deckAGlow}
+            pitch={deckApitch}
+            setPitch={setDeckAPitch}
+            setBpm={setDeckAInitBpm}
           />
           <Mixer router={audioRouter} decks={DECKS} />
           <Deck
-            otherBPM={deckABpm}
-            setBpm={setDeckBBpm}
-            thisBPM={deckBBpm}
             deck={DECKS.deckB}
             color={Colors.deckB}
             glowColor={Colors.deckbGlow}
+            pitch={deckBpitch}
+            setPitch={setDeckBPitch}
+            setBpm={setDeckBInitBpm}
           />
         </Decks>
-        <FX deckABpm={deckABpm} deckBBpm={deckBBpm} effects={EFFECTS} />
+        <FX
+          deckA={DECKS.deckA}
+          deckAPitch={deckApitch}
+          deckAInitBpm={deckAInitBpm}
+          deckBInitBpm={deckBInitBpm}
+          deckBPitch={deckBpitch}
+          deckB={DECKS.deckB}
+          setDeckAPitch={setDeckAPitch}
+          setDeckBPitch={setDeckBPitch}
+        />
         <ConfigAndUpload>
           <Upload uploadTrack={uploadTrack} />
           <AudioConfig decks={DECKS} router={audioRouter} />

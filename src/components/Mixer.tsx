@@ -16,9 +16,7 @@ export function Mixer({ decks, router }: Props) {
     const volumeB = Math.sqrt((value + 50) / 100);
     const volumeA = Math.sqrt(1 - (value + 50) / 100);
     DECKS.deckA.setVolume(volumeA);
-    DECKS.deckA.currentVolume = volumeA;
     DECKS.deckB.setVolume(volumeB);
-    DECKS.deckB.currentVolume = volumeB;
   };
 
   return (

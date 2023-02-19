@@ -14,9 +14,10 @@ interface Props {
   glowColor: string;
   deck: typeof DECKS.deckA;
   reverse?: boolean;
-  setBpm: (bpm: number) => void;
-  otherBPM?: string | number | undefined;
-  thisBPM?: string | number | undefined;
+  // setBpm: (bpm: number) => void;
+  pitch: number;
+  setPitch: (val: number) => void;
+  setBpm: (val: number | undefined) => void;
 }
 
 const limit = (value: number) => {
@@ -65,13 +66,12 @@ export function Deck({
   glowColor,
   deck,
   reverse,
+  pitch,
+  setPitch,
   setBpm,
-  otherBPM,
-  thisBPM,
 }: Props) {
   const [playbackState, setPlaybackState] = useState(PlaybackStates.EMPTY);
   const [position, setPosition] = useState<number>(0);
-  const [pitch, setPitch] = useState(1);
   const duration = deck.loadedTrack?.buffer?.duration;
   const [metaData, setMetaData] = useState<TuneMetaData>({});
   const [waveform, setWaveform] = useState<number[]>();
@@ -104,13 +104,6 @@ export function Deck({
     );
   };
 
-  const handleSync = () => {
-    if (!otherBPM || !deck.metaData.bpm) return;
-    const nextPitch = Number(otherBPM) / Number(deck.metaData.bpm);
-    setPitch(nextPitch);
-    deck.setPlayBackSpeed(nextPitch);
-  };
-
   useEffect(() => {
     if (playbackState !== PlaybackStates.EMPTY && deck.metaData) {
       setMetaData(deck.metaData);
@@ -124,9 +117,13 @@ export function Deck({
   };
 
   useEffect(() => {
-    const bpm = Number(deck.metaData.bpm) * pitch || 0;
-    setBpm(bpm);
-  }, [pitch, playbackState]);
+    if (deck.metaData.bpm) {
+      const bpm = Number(deck.metaData.bpm);
+      setBpm(bpm);
+    } else {
+      setBpm(undefined);
+    }
+  }, [playbackState]);
 
   return (
     <Wrapper reverse={reverse}>
@@ -225,8 +222,6 @@ export function Deck({
         setPitch={setPitch}
         deck={deck}
         color={color}
-        showSync={!!thisBPM && !!otherBPM}
-        handleSync={handleSync}
       />
     </Wrapper>
   );
