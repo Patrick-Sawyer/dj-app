@@ -1,4 +1,4 @@
-import { TuneMetaData } from "../components/TuneTableRow";
+import { TuneMetaData } from "../App";
 import { Effects } from "./effectsWebAudio";
 import {
   audioRouter,

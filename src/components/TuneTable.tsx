@@ -1,25 +1,29 @@
 import { useState } from "react";
 import styled from "styled-components";
+import { TuneData, TuneMetaData, TuneMetaDataTableColumns } from "../App";
 import { Colors } from "../utils/theme";
 import { TuneTableRow } from "./TuneTableRow";
 
 interface Props {
-  tunes: any[];
-  deleteTrack: (index: number) => void;
+  tunes: TuneData[];
+  deleteTrack: (reactKey: string) => void;
 }
 
-const columnFields = [ 'artist', 'title', 'genre', 'bpm', 'key', 'bitrate'];
+const columnFields: Array<keyof TuneMetaDataTableColumns> = [ 'artist', 'title', 'genre', 'bpm', 'key', 'bitrate'];
 
 export function TuneTable({ tunes, deleteTrack }: Props) {
-
   const [sortType, setSortType] = useState<{index: number; down: boolean;}>();
 
   const handleSort = (index: number) => {
     if(sortType?.index === index){
-      setSortType({
-        index,
-        down: !sortType.down,
-      })
+      if(sortType.down === false) {
+        setSortType({
+          index,
+          down: true,
+        })
+      } else {
+        setSortType(undefined)
+      }
     } else {
       setSortType({
         index,
@@ -27,6 +31,23 @@ export function TuneTable({ tunes, deleteTrack }: Props) {
       })
     }
   }
+
+  const copyOfTunes = [...tunes];
+
+  const sorted = copyOfTunes.sort((a, b) => {
+    if(!sortType) return 0;
+    const field = columnFields[sortType.index];
+    const first = a[field];
+    const second = b[field];
+
+    if(first && second) {
+      return sortType.down ? first.localeCompare(second) : second.localeCompare(first);
+    }
+
+    return 0;
+  });
+
+  const tunesToShow = sortType ? sorted : tunes;
 
   return (
     <Wrapper>
@@ -46,24 +67,12 @@ export function TuneTable({ tunes, deleteTrack }: Props) {
         </tr>
       </Head>
       <Body>
-        {tunes.sort((a, b) => {
-          if(!sortType) return 0;
-          const field = columnFields[sortType.index];
-          const first = a[field]?.toString();
-          const second = b[field]?.toString();
-          console.log(a, b);
-          if(first && second) {
-            return sortType.down ? first.localeCompare(second) : second.localeCompare(first)
-          }
-          
-          return 0;
-        }).map((tune, index) => {
+        {tunesToShow.map((tune) => {
           return (
             <TuneTableRow
               deleteTrack={deleteTrack}
-              tune={tune}
-              key={index}
-              index={index}
+              key={tune.reactKey}
+              data={tune}
             />
           );
         })}
@@ -81,7 +90,7 @@ const Arrow = styled.div<{
   border-right: 5px solid transparent;
   border-bottom: 5px solid ${Colors.white};
 
-  ${({down}) => !!down && 'transform: scaleY(-1);'}
+  ${({down}) => !down && 'transform: scaleY(-1);'}
 
 `
 
@@ -101,15 +110,16 @@ const Head = styled.thead`
   cursor: pointer;
   th:not(:last-child) {
     border-right: 1px solid rgba(0, 0, 0, 0.2);
+    min-width: 70px;
   }
 `;
 
 const HeadCellContent = styled.div`
   display: flex;
   height: 100%;
-  gap: 15px;
+  gap: 8px;
   align-items: center;
-
+  justify-content: space-between;
 `
 
 const HeadCell = styled.th<{

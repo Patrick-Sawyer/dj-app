@@ -1,6 +1,6 @@
 import styled from "styled-components";
+import { TuneMetaData } from "../App";
 import { Ellipsis } from "./Ellipsis";
-import { TuneMetaData } from "./TuneTableRow";
 
 export function TrackInfo({
   artist = "",

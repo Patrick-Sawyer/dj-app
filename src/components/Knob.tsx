@@ -109,7 +109,7 @@ export function Knob({
         setPercentage(nextValue > 50 ? 50 : nextValue < -50 ? -50 : nextValue);
         mouseStartPosition.current = pageY;
       }
-    }, 10)
+    }, 50)
 
     const handleMouseUp = (e: any) => {
       document.body.style.cursor = "auto";
@@ -124,7 +124,7 @@ export function Knob({
       window.removeEventListener("pointerup", handleMouseUp);
       window.removeEventListener("pointermove", handleMouseMove);
     };
-  }, [bypassed, onChange, percentage]);
+  }, [bypassed, onChange, percentage, mouseDown.current]);
 
   useEffect(() => {
     setBypass && setBypass(bypassed);

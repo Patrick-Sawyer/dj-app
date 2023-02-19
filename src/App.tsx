@@ -10,9 +10,29 @@ import { FX } from "./components/FX";
 import { Upload } from "./components/Upload";
 import { AudioConfig } from "./components/AudioConfig";
 import { audioRouter } from "./webaudio/webAudio";
+import * as musicMetadata from "music-metadata-browser";
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
 window.process = window.process || require("process");
+
+export interface TuneMetaDataTableColumns {
+  artist?: string;
+  title?: string;
+  genre?: string;
+  bitrate?: string;
+  bpm?: string;
+  key?: string;
+}
+
+
+export interface TuneMetaData extends TuneMetaDataTableColumns {
+  image?: musicMetadata.IPicture;
+}
+
+export interface TuneData extends TuneMetaData {
+  blob?: any;
+  reactKey: string;
+}
 
 export interface DeckType {}
 
@@ -23,8 +43,8 @@ function App() {
   const [deckBInitBpm, setDeckBInitBpm] = useState<number>();
   const [deckBpitch, setDeckBPitch] = useState(1);
 
-  const deleteTrack = (index: number) => {
-    const newTunes = [...tunes].filter((_, i) => i !== index);
+  const deleteTrack = (reactKeyToDelete: string) => {
+    const newTunes = [...tunes].filter(({reactKey}) => reactKey !== reactKeyToDelete);
     setTunes(newTunes);
   };
 

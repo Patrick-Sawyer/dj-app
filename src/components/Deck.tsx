@@ -6,8 +6,8 @@ import { JogWheel } from "./JogWheel";
 import { Waveform } from "./Waveform";
 import { DECKS, PlaybackStates } from "../webaudio/deckWebAudio";
 import { useEffect, useRef, useState } from "react";
-import { TuneMetaData } from "./TuneTableRow";
 import { PitchControl } from "./PitchControl";
+import { TuneMetaData } from "../App";
 
 interface Props {
   color: string;
@@ -62,14 +62,15 @@ const jogFuncGen = (handleJogWheel: (value: number, zoom: number) => void) => {
 };
 
 export const debouncer = (callback: (value: any) => void, time = 40) => {
-
-  let timeout: NodeJS.Timeout;
+  let lastCalled = 0;
 
   return (value: any) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => {
+    const now = Date.now();
+
+    if(now - lastCalled > time) {
       callback(value);
-    }, time)
+      lastCalled = now;
+    }
   }
 }
 
@@ -96,7 +97,7 @@ export function Deck({
   deck.setPlaybackState = setPlaybackState;
   deck.setWaveform = setWaveform;
   deck.setCuePoint = setCuePoint;
-  deck.updatePosition = debouncer(setPosition);
+  deck.updatePosition = debouncer(setPosition, 100);
 
   const handleEject = () => {
     if (deck.playbackState === PlaybackStates.PAUSED) {
