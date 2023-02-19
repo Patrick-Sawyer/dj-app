@@ -48,7 +48,7 @@ const debouncedPositionScroller = (
     }
     timeout = setTimeout(() => {
       callback(buffer, speed, position);
-    }, 250);
+    }, 1000);
   };
 };
 
@@ -228,7 +228,9 @@ export class Deck {
         this.positionReporter.connect(CONTEXT.destination);
         this.positionTracker.playbackRate.value = speed;
         this.positionTracker.start(0, position);
-        this.position = position;
+        if (this.backupBuffer) {
+          this.position = position / this.backupBuffer.duration;
+        }
         this.loadedTrack.start(0, position);
         setTimeout(() => {
           this.playbackState = PlaybackStates.PAUSED;
@@ -374,7 +376,7 @@ export class Deck {
       ) {
         this.pause();
         setTimeout(() => {
-          if (!this.cuePoint || this.backupBuffer === null) return;
+          if (this.cuePoint === null || this.backupBuffer === null) return;
           this.updatePosition && this.updatePosition(this.cuePoint);
           this.loadedTrack?.disconnect();
           this.positionTracker?.disconnect();

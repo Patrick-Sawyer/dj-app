@@ -11,39 +11,53 @@ interface Props {
   handleUpload: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const columnFields: Array<keyof TuneMetaDataTableColumns> = [ 'artist', 'title', 'genre', 'bpm', 'key', 'bitrate'];
+const columnFields: Array<keyof TuneMetaDataTableColumns> = [
+  "artist",
+  "title",
+  "genre",
+  "bpm",
+  "key",
+  "bitrate",
+];
 
-export function TuneTable({ tunes, deleteTrack, loading, handleUpload }: Props) {
-  const [sortType, setSortType] = useState<{index: number; down: boolean;}>();
+export function TuneTable({
+  tunes,
+  deleteTrack,
+  loading,
+  handleUpload,
+}: Props) {
+  const [sortType, setSortType] = useState<{ index: number; down: boolean }>();
 
   const handleSort = (index: number) => {
-    if(sortType?.index === index){
-      if(sortType.down === false) {
+    if (sortType?.index === index) {
+      if (sortType.down === false) {
         setSortType({
           index,
           down: true,
-        })
+        });
       } else {
-        setSortType(undefined)
+        setSortType(undefined);
       }
     } else {
       setSortType({
         index,
-        down: false
-      })
+        down: false,
+      });
     }
-  }
+  };
 
   const copyOfTunes = [...tunes];
 
   const sorted = copyOfTunes.sort((a, b) => {
-    if(!sortType) return 0;
+    if (!sortType) return 0;
     const field = columnFields[sortType.index];
     const first = a[field];
     const second = b[field];
 
-    if(first && second) {
-      return sortType.down ? first.localeCompare(second) : second.localeCompare(first);
+    if (first && second) {
+      return sortType.down
+        ? first.localeCompare(second)
+        : second.localeCompare(first);
     }
 
     return 0;
@@ -57,11 +71,19 @@ export function TuneTable({ tunes, deleteTrack, loading, handleUpload }: Props) 
         <tr>
           {COLUMNS.map((column, index) => {
             return (
-              <HeadCell hideBelow={index === 5 ? 1000 : undefined} key={column.name} width={column.width} onClick={() => {
-                if(index < COLUMNS.length - 1) handleSort(index)
-              }}>
+              <HeadCell
+                hideBelow={index === 5 ? 1000 : undefined}
+                key={column.name}
+                width={column.width}
+                onClick={() => {
+                  if (index < COLUMNS.length - 1) handleSort(index);
+                }}
+              >
                 <HeadCellContent>
-                  {column.name}{sortType?.index === index && index < COLUMNS.length - 1 ? <Arrow down={sortType.down} /> : null}
+                  {column.name}
+                  {sortType?.index === index && index < COLUMNS.length - 1 ? (
+                    <Arrow down={sortType.down} />
+                  ) : null}
                 </HeadCellContent>
               </HeadCell>
             );
@@ -69,32 +91,45 @@ export function TuneTable({ tunes, deleteTrack, loading, handleUpload }: Props) 
         </tr>
       </Head>
       <Body>
-        {!tunesToShow.length && !loading && (
+        {tunesToShow.length ? (
+          tunesToShow.map((tune) => {
+            return (
+              <TuneTableRow
+                deleteTrack={deleteTrack}
+                key={tune.reactKey}
+                data={tune}
+              />
+            );
+          })
+        ) : loading ? (
+          <TuneTableRow
+            key="loading"
+            data={{
+              artist: "Loading...",
+              title: "Loading...",
+              reactKey: "Loading",
+              bpm: "...",
+              bitrate: "...",
+              key: "...",
+              genre: "...",
+            }}
+          />
+        ) : (
           <TuneTableRow
             deleteTrack={deleteTrack}
             handleUpload={handleUpload}
-            key={'no-tunes'}
+            key={"no-tunes"}
             data={{
-              artist: 'Upload some tracks...',
-              title: 'Upload some tracks...',
-              reactKey: 'upload-some-tracks',
-              bpm: '...', 
-              bitrate: '...', 
-              key: '...', 
-              genre: '...'
+              artist: "Upload some tracks...",
+              title: "Upload some tracks...",
+              reactKey: "upload-some-tracks",
+              bpm: "...",
+              bitrate: "...",
+              key: "...",
+              genre: "...",
             }}
           />
         )}
-        {tunesToShow.map((tune) => {
-          return (
-            <TuneTableRow
-              deleteTrack={deleteTrack}
-              key={tune.reactKey}
-              data={tune}
-            />
-          );
-        })}
-        {loading && <TuneTableRow key="loading" data={{artist: "Loading...", title: "Loading...", reactKey: "Loading", bpm: '...', bitrate: '...', key: '...', genre: '...'}} />}
       </Body>
     </Wrapper>
   );
@@ -103,15 +138,14 @@ export function TuneTable({ tunes, deleteTrack, loading, handleUpload }: Props) 
 const Arrow = styled.div<{
   down?: boolean;
 }>`
-  width: 0; 
-  height: 0; 
+  width: 0;
+  height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
   border-bottom: 5px solid ${Colors.white};
 
-  ${({down}) => !down && 'transform: scaleY(-1);'}
-
-`
+  ${({ down }) => !down && "transform: scaleY(-1);"}
+`;
 
 const Body = styled.tbody`
   height: 100%;
@@ -160,7 +194,7 @@ const HeadCellContent = styled.div`
   gap: 8px;
   align-items: center;
   justify-content: space-between;
-`
+`;
 
 const HeadCell = styled.th<{
   width?: string;
@@ -171,7 +205,9 @@ const HeadCell = styled.th<{
   font-weight: 600;
   ${({ width }) => width && `width: ${width};`}
 
-  ${({hideBelow}) => !!hideBelow && `
+  ${({ hideBelow }) =>
+    !!hideBelow &&
+    `
     @media screen and (max-width: ${hideBelow}px) {
       display: none;
     }

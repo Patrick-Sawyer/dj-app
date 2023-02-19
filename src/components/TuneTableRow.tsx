@@ -5,7 +5,6 @@ import { TuneData } from "../App";
 import { DeleteIcon } from "./Svg";
 import { ChangeEvent } from "react";
 
-
 interface Props {
   data: TuneData;
   deleteTrack?: (reactKey: string) => void;
@@ -26,55 +25,64 @@ export const TuneTableRow = ({ data, deleteTrack, handleUpload }: Props) => {
     }
   };
 
-  const UploadCell = ({text}: {text: string}) => {
+  const UploadCell = ({
+    text,
+    hideBelow,
+  }: {
+    text: string;
+    hideBelow?: number;
+  }) => {
     return (
-      <Cell>
-          <Label>
-            <Input
-              type="file"
-              name="file"
-              onChange={handleUpload}
-              accept="audio/*"
-              multiple
-            />
-          </Label>
-          {text}
-        </Cell>
-    )
-  }
+      <Cell hideBelow={hideBelow}>
+        <Label>
+          <Input
+            type="file"
+            name="file"
+            onChange={handleUpload}
+            accept="audio/*"
+            multiple
+          />
+        </Label>
+        {text}
+      </Cell>
+    );
+  };
 
   return (
     <Row onDoubleClick={onDoubleClick}>
       {!!handleUpload ? (
         <>
-        <UploadCell text={"Upload some tracks..."} />
-        <UploadCell text={"Upload some tracks..."} />
-        <UploadCell text={"..."} />
-        <UploadCell text={"..."} />
-        <UploadCell text={"..."} />
-        <UploadCell text={"..."} />
-        <Cell>
-          <IconWrapper>
-            <DeleteIcon />
-          </IconWrapper>
-        </Cell>
-      </>
-      ): <>
-         <Cell>{artist}</Cell>
-      <Cell>{title}</Cell>
-      <Cell>{genre}</Cell>
-      <Cell>{bpm}</Cell>
-      <Cell >{key}</Cell>
-      <Cell hideBelow={1000}>{bitrate}</Cell>
-      <Cell
-        onPointerDown={() => {
-          deleteTrack && deleteTrack(data.reactKey);
-        }}
-      >
-        <IconWrapper>
-          <DeleteIcon />
-        </IconWrapper>
-      </Cell></>}
+          <UploadCell text={"Upload some tracks..."} />
+          <UploadCell text={"Upload some tracks..."} />
+          <UploadCell text={"..."} />
+          <UploadCell text={"..."} />
+          <UploadCell text={"..."} />
+          <UploadCell hideBelow={1000} text={"..."} />
+          <Cell>
+            <IconWrapper>
+              <DeleteIcon />
+            </IconWrapper>
+          </Cell>
+        </>
+      ) : (
+        <>
+          <Cell>{artist}</Cell>
+          <Cell>{title}</Cell>
+          <Cell>{genre}</Cell>
+          <Cell>{bpm}</Cell>
+          <Cell>{key}</Cell>
+          <Cell hideBelow={1000}>{bitrate}</Cell>
+          <Cell
+            onPointerDown={() => {
+              deleteTrack && deleteTrack(data.reactKey);
+            }}
+          >
+            <IconWrapper>
+              <DeleteIcon />
+            </IconWrapper>
+          </Cell>
+        </>
+      )}
     </Row>
   );
 };
@@ -85,7 +93,7 @@ const Label = styled.label`
   height: 100%;
   cursor: pointer;
   background-color: transparent;
-`
+`;
 
 const Input = styled.input`
   display: none;
@@ -101,7 +109,7 @@ const IconWrapper = styled.div`
   &:hover {
     opacity: 1;
   }
-`
+`;
 
 const Row = styled.tr`
   cursor: pointer;
@@ -131,7 +139,9 @@ const Cell = styled.td<{
 
   height: 15px;
 
-  ${({hideBelow}) => !!hideBelow && `
+  ${({ hideBelow }) =>
+    !!hideBelow &&
+    `
     @media screen and (max-width: ${hideBelow}px) {
       display: none;
     }
