@@ -167,7 +167,7 @@ export const MiniButton = styled.span<{
   font-weight: 300;
   font-size: 25px;
   opacity: 0.4;
-  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+  cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
   ${({ marginLeft }) => marginLeft && "margin-left: 15px;"}
   ${({ marginRight }) => marginRight && "margin-right: 15px;"}
 

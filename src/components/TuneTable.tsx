@@ -26,7 +26,12 @@ export function TuneTable({
   loading,
   handleUpload,
 }: Props) {
-  const [sortType, setSortType] = useState<{ index: number; down: boolean }>();
+  const [sortType, setSortType] = useState<
+    { index: number; down: boolean } | undefined
+  >({
+    index: 0,
+    down: false,
+  });
 
   const handleSort = (index: number) => {
     if (sortType?.index === index) {
@@ -56,8 +61,14 @@ export function TuneTable({
 
     if (first && second) {
       return sortType.down
-        ? first.localeCompare(second)
-        : second.localeCompare(first);
+        ? second.localeCompare(first, undefined, {
+            numeric: true,
+            sensitivity: "base",
+          })
+        : first.localeCompare(second, undefined, {
+            numeric: true,
+            sensitivity: "base",
+          });
     }
 
     return 0;

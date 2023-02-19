@@ -113,6 +113,7 @@ export class Deck {
   dryValue: GainNode;
   outputWithEffectsAndVolume: GainNode;
   isCued: boolean;
+  scrolling: boolean;
 
   constructor() {
     this.isCued = false;
@@ -235,6 +236,7 @@ export class Deck {
         setTimeout(() => {
           this.playbackState = PlaybackStates.PAUSED;
           this.setPlaybackState && this.setPlaybackState(PlaybackStates.PAUSED);
+          this.scrolling = false;
         }, 200);
       }, 100);
     };
@@ -307,6 +309,8 @@ export class Deck {
     this.computedPlaybackSpeed = 1;
     this.jogWheelValue = 1;
 
+    this.scrolling = false;
+
     this.handleJogWheel = (nextValue: number, zoom: number) => {
       if (this.loadedTrack && this.playbackState === PlaybackStates.PLAYING) {
         this.jogWheelValue = nextValue;
@@ -333,17 +337,27 @@ export class Deck {
         if (
           this.position === null ||
           !this.backupBuffer ||
-          this.playbackState !== PlaybackStates.PAUSED ||
+          (this.playbackState !== PlaybackStates.PAUSED && !this.scrolling) ||
           !this.loadedTrack
-        )
+        ) {
           return;
-        this.loadedTrack?.disconnect();
-        this.positionTracker?.disconnect();
+        }
+
+        if (!this.scrolling) {
+          this.scrolling = true;
+          this.loadedTrack?.disconnect();
+          this.positionTracker?.disconnect();
+          this.playbackState = PlaybackStates.LOADING;
+          this.setPlaybackState &&
+            this.setPlaybackState(PlaybackStates.LOADING);
+        }
+
         const nextPosition = limit(
           ((nextValue - 1) * zoom) / 100 + this.position
         );
         this.updatePosition && this.updatePosition(nextPosition);
         this.position = nextPosition;
+
         this.handleScroll(
           this.backupBuffer,
           isFireFox ? ZERO : 0,
