@@ -94,10 +94,7 @@ export function Deck({
   const zoom = useRef({
     value: 1,
   });
-  deck.setPlaybackState = setPlaybackState;
-  deck.setWaveform = setWaveform;
-  deck.setCuePoint = setCuePoint;
-  deck.updatePosition = debouncer(setPosition, 100);
+
 
   const handleEject = () => {
     if (deck.playbackState === PlaybackStates.PAUSED) {
@@ -137,6 +134,13 @@ export function Deck({
       setBpm(undefined);
     }
   }, [playbackState]);
+
+  useEffect(() => {
+    deck.setPlaybackState = setPlaybackState;
+    deck.setWaveform = setWaveform;
+    deck.setCuePoint = setCuePoint;
+    deck.updatePosition = debouncer(setPosition, 20);
+  }, [])
 
   return (
     <Wrapper reverse={reverse}>

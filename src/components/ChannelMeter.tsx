@@ -36,7 +36,7 @@ export function ChannelMeter({ deck }: Props) {
       } else {
         setLevel(0);
       }
-    }, 50);
+    }, 250);
 
     return () => {
       clearInterval(interval);
