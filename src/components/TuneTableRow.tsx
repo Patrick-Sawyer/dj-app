@@ -2,14 +2,17 @@ import styled from "styled-components";
 import { Colors } from "../utils/theme";
 import { DECKS, PlaybackStates } from "../webaudio/deckWebAudio";
 import { TuneData } from "../App";
+import { DeleteIcon } from "./Svg";
+import { ChangeEvent } from "react";
 
 
 interface Props {
   data: TuneData;
-  deleteTrack: (reactKey: string) => void;
+  deleteTrack?: (reactKey: string) => void;
+  handleUpload?: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const TuneTableRow = ({ data, deleteTrack }: Props) => {
+export const TuneTableRow = ({ data, deleteTrack, handleUpload }: Props) => {
   const { artist, title, genre, bitrate, bpm, key } = data;
 
   const onDoubleClick = () => {
@@ -23,27 +26,86 @@ export const TuneTableRow = ({ data, deleteTrack }: Props) => {
     }
   };
 
+  const UploadCell = ({text}: {text: string}) => {
+    return (
+      <Cell>
+          <Label>
+            <Input
+              type="file"
+              name="file"
+              onChange={handleUpload}
+              accept="audio/*"
+              multiple
+            />
+          </Label>
+          {text}
+        </Cell>
+    )
+  }
+
   return (
     <Row onDoubleClick={onDoubleClick}>
-      <Cell>{artist}</Cell>
+      {!!handleUpload ? (
+        <>
+        <UploadCell text={"Upload some tracks..."} />
+        <UploadCell text={"Upload some tracks..."} />
+        <UploadCell text={"..."} />
+        <UploadCell text={"..."} />
+        <UploadCell text={"..."} />
+        <UploadCell text={"..."} />
+        <Cell>
+          <IconWrapper>
+            <DeleteIcon />
+          </IconWrapper>
+        </Cell>
+      </>
+      ): <>
+         <Cell>{artist}</Cell>
       <Cell>{title}</Cell>
       <Cell>{genre}</Cell>
       <Cell>{bpm}</Cell>
-      <Cell>{key}</Cell>
-      <Cell>{bitrate}</Cell>
+      <Cell >{key}</Cell>
+      <Cell hideBelow={1000}>{bitrate}</Cell>
       <Cell
         onPointerDown={() => {
-          deleteTrack(data.reactKey);
+          deleteTrack && deleteTrack(data.reactKey);
         }}
       >
-        {"X"}
-      </Cell>
+        <IconWrapper>
+          <DeleteIcon />
+        </IconWrapper>
+      </Cell></>}
     </Row>
   );
 };
 
+const Label = styled.label`
+  width: 100%;
+  position: absolute;
+  height: 100%;
+  cursor: pointer;
+  background-color: transparent;
+`
+
+const Input = styled.input`
+  display: none;
+  margin: 0;
+  padding: 0;
+`;
+
+const IconWrapper = styled.div`
+  height: 15px;
+  width: 15px;
+  opacity: 0.3;
+
+  &:hover {
+    opacity: 1;
+  }
+`
+
 const Row = styled.tr`
   cursor: pointer;
+  position: relative;
 
   td:not(:last-child) {
     border-right: 1px solid rgba(0, 0, 0, 0.2);
@@ -57,14 +119,21 @@ const Row = styled.tr`
   }
 `;
 
-const Cell = styled.td`
+const Cell = styled.td<{
+  hideBelow?: number;
+}>`
   font-size: 11px;
   padding: 7px 10px;
   color: white;
 
   background-color: ${Colors.tableBackground};
   color: black;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+
   height: 15px;
+
+  ${({hideBelow}) => !!hideBelow && `
+    @media screen and (max-width: ${hideBelow}px) {
+      display: none;
+    }
+  `}
 `;

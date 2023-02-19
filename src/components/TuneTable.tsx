@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import styled from "styled-components";
 import { TuneData, TuneMetaData, TuneMetaDataTableColumns } from "../App";
 import { Colors } from "../utils/theme";
@@ -7,11 +7,13 @@ import { TuneTableRow } from "./TuneTableRow";
 interface Props {
   tunes: TuneData[];
   deleteTrack: (reactKey: string) => void;
+  loading: boolean;
+  handleUpload: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const columnFields: Array<keyof TuneMetaDataTableColumns> = [ 'artist', 'title', 'genre', 'bpm', 'key', 'bitrate'];
 
-export function TuneTable({ tunes, deleteTrack }: Props) {
+export function TuneTable({ tunes, deleteTrack, loading, handleUpload }: Props) {
   const [sortType, setSortType] = useState<{index: number; down: boolean;}>();
 
   const handleSort = (index: number) => {
@@ -55,11 +57,11 @@ export function TuneTable({ tunes, deleteTrack }: Props) {
         <tr>
           {COLUMNS.map((column, index) => {
             return (
-              <HeadCell key={column.name} width={column.width} onClick={() => {
-                handleSort(index)
+              <HeadCell hideBelow={index === 5 ? 1000 : undefined} key={column.name} width={column.width} onClick={() => {
+                if(index < COLUMNS.length - 1) handleSort(index)
               }}>
                 <HeadCellContent>
-                  {column.name}{sortType?.index === index ? <Arrow down={sortType.down} /> : null}
+                  {column.name}{sortType?.index === index && index < COLUMNS.length - 1 ? <Arrow down={sortType.down} /> : null}
                 </HeadCellContent>
               </HeadCell>
             );
@@ -67,6 +69,22 @@ export function TuneTable({ tunes, deleteTrack }: Props) {
         </tr>
       </Head>
       <Body>
+        {!tunesToShow.length && !loading && (
+          <TuneTableRow
+            deleteTrack={deleteTrack}
+            handleUpload={handleUpload}
+            key={'no-tunes'}
+            data={{
+              artist: 'Upload some tracks...',
+              title: 'Upload some tracks...',
+              reactKey: 'upload-some-tracks',
+              bpm: '...', 
+              bitrate: '...', 
+              key: '...', 
+              genre: '...'
+            }}
+          />
+        )}
         {tunesToShow.map((tune) => {
           return (
             <TuneTableRow
@@ -76,6 +94,7 @@ export function TuneTable({ tunes, deleteTrack }: Props) {
             />
           );
         })}
+        {loading && <TuneTableRow key="loading" data={{artist: "Loading...", title: "Loading...", reactKey: "Loading", bpm: '...', bitrate: '...', key: '...', genre: '...'}} />}
       </Body>
     </Wrapper>
   );
@@ -112,6 +131,27 @@ const Head = styled.thead`
     border-right: 1px solid rgba(0, 0, 0, 0.2);
     min-width: 70px;
   }
+
+  th {
+    background: ${Colors.deckbGlow};
+    animation-name: colors;
+    animation-duration: 5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-play-state: running;
+
+    @keyframes colors {
+      0% {
+        background: ${Colors.deckbGlow};
+      }
+      50% {
+        background: ${Colors.deckAGlow};
+      }
+      100% {
+        background: ${Colors.deckbGlow};
+      }
+    }
+  }
 `;
 
 const HeadCellContent = styled.div`
@@ -124,29 +164,18 @@ const HeadCellContent = styled.div`
 
 const HeadCell = styled.th<{
   width?: string;
+  hideBelow?: number;
 }>`
   font-size: 11px;
   padding: 10px;
   font-weight: 600;
   ${({ width }) => width && `width: ${width};`}
-  background: ${Colors.deckbGlow};
-  animation-name: colors;
-  animation-duration: 5s;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  animation-play-state: running;
 
-  @keyframes colors {
-    0% {
-      background: ${Colors.deckbGlow};
+  ${({hideBelow}) => !!hideBelow && `
+    @media screen and (max-width: ${hideBelow}px) {
+      display: none;
     }
-    50% {
-      background: ${Colors.deckAGlow};
-    }
-    100% {
-      background: ${Colors.deckbGlow};
-    }
-  }
+  `}
 `;
 
 const COLUMNS = [
@@ -175,6 +204,6 @@ const COLUMNS = [
     width: "7%",
   },
   {
-    name: "X",
+    name: "",
   },
 ];

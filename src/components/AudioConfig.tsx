@@ -52,7 +52,7 @@ export function AudioConfig({ decks, router }: Props) {
         <HighlightedLabel
           color={Colors.orange}
           glowColor={Colors.orangeGlow}
-          text={"MAIN:"}
+          text={"MAIN MIX:"}
         />
         <Text
           onPointerDown={() => {
@@ -70,7 +70,7 @@ export function AudioConfig({ decks, router }: Props) {
         <HighlightedLabel
           color={Colors.orange}
           glowColor={Colors.orangeGlow}
-          text={"PHONES:"}
+          text={"CUE:"}
         />{" "}
         <Text
           onPointerDown={() => {
@@ -89,7 +89,7 @@ export function AudioConfig({ decks, router }: Props) {
         <HighlightedLabel
           color={Colors.orange}
           glowColor={Colors.orangeGlow}
-          text={"PHONES VOL"}
+          text={"PHONES"}
         />
         <Knob
           color={Colors.orange}

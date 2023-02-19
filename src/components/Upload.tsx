@@ -2,77 +2,14 @@ import { ChangeEvent } from "react";
 import styled from "styled-components";
 import { Colors } from "../utils/theme";
 import { HighlightedLabel } from "./HighlightedLabel";
-import * as musicMetadata from "music-metadata-browser";
-import { TuneData } from "../App";
 
 interface Props {
-  setTunes: (tracks: any[]) => void;
-  tunes: any[];
+  handleUpload: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const parseBitRate = (bitrate: number | undefined): string | undefined => {
-  if (!bitrate) return undefined;
-  return Math.round(bitrate / 1000) + "kB";
-};
-
-function create_UUID(){
-  var dt = new Date().getTime();
-  var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      var r = (dt + Math.random()*16)%16 | 0;
-      dt = Math.floor(dt/16);
-      return (c=='x' ? r :(r&0x3|0x8)).toString(16);
-  });
-  return uuid;
-}
-
-export function Upload({ tunes, setTunes }: Props) {
-  const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
-    if(e.target.files){
-
-      const tracks = Object.values(e.target.files)
-      const tunesToUpload = tracks.map((track) => URL.createObjectURL(track));
-
-      const promises: Array<Promise<TuneData | null>> = tunesToUpload.map(async (tune) => {
-        try {
-          const data = await fetch(tune)
-          const blob = await data.blob();
-          const metadata = await musicMetadata.parseBlob(blob);
-          const { artist, title, bpm, key } = metadata.common;
-          const image = musicMetadata.selectCover(metadata.common.picture) || undefined;
-          const genre = metadata.common.genre?.join(", ");
-          const bitrate = parseBitRate(metadata.format.bitrate);
-          const reactKey = (artist || 'no-artist') + '-' + (title || 'no-title') + '-' + create_UUID();
-
-          return {
-            blob,
-            artist: artist?.toString(),
-            title: title?.toString(),
-            bpm: bpm?.toString(),
-            key: key?.toString(),
-            image,
-            genre: genre?.toString(),
-            bitrate: bitrate?.toString(),
-            reactKey
-          }
-        } catch {
-          return null;
-        }
-      })
-
-      const tunesWithData = await Promise.all(promises);
-      const filtered = tunesWithData.filter((tune) => !!tune)
-      const newTunes = [...tunes].concat(filtered)
-      setTunes(newTunes);
-    }
-  };
-
+export function Upload({ handleUpload }: Props) {
   return (
     <Wrapper>
-      <HighlightedLabel
-        color={Colors.orange}
-        glowColor={Colors.orangeGlow}
-        text={"UPLOAD:"}
-      />
       <Label>
         <Input
           type="file"
@@ -81,7 +18,12 @@ export function Upload({ tunes, setTunes }: Props) {
           accept="audio/*"
           multiple
         />
-        <Text>{"Click to choose file(s)"}</Text>
+        <HighlightedLabel
+          color={Colors.deckB}
+          glowColor={Colors.deckbGlow}
+          text={"UPLOAD TRACKS"}
+        />
+        <Text>{"Click to choose files"}</Text>
       </Label>
     </Wrapper>
   );

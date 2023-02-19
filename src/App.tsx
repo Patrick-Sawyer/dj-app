@@ -1,7 +1,7 @@
 import "./App.css";
 import styled from "styled-components";
 import { Deck } from "./components/Deck";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { TuneTable } from "./components/TuneTable";
 import { Mixer } from "./components/Mixer";
 import { Colors } from "./utils/theme";
@@ -24,6 +24,20 @@ export interface TuneMetaDataTableColumns {
   key?: string;
 }
 
+const parseBitRate = (bitrate: number | undefined): string | undefined => {
+  if (!bitrate) return undefined;
+  return Math.round(bitrate / 1000) + "kB";
+};
+
+function create_UUID(){
+  var dt = new Date().getTime();
+  var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = (dt + Math.random()*16)%16 | 0;
+      dt = Math.floor(dt/16);
+      return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+  });
+  return uuid;
+}
 
 export interface TuneMetaData extends TuneMetaDataTableColumns {
   image?: musicMetadata.IPicture;
@@ -38,6 +52,7 @@ export interface DeckType {}
 
 function App() {
   const [tunes, setTunes] = useState<any[]>([]);
+  const [tunesLoading, setTunesLoading] = useState(false);
   const [deckApitch, setDeckAPitch] = useState(1);
   const [deckAInitBpm, setDeckAInitBpm] = useState<number>();
   const [deckBInitBpm, setDeckBInitBpm] = useState<number>();
@@ -47,6 +62,53 @@ function App() {
     const newTunes = [...tunes].filter(({reactKey}) => reactKey !== reactKeyToDelete);
     setTunes(newTunes);
   };
+  
+  const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    setTunesLoading(true);
+  
+    await new Promise(r => setTimeout(r, 10));
+  
+    if(e.target.files){
+  
+      const tracks = Object.values(e.target.files)
+      const tunesToUpload = tracks.map((track) => URL.createObjectURL(track));
+  
+      const promises: Array<Promise<TuneData | null>> = tunesToUpload.map(async (tune) => {
+        try {
+          const data = await fetch(tune)
+          const blob = await data.blob();
+          const metadata = await musicMetadata.parseBlob(blob);
+          const { artist, title, bpm, key } = metadata.common;
+          const image = musicMetadata.selectCover(metadata.common.picture) || undefined;
+          const genre = metadata.common.genre?.join(", ");
+          const bitrate = parseBitRate(metadata.format.bitrate);
+          const reactKey = (artist || 'no-artist') + '-' + (title || 'no-title') + '-' + create_UUID();
+  
+          return {
+            blob,
+            artist: artist?.toString(),
+            title: title?.toString(),
+            bpm: bpm?.toString(),
+            key: key?.toString(),
+            image,
+            genre: genre?.toString(),
+            bitrate: bitrate?.toString(),
+            reactKey
+          }
+        } catch {
+          return null;
+        }
+      })
+  
+      const tunesWithData = await Promise.all(promises);
+      const filtered = tunesWithData.filter((tune) => !!tune)
+      const newTunes = [...tunes].concat(filtered)
+      setTunes(newTunes);
+      await new Promise(r => setTimeout(r, 10));
+      setTunesLoading(false);
+    }
+  };
+  
 
   return (
     <Outer>
@@ -82,12 +144,12 @@ function App() {
           setDeckBPitch={setDeckBPitch}
         />
         <ConfigAndUpload>
-          <Upload setTunes={setTunes} tunes={tunes} />
+          <Upload handleUpload={handleUpload} />
           <AudioConfig decks={DECKS} router={audioRouter} />
         </ConfigAndUpload>
       </Wrapper>
       <TableWrapper>
-        <TuneTable deleteTrack={deleteTrack} tunes={tunes} />
+        <TuneTable handleUpload={handleUpload} loading={tunesLoading} deleteTrack={deleteTrack} tunes={tunes} />
       </TableWrapper>
       <Blurb>
         <BlurbHeader>
