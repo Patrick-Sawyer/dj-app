@@ -78,7 +78,7 @@ export function Waveform({
           >
             <div
               style={{
-                right: `${(position * 100).toFixed(3)}%`,
+                transform: `translateX(-${position * 100}%)`,
                 position: "relative",
                 borderLeft: `1px solid ${Colors.lightGrey}`,
                 borderRight: `1px solid ${Colors.lightGrey}`,

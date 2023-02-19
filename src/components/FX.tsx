@@ -280,11 +280,11 @@ const Pad = styled.div<{
   width: 75px;
   border-radius: 6px;
   color: ${(props) => props.color};
-  font-size: 14px;
+  font-size: 13px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 300;
+  text-shadow: 0 0 10px ${({ glowColor }) => glowColor};
   margin-top: 2px;
   cursor: ${({ disabled }) => (disabled ? "auto" : "pointer")};
   border: 1px solid transparent;

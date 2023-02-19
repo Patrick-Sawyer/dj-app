@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, memo } from "react";
 import styled from "styled-components";
 import { Colors } from "../utils/theme";
+import { debouncer } from "./Deck";
 
 interface Props {
   size?: number;
@@ -99,7 +100,7 @@ export function Knob({
   useEffect(() => {
     !bypassed && onChange && onChange(percentage);
 
-    const handleMouseMove = (e: any) => {
+    const handleMouseMove = debouncer((e: any) => {
       if (mouseDown.current) {
         const { pageY } = e;
         const diff = (mouseStartPosition.current - pageY) / 3;
@@ -108,7 +109,7 @@ export function Knob({
         setPercentage(nextValue > 50 ? 50 : nextValue < -50 ? -50 : nextValue);
         mouseStartPosition.current = pageY;
       }
-    };
+    }, 10)
 
     const handleMouseUp = (e: any) => {
       document.body.style.cursor = "auto";

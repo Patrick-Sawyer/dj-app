@@ -61,6 +61,18 @@ const jogFuncGen = (handleJogWheel: (value: number, zoom: number) => void) => {
   };
 };
 
+export const debouncer = (callback: (value: any) => void, time = 40) => {
+
+  let timeout: NodeJS.Timeout;
+
+  return (value: any) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      callback(value);
+    }, time)
+  }
+}
+
 export function Deck({
   color,
   glowColor,
@@ -84,7 +96,7 @@ export function Deck({
   deck.setPlaybackState = setPlaybackState;
   deck.setWaveform = setWaveform;
   deck.setCuePoint = setCuePoint;
-  deck.updatePosition = setPosition;
+  deck.updatePosition = debouncer(setPosition);
 
   const handleEject = () => {
     if (deck.playbackState === PlaybackStates.PAUSED) {

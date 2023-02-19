@@ -23,11 +23,11 @@ function App() {
   const [deckBInitBpm, setDeckBInitBpm] = useState<number>();
   const [deckBpitch, setDeckBPitch] = useState(1);
 
-  const uploadTrack = (tune: any) => {
-    const tuneToAdd = URL.createObjectURL(tune);
-    const newTunes = [...tunes, tuneToAdd];
-    setTunes(newTunes);
-  };
+  // const uploadTrack = async (tune: any) => {
+  //   const tuneToAdd = URL.createObjectURL(tune);
+  //   const newTunes = [...tunes, tuneToAdd];
+  //   setTunes(newTunes);
+  // };
 
   const deleteTrack = (index: number) => {
     const newTunes = [...tunes].filter((_, i) => i !== index);
@@ -68,16 +68,87 @@ function App() {
           setDeckBPitch={setDeckBPitch}
         />
         <ConfigAndUpload>
-          <Upload uploadTrack={uploadTrack} />
+          <Upload setTunes={setTunes} tunes={tunes} />
           <AudioConfig decks={DECKS} router={audioRouter} />
         </ConfigAndUpload>
       </Wrapper>
       <TableWrapper>
         <TuneTable deleteTrack={deleteTrack} tunes={tunes} />
       </TableWrapper>
+      <Blurb>
+        <BlurbHeader>
+          {"How does it work?"}
+        </BlurbHeader>
+        <BlurbText>
+          {"This DJ App has been designed so you can upload any of your own audio tracks and mix them online. It will work with most common audio formats."}
+        </BlurbText>
+        <BlurbText>
+          {"Click the uplpoad button to upload tracks, then click on the track in the list to load it into an empty deck."}
+        </BlurbText>
+        <BlurbHeader>
+          {"Can I use headphones?"}
+        </BlurbHeader>
+        <BlurbText>
+          {"You will need a 4 channel audio setup to be able to have a separate headphones output. On launch, the app checks how many audio outputs are available and configures the app accordingly. If you add a sound card with 4 or more audio tracks and refresh the browser you will see cue / headphones controls and an audio config."}
+        </BlurbText>
+        <BlurbHeader>
+          {"Will it work on all devices?"}
+        </BlurbHeader>
+        <BlurbText>
+          {"This has been optimised for use in Chrome on a desktop / laptop. Other devices & browsers may not work as well."}
+        </BlurbText>
+        <BlurbHeader>
+          {"Online synth"}
+        </BlurbHeader>
+        <BlurbText>
+          {`While you're here, why don't you check out our `}<Link target="_blank" href="https://www.disco-computer.com/synthesizer/synth.html">{"online synth"}</Link>{` too.`}
+        </BlurbText>
+        <BlurbHeader>
+          {"Developer"}
+        </BlurbHeader>
+        <BlurbText>
+          {`This app was created by `}<Link target="_blank" href="https://www.linkedin.com/in/patrickrobertsawyer/">{"Patrick Sawyer"}</Link>{"."}
+        </BlurbText>
+      </Blurb>
     </Outer>
   );
 }
+
+const Link = styled.a`
+  text-decoration: underline;
+  appearence: none;
+  cursor: pointer;
+  color ${Colors.white};
+
+  :hover {
+    color ${Colors.deckA};
+  }
+  
+  :active {
+    color ${Colors.white};
+  }
+`
+
+const BlurbText = styled.p`
+  color: ${Colors.white};
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.6;
+  text-align: left;
+  padding: 0 15px;
+`
+
+const BlurbHeader = styled.p`
+  color: ${Colors.white};
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  padding: 0 15px;
+`
+
+const Blurb = styled.div`
+  width: 100%;
+`
 
 const ConfigAndUpload = styled.div`
   display: flex;

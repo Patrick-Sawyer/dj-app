@@ -17,7 +17,8 @@ export const FADE_IN_OUT_TIME = isFireFox ? 0.1 : 0.05;
 export const changeMasterVolume = (nextValue: number) => {
   MAIN_VOLUME.gain.cancelScheduledValues(0);
   const value = (nextValue + 50) / 100;
-  MAIN_VOLUME.gain.value = value < ZERO ? ZERO : value;
+  const realValue = value < ZERO ? ZERO : value;
+  MAIN_VOLUME.gain.linearRampToValueAtTime(realValue, CONTEXT.currentTime + FADE_IN_OUT_TIME);
 };
 
 class AudioRouter {

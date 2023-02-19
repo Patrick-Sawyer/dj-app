@@ -4,14 +4,22 @@ import { Colors } from "../utils/theme";
 import { HighlightedLabel } from "./HighlightedLabel";
 
 interface Props {
-  uploadTrack: (track: any) => void;
+  setTunes: (tracks: any[]) => void;
+  tunes: any[];
 }
 
-export function Upload({ uploadTrack }: Props) {
-  const handleUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const track = e.target.files?.[0];
-    if (track) {
-      uploadTrack(track);
+export function Upload({ tunes, setTunes }: Props) {
+  const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    if(e.target.files){
+      const newTunes = [...tunes];
+      const tracks = Object.values(e.target.files)
+
+      for (const track of tracks) {
+        const tuneToAdd = URL.createObjectURL(track);
+        newTunes.push(tuneToAdd);
+      }
+
+      setTunes(newTunes);
     }
   };
 
@@ -27,7 +35,8 @@ export function Upload({ uploadTrack }: Props) {
           type="file"
           name="file"
           onChange={handleUpload}
-          accept="audio/mpeg3"
+          accept="audio/*"
+          multiple
         />
         <Text>{"Click to choose file"}</Text>
       </Label>

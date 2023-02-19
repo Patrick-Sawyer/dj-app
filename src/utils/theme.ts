@@ -19,5 +19,6 @@ export const Colors = {
   meterPeak: '#ff4000',
   black: 'black',
   turquoise: '#23c471',
-  turquoiseGlow: 'rgba(35, 196, 113, 0.4)'
+  turquoiseGlow: 'rgba(35, 196, 113, 0.4)',
+  white: '#ffffff'
 }
