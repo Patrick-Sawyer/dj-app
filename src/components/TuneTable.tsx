@@ -171,16 +171,17 @@ const Wrapper = styled.table`
 `;
 const Head = styled.thead`
   color: white;
-  cursor: pointer;
+
   th:not(:last-child) {
     min-width: 70px;
+    cursor: pointer;
   }
 
   background: #252525;
-  border-bottom: 3px solid #3b3b3b;
+  border-bottom: 2px solid #3b3b3b;
 
   th:not(:last-child) {
-    border-right: 3px solid #3b3b3b;
+    border-right: 2px solid #3b3b3b;
   }
 `;
 
