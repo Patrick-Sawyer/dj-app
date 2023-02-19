@@ -23,12 +23,6 @@ function App() {
   const [deckBInitBpm, setDeckBInitBpm] = useState<number>();
   const [deckBpitch, setDeckBPitch] = useState(1);
 
-  // const uploadTrack = async (tune: any) => {
-  //   const tuneToAdd = URL.createObjectURL(tune);
-  //   const newTunes = [...tunes, tuneToAdd];
-  //   setTunes(newTunes);
-  // };
-
   const deleteTrack = (index: number) => {
     const newTunes = [...tunes].filter((_, i) => i !== index);
     setTunes(newTunes);
@@ -148,6 +142,7 @@ const BlurbHeader = styled.p`
 
 const Blurb = styled.div`
   width: 100%;
+  max-width: 1340px;
 `
 
 const ConfigAndUpload = styled.div`
