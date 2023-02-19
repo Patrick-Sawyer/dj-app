@@ -16,6 +16,7 @@ const channelsToString = (left: number) => {
   return `${left + 1} & ${left + 2}`;
 };
 
+
 export function AudioConfig({ decks, router }: Props) {
   const [mainChannels, setMainChannels] = useState<number>(0);
   const [headphonesChannels, setHeadphonesChannels] = useState<number>(2);
@@ -88,7 +89,7 @@ export function AudioConfig({ decks, router }: Props) {
         <HighlightedLabel
           color={Colors.orange}
           glowColor={Colors.orangeGlow}
-          text={"VOL"}
+          text={"PHONES VOL"}
         />
         <Knob
           color={Colors.orange}
@@ -108,6 +109,7 @@ export function AudioConfig({ decks, router }: Props) {
           color={Colors.orange}
           glowColor={Colors.orangeGlow}
           onChange={router.setCueMix}
+          debounceTime={100}
         />
       </Pair>
     </Fragment>

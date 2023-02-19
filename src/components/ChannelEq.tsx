@@ -41,7 +41,9 @@ export function ChannelEq({
   };
 
   const handleCueClick = () => {
-    setCue(!cue);
+    const nextState = !cue;
+    setCue(nextState);
+    deck.isCued = nextState;
   };
 
   useEffect(() => {

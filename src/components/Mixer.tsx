@@ -17,6 +17,7 @@ export function Mixer({ decks, router }: Props) {
     const volumeA = Math.sqrt(1 - (value + 50) / 100);
     DECKS.deckA.setVolume(volumeA);
     DECKS.deckB.setVolume(volumeB);
+    router.handleHeadphoneVolumes();
   };
 
   return (

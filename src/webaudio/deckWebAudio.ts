@@ -5,7 +5,7 @@ import {
   CONTEXT,
   FADE_IN_OUT_TIME,
   isFireFox,
-  MAIN_VOLUME,
+  MAIN_OUTPUT,
   ZERO,
 } from "./webAudio";
 
@@ -61,6 +61,7 @@ export class Deck {
   pause: () => void;
   handleCuePoint: () => void;
   rewind: (amount: number) => void;
+  currentVolume: number;
   fastForward: (amount: number) => void;
   mainPlaybackSpeed: number;
   handleJogWheel: (nextValue: number, zoom: number) => void;
@@ -110,8 +111,11 @@ export class Deck {
   outputWithEffects: GainNode;
   wetEffects: GainNode;
   dryValue: GainNode;
+  outputWithEffectsAndVolume: GainNode;
+  isCued: boolean;
 
   constructor() {
+    this.isCued = false;
     this.effects = new Effects();
     this.loadedTrack = null;
     this.position = 0;
@@ -141,6 +145,7 @@ export class Deck {
       knee: 20,
     });
     this.audioAnalyser = CONTEXT.createAnalyser();
+    this.currentVolume = 0.7;
     this.output = CONTEXT.createGain();
     this.output.gain.value = ZERO;
     this.output.connect(this.effects.input);
@@ -156,6 +161,9 @@ export class Deck {
     this.dryValue.connect(this.outputWithEffects);
     this.masterGain.connect(this.lowPassFilter);
     this.lowPassFilter.connect(this.highPassFilter);
+    this.outputWithEffectsAndVolume = CONTEXT.createGain();
+    this.outputWithEffects.gain.value = 0.7;
+    this.outputWithEffects.connect(this.outputWithEffectsAndVolume);
     this.highPassFilter.connect(this.lowEQ);
     this.lowEQ.connect(this.midEQ);
     this.midEQ.connect(this.highEQ);
@@ -444,9 +452,9 @@ export class Deck {
     this.metaData = {};
     this.setVolume = (nextVolume: number) => {
       const value = nextVolume > 1 ? 1 : nextVolume < ZERO ? ZERO : nextVolume;
-
-      this.outputWithEffects.gain.cancelScheduledValues(0);
-      this.outputWithEffects.gain.exponentialRampToValueAtTime(
+      this.currentVolume = value;
+      this.outputWithEffectsAndVolume.gain.cancelScheduledValues(0);
+      this.outputWithEffectsAndVolume.gain.exponentialRampToValueAtTime(
         value,
         CONTEXT.currentTime + FADE_IN_OUT_TIME
       );
@@ -510,7 +518,7 @@ const limit = (value: number) => {
   return value;
 };
 
-DECKS.deckA.output.connect(audioRouter.deckA);
-DECKS.deckB.output.connect(audioRouter.deckB);
-DECKS.deckA.outputWithEffects.connect(MAIN_VOLUME);
-DECKS.deckB.outputWithEffects.connect(MAIN_VOLUME);
+DECKS.deckA.outputWithEffects.connect(audioRouter.deckA);
+DECKS.deckB.outputWithEffects.connect(audioRouter.deckB);
+DECKS.deckA.outputWithEffectsAndVolume.connect(MAIN_OUTPUT);
+DECKS.deckB.outputWithEffectsAndVolume.connect(MAIN_OUTPUT);

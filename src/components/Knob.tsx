@@ -15,6 +15,7 @@ interface Props {
   doubleClickValue?: number;
   numberOfLights?: number;
   initValue?: number;
+  debounceTime?: number;
 }
 
 interface LightProps {
@@ -62,6 +63,7 @@ export function Knob({
   doubleClickValue = 0,
   numberOfLights = 20,
   initValue,
+  debounceTime
 }: Props) {
   const [percentage, setPercentage] = useState(
     initValue !== undefined ? initValue : fromZero ? -50 : 0
@@ -109,7 +111,7 @@ export function Knob({
         setPercentage(nextValue > 50 ? 50 : nextValue < -50 ? -50 : nextValue);
         mouseStartPosition.current = pageY;
       }
-    }, 50)
+    }, debounceTime)
 
     const handleMouseUp = (e: any) => {
       document.body.style.cursor = "auto";

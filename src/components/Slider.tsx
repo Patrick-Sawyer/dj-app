@@ -1,6 +1,7 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { Colors } from "../utils/theme";
+import { debouncer } from "./Deck";
 import { EmbossedLabel } from "./EmbossedLabel";
 
 interface Props {
@@ -16,6 +17,8 @@ export function Slider({ onChange, text }: Props) {
     setValue(parseInt(e.target.value));
   };
 
+  const debounced = debouncer(onChange)
+
   useEffect(() => {
     if (ref.current) {
       const color = 191 + (50 + value) * 1.26;
@@ -24,7 +27,7 @@ export function Slider({ onChange, text }: Props) {
         `hsl(${color}, 100%, 50%)`
       );
     }
-    onChange(value);
+    debounced(value);
   }, [value]);
 
   return (

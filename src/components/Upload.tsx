@@ -28,15 +28,11 @@ function create_UUID(){
 export function Upload({ tunes, setTunes }: Props) {
   const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     if(e.target.files){
-      const newTunes = [...tunes];
+
       const tracks = Object.values(e.target.files)
+      const tunesToUpload = tracks.map((track) => URL.createObjectURL(track));
 
-      for (const track of tracks) {
-        const tuneToAdd = URL.createObjectURL(track);
-        newTunes.push(tuneToAdd);
-      }
-
-      const promises: Array<Promise<TuneData | null>> = newTunes.map(async (tune) => {
+      const promises: Array<Promise<TuneData | null>> = tunesToUpload.map(async (tune) => {
         try {
           const data = await fetch(tune)
           const blob = await data.blob();
@@ -64,8 +60,9 @@ export function Upload({ tunes, setTunes }: Props) {
       })
 
       const tunesWithData = await Promise.all(promises);
-
-      setTunes(tunesWithData.filter((tune) => !!tune));
+      const filtered = tunesWithData.filter((tune) => !!tune)
+      const newTunes = [...tunes].concat(filtered)
+      setTunes(newTunes);
     }
   };
 
