@@ -92,7 +92,7 @@ export function TuneTable({
               >
                 <HeadCellContent>
                   {column.name}
-                  {sortType?.index === index && index < COLUMNS.length - 1 ? (
+                  {sortType?.index === index ? (
                     <Arrow down={sortType.down} />
                   ) : null}
                 </HeadCellContent>
@@ -173,29 +173,14 @@ const Head = styled.thead`
   color: white;
   cursor: pointer;
   th:not(:last-child) {
-    border-right: 1px solid rgba(0, 0, 0, 0.2);
     min-width: 70px;
   }
 
-  th {
-    background: ${Colors.deckbGlow};
-    animation-name: colors;
-    animation-duration: 5s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    animation-play-state: running;
+  background: #252525;
+  border-bottom: 3px solid #3b3b3b;
 
-    @keyframes colors {
-      0% {
-        background: ${Colors.deckbGlow};
-      }
-      50% {
-        background: ${Colors.deckAGlow};
-      }
-      100% {
-        background: ${Colors.deckbGlow};
-      }
-    }
+  th:not(:last-child) {
+    border-right: 3px solid #3b3b3b;
   }
 `;
 
@@ -212,6 +197,7 @@ const HeadCell = styled.th<{
   hideBelow?: number;
 }>`
   font-size: 11px;
+
   padding: 10px;
   font-weight: 600;
   ${({ width }) => width && `width: ${width};`}
@@ -236,19 +222,19 @@ const COLUMNS = [
   },
   {
     name: "GENRE",
-    width: "7%",
+    width: "15%",
   },
   {
     name: "BPM",
-    width: "7%",
+    width: "5%",
   },
   {
     name: "KEY",
-    width: "7%",
+    width: "5%",
   },
   {
     name: "BITRATE",
-    width: "7%",
+    width: "5%",
   },
   {
     name: "",

@@ -107,7 +107,10 @@ const IconWrapper = styled.div`
   opacity: 0.3;
 
   &:hover {
-    opacity: 1;
+    opacity: 0.8;
+    path {
+      fill: white;
+    }
   }
 `;
 
@@ -115,13 +118,9 @@ const Row = styled.tr`
   cursor: pointer;
   position: relative;
 
-  td:not(:last-child) {
-    border-right: 1px solid rgba(0, 0, 0, 0.2);
-  }
-
   &:hover {
     td {
-      background-color: #989799;
+      background-color: #646464;
       color: white;
     }
   }
@@ -135,8 +134,8 @@ const Cell = styled.td<{
   color: white;
 
   background-color: ${Colors.tableBackground};
-  color: black;
-
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 300;
   height: 15px;
 
   ${({ hideBelow }) =>
