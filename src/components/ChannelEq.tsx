@@ -73,9 +73,11 @@ export function ChannelEq({
         glowColor={glowColor}
         color={color}
         text={"GAIN"}
+        initValue={0}
         onChange={handleGain}
-        size={25}
-        numberOfLights={15}
+        size={24}
+        fromZero
+        numberOfLights={14}
       />
       <NewKnob
         glowColor={glowColor}
