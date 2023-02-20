@@ -12,7 +12,7 @@ export function PitchSlider({ offset, onMouseDown, reset }: Props) {
       onPointerDown={onMouseDown}
       onDoubleClick={reset}
       style={{
-        top: offset + 1,
+        transform: `translateY(${offset + 1}px)`,
       }}
     >
       <Fade />
@@ -34,7 +34,7 @@ const Wrapper = styled.div`
   cursor: pointer;
   border-radius: 4px;
   overflow: hidden;
-  position: relative;
+
   z-index: 4;
 `;
 

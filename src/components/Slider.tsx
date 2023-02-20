@@ -17,7 +17,7 @@ export function Slider({ onChange, text }: Props) {
     setValue(parseInt(e.target.value));
   };
 
-  const debounced = debouncer(onChange)
+  const debounced = debouncer(onChange);
 
   useEffect(() => {
     if (ref.current) {

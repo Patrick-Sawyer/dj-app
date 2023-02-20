@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Colors } from "../utils/theme";
 import { DECKS } from "../webaudio/deckWebAudio";
 import { CONTEXT } from "../webaudio/webAudio";
+import { debouncer } from "./Deck";
 import { HighlightedLabel } from "./HighlightedLabel";
 import { PitchBackground } from "./PitchBackground";
 import { PitchSlider } from "./PitchSlider";
@@ -45,7 +46,7 @@ export function PitchControl({
     mouseState.current.startPosition = e.pageY;
   };
 
-  const handleMouseMove = (e: any) => {
+  const handleMouseMove = debouncer((e: any) => {
     if (mouseState.current.mouseDown) {
       const SCROLL_LIMIT = HEIGHT / 2 - 47;
       const diff = e.pageY - mouseState.current.startPosition;
@@ -58,7 +59,7 @@ export function PitchControl({
           : value;
       setOffset(limited);
     }
-  };
+  }, 100);
 
   const reset = () => {
     mouseState.current.startPosition = 0;
