@@ -198,7 +198,7 @@ const HeadCell = styled.th<{
   hideBelow?: number;
 }>`
   font-size: 11px;
-
+  opacity: 0.7;
   padding: 10px;
   font-weight: 600;
   ${({ width }) => width && `width: ${width};`}

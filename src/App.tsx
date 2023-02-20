@@ -240,9 +240,8 @@ const Link = styled.a`
 
 const BlurbText = styled.p`
   color: ${Colors.white};
-  font-size: 13px;
-  font-weight: 500;
-  opacity: 0.6;
+  font-size: 12px;
+  opacity: 0.5;
   text-align: left;
   padding: 0 15px;
 `;
@@ -250,9 +249,10 @@ const BlurbText = styled.p`
 const BlurbHeader = styled.p`
   color: ${Colors.white};
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   text-align: left;
   padding: 0 15px;
+  opacity: 0.9;
 `;
 
 const Blurb = styled.div`
