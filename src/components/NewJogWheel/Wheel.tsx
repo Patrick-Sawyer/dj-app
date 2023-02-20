@@ -24,11 +24,18 @@ interface Coord {
   pageY: number;
 }
 
+const limitAngle = (angle: number) => {
+  if (angle > 0.5) return angle - 1;
+  if (angle < -0.5) return angle + 1;
+  return angle;
+};
+
 const calculateAngle = (coord1: Coord, coord2: Coord) => {
-  return (
+  const angle =
     Math.atan2(coord2.pageY - coord1.pageY, coord2.pageX - coord1.pageX) /
-    (2 * Math.PI)
-  );
+    (2 * Math.PI);
+
+  return limitAngle(angle);
 };
 
 export function Wheel({
@@ -80,13 +87,13 @@ export function Wheel({
         const centre = getCentre();
         if (!centre) return;
         const currentAngle = calculateAngle(currentCoord, centre);
-        const angleDiff = currentAngle - initAngle.current;
+        const angleDiff = limitAngle(currentAngle - initAngle.current);
         onChange(angleDiff);
-        const newRotateValue = rotateAtStart.current + angleDiff;
+        const newRotateValue = limitAngle(rotateAtStart.current + angleDiff);
         setRotate(newRotateValue);
         currentRotate.current = newRotateValue;
       }
-    }, 50),
+    }, 25),
     [initAngle.current]
   );
 
