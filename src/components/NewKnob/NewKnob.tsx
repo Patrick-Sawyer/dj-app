@@ -109,8 +109,8 @@ export function NewKnob({
   const handleOnChange = !!onChange && debouncer(onChange, debounceTime);
 
   useEffect(() => {
-    handleOnChange && handleOnChange(percentage);
-  }, [percentage]);
+    !bypassed && handleOnChange && handleOnChange(percentage);
+  }, [percentage, bypassed]);
 
   return (
     <Wrapper>
