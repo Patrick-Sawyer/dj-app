@@ -5,7 +5,7 @@ import { DECKS } from "../webaudio/deckWebAudio";
 import { audioRouter, CONTEXT } from "../webaudio/webAudio";
 import { EmbossedLabel } from "./EmbossedLabel";
 import { HighlightedLabel } from "./HighlightedLabel";
-import { Knob } from "./Knob";
+import { NewKnob } from "./NewKnob/NewKnob";
 
 interface Props {
   decks: typeof DECKS;
@@ -15,7 +15,6 @@ interface Props {
 const channelsToString = (left: number) => {
   return `${left + 1} & ${left + 2}`;
 };
-
 
 export function AudioConfig({ decks, router }: Props) {
   const [mainChannels, setMainChannels] = useState<number>(0);
@@ -91,7 +90,7 @@ export function AudioConfig({ decks, router }: Props) {
           glowColor={Colors.orangeGlow}
           text={"PHONES"}
         />
-        <Knob
+        <NewKnob
           color={Colors.orange}
           glowColor={Colors.orangeGlow}
           onChange={router.changeHeadphonesVolume}
@@ -105,7 +104,7 @@ export function AudioConfig({ decks, router }: Props) {
           glowColor={Colors.orangeGlow}
           text={"CUE / MIX"}
         />
-        <Knob
+        <NewKnob
           color={Colors.orange}
           glowColor={Colors.orangeGlow}
           onChange={router.setCueMix}

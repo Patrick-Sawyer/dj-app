@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { Colors } from "../utils/theme";
-import { Knob, KnobText } from "./Knob";
 import { EmbossedLabel } from "./EmbossedLabel";
 import { DECKS } from "../webaudio/deckWebAudio";
 import { useEffect, useState } from "react";
@@ -11,6 +10,7 @@ import {
   isFireFox,
   ZERO,
 } from "../webaudio/webAudio";
+import { KnobText, NewKnob } from "./NewKnob/NewKnob";
 
 interface Props {
   color: string;
@@ -69,7 +69,7 @@ export function ChannelEq({
   return (
     <EqWrapper>
       <EmbossedLabel text={label} hideOnSmallScreen />
-      <Knob
+      <NewKnob
         glowColor={glowColor}
         color={color}
         text={"GAIN"}
@@ -77,28 +77,28 @@ export function ChannelEq({
         size={25}
         numberOfLights={15}
       />
-      <Knob
+      <NewKnob
         glowColor={glowColor}
         color={color}
         text={"HIGH"}
         onChange={deck.changeHigh}
         numberOfLights={17}
       />
-      <Knob
+      <NewKnob
         glowColor={glowColor}
         color={color}
         text={"MID"}
         onChange={deck.changeMid}
         numberOfLights={17}
       />
-      <Knob
+      <NewKnob
         glowColor={glowColor}
         color={color}
         text={"LOW"}
         onChange={deck.changeLow}
         numberOfLights={17}
       />
-      <Knob
+      <NewKnob
         glowColor={glowColor}
         color={color}
         onChange={handleFilter}

@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Colors } from "../utils/theme";
 import { Deck } from "../webaudio/deckWebAudio";
-import { EmbossedLabel } from "./EmbossedLabel";
-import { Knob, KnobText } from "./Knob";
+import { KnobText, NewKnob } from "./NewKnob/NewKnob";
 
 interface TouchpadProps {
   text: string;
@@ -80,13 +78,13 @@ export function FX({
     <Wrapper>
       <Row>
         <Section>
-          <Knob
+          <NewKnob
             color={Colors.deckA}
             glowColor={Colors.deckAGlow}
             size={40}
             text="Dry / Wet"
             fromZero
-            onChange={(input) => {
+            onChange={(input: number) => {
               const wetValue = convertVal(input);
               const dryValue = 1 - wetValue;
               deckA.wetEffects.gain.value = wetValue;
@@ -94,25 +92,25 @@ export function FX({
             }}
             doubleClickValue={-50}
           />
-          <Knob
+          <NewKnob
             color={Colors.deckA}
             glowColor={Colors.deckAGlow}
             size={40}
             text="Reverb"
             fromZero
-            onChange={(input) => {
+            onChange={(input: number) => {
               const value = convertVal(input);
               deckA.effects.reverbLevel.gain.value = value;
             }}
             doubleClickValue={-50}
           />
-          <Knob
+          <NewKnob
             color={Colors.deckA}
             glowColor={Colors.deckAGlow}
             size={40}
             text="Delay"
             fromZero
-            onChange={(input) => {
+            onChange={(input: number) => {
               const value = convertVal(input);
               deckA.effects.delay.feedback.gain.value = value;
             }}
@@ -167,7 +165,7 @@ export function FX({
           />
         </Section>
         <Section>
-          <Knob
+          <NewKnob
             color={Colors.deckB}
             glowColor={Colors.deckbGlow}
             size={40}
@@ -181,7 +179,7 @@ export function FX({
             }}
             doubleClickValue={-50}
           />
-          <Knob
+          <NewKnob
             color={Colors.deckB}
             glowColor={Colors.deckbGlow}
             size={40}
@@ -193,7 +191,7 @@ export function FX({
             }}
             doubleClickValue={-50}
           />
-          <Knob
+          <NewKnob
             color={Colors.deckB}
             glowColor={Colors.deckbGlow}
             size={40}

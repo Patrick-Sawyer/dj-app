@@ -4,7 +4,7 @@ import { DECKS } from "../webaudio/deckWebAudio";
 import { changeMasterVolume } from "../webaudio/webAudio";
 import { ChannelMeter } from "./ChannelMeter";
 import { EmbossedLabel } from "./EmbossedLabel";
-import { Knob } from "./Knob";
+import { NewKnob } from "./NewKnob/NewKnob";
 
 interface Props {
   decks: typeof DECKS;
@@ -14,7 +14,7 @@ export function MainLevels({ decks }: Props) {
   return (
     <Wrapper>
       <EmbossedLabel text={"MAIN"} />
-      <Knob
+      <NewKnob
         color={Colors.orange}
         glowColor={Colors.orangeGlow}
         text={"LEVEL"}
