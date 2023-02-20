@@ -172,7 +172,7 @@ export function Deck({
             image={metaData.image}
             onChange={handlePitchJog}
           />
-          <PitchLabel reverse={!reverse} color={color} bottom={"20px"}>
+          <PitchLabel reverse={!reverse} color={color} bottom={"10px"}>
             {(pitch >= 1 ? "+" : "") + (100 * pitch - 100).toFixed(2) + "%"}
           </PitchLabel>
           <PitchButton
@@ -272,7 +272,7 @@ const PitchButton = styled.button<{
   border-color: rgba(255, 255, 255, 0.1);
   border-radius: 15px;
   position: absolute;
-  bottom: 15px;
+  bottom: 5px;
   ${({ reverse }) => (reverse ? "left: 20px" : "right: 20px")};
 
   &:hover {

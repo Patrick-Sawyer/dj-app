@@ -54,7 +54,12 @@ const Wrapper = styled.div`
   }
 
   @media screen and (max-width: 1000px) {
-    width: 200px;
-    height: 200px;
+    width: 230px;
+    height: 230px;
+  }
+
+  @media screen and (max-width: 850px) {
+    width: 210px;
+    height: 210px;
   }
 `;
