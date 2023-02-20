@@ -21,9 +21,6 @@ const MAX_ZOOM = 1;
 const MIN_ZOOM = 300;
 const OFFSET = 50;
 
-// MOVE CALCULATION TO WEB AUDIO WORKLET
-// MAKE AVERAGE USE LESS CALCULATIONS
-
 export function Waveform({
   data,
   color,

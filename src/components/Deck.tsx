@@ -67,12 +67,12 @@ export const debouncer = (callback: (value: any) => void, time = 40) => {
   return (value: any) => {
     const now = Date.now();
 
-    if(now - lastCalled > time) {
+    if (now - lastCalled > time) {
       callback(value);
       lastCalled = now;
     }
-  }
-}
+  };
+};
 
 export function Deck({
   color,
@@ -94,7 +94,6 @@ export function Deck({
   const zoom = useRef({
     value: 1,
   });
-
 
   const handleEject = () => {
     if (deck.playbackState === PlaybackStates.PAUSED) {
@@ -140,7 +139,7 @@ export function Deck({
     deck.setWaveform = setWaveform;
     deck.setCuePoint = setCuePoint;
     deck.updatePosition = debouncer(setPosition, 20);
-  }, [])
+  }, []);
 
   return (
     <Wrapper reverse={reverse}>

@@ -181,7 +181,7 @@ function App() {
         </BlurbText>
         <BlurbText>
           {
-            "Click the uplpoad button to upload tracks, then click on the track in the list to load it into an empty deck."
+            "Click the uplpoad button to upload tracks, then double click on the track in the list to load it into an empty deck."
           }
         </BlurbText>
         <BlurbHeader>{"Can I use headphones?"}</BlurbHeader>
@@ -225,7 +225,7 @@ function App() {
 
 const Link = styled.a`
   text-decoration: underline;
-  appearence: none;
+  appearance: none;
   cursor: pointer;
   color: ${Colors.white};
 
@@ -271,11 +271,13 @@ const ConfigAndUpload = styled.div`
 const Outer = styled.div`
   display: flex;
   justify-content: center;
+  position: relative;
   flex-direction: column;
   align-items: center;
   width: 100%;
   min-width: 750px;
   padding-bottom: 500px;
+  overflow: hidden;
 
   @media screen and (min-width: 1310px) {
     padding-top: 15px;

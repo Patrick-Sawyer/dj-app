@@ -15,7 +15,7 @@ export function Upload({ handleUpload }: Props) {
           type="file"
           name="file"
           onChange={handleUpload}
-          accept="audio/*"
+          accept=".wav, .aiff, .aif, .aac, .pcm, .mp3, .m4a, .wma, .flac"
           multiple
         />
         <HighlightedLabel
