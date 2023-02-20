@@ -24,7 +24,7 @@ interface Props {
   debounceTime?: number;
 }
 
-interface MouseState {
+interface State {
   mouseDownPosition?: number;
   percentageAtMouseDown?: number;
 }
@@ -48,7 +48,7 @@ export function NewKnob({
   initValue,
   debounceTime = 100,
 }: Props) {
-  const mouseState = useRef<MouseState>({});
+  const state = useRef<State>({});
   const [bypassed, setBypassed] = useState(false);
   const [percentage, setPercentage] = useState(
     initValue !== undefined ? initValue : fromZero ? -50 : 0
@@ -56,27 +56,25 @@ export function NewKnob({
 
   const onPointerDown: PointerEventHandler<HTMLDivElement> = useCallback(
     (e) => {
-      mouseState.current.mouseDownPosition = e.screenY;
-      mouseState.current.percentageAtMouseDown = percentage;
+      state.current.mouseDownPosition = e.screenY;
+      state.current.percentageAtMouseDown = percentage;
     },
     [percentage]
   );
 
   const onPointerUp = useCallback(() => {
-    mouseState.current.mouseDownPosition = undefined;
-    mouseState.current.percentageAtMouseDown = undefined;
+    state.current.mouseDownPosition = undefined;
+    state.current.percentageAtMouseDown = undefined;
   }, []);
 
   const onPointerMove = useCallback(
     debouncer((e: PointerEvent) => {
       if (
-        mouseState.current.mouseDownPosition !== undefined &&
-        mouseState.current.percentageAtMouseDown !== undefined
+        state.current.mouseDownPosition !== undefined &&
+        state.current.percentageAtMouseDown !== undefined
       ) {
-        const changeThisTouch =
-          mouseState.current.mouseDownPosition - e.screenY;
-        const newValue =
-          mouseState.current.percentageAtMouseDown + changeThisTouch;
+        const changeThisTouch = state.current.mouseDownPosition - e.screenY;
+        const newValue = state.current.percentageAtMouseDown + changeThisTouch;
         const limited = limitValue(newValue);
         if (percentage !== limited) {
           setPercentage(limited);

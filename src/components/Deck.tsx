@@ -2,12 +2,12 @@ import styled from "styled-components";
 import { Colors } from "../utils/theme";
 import { Button } from "./Button";
 import { TrackInfo } from "./TrackInfo";
-import { JogWheel } from "./JogWheel";
 import { Waveform } from "./Waveform";
 import { DECKS, PlaybackStates } from "../webaudio/deckWebAudio";
 import { useEffect, useRef, useState } from "react";
 import { PitchControl } from "./PitchControl";
 import { TuneMetaData } from "../App";
+import { NewJogWheel } from "./NewJogWheel/NewJogWheel";
 
 interface Props {
   color: string;
@@ -166,13 +166,11 @@ export function Deck({
           </WaveformWrapper>
         </Top>
         <Pitch ref={ref}>
-          <JogWheel
-            pitchJog={handlePitchJog}
-            pitch={pitch}
+          <NewJogWheel
             playbackState={playbackState}
+            loadingColor={glowColor}
             image={metaData.image}
-            parentRef={ref}
-            color={color}
+            onChange={handlePitchJog}
           />
           <PitchLabel reverse={!reverse} color={color} bottom={"20px"}>
             {(pitch >= 1 ? "+" : "") + (100 * pitch - 100).toFixed(2) + "%"}
