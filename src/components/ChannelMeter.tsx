@@ -70,6 +70,6 @@ const Wrapper = styled.div`
   gap: 5px;
   padding: 7px;
   width: 100%;
-  background-color: ${Colors.darkGreyBackground};
+  background-color: #151515;
   transform: scaleY(-1);
 `;

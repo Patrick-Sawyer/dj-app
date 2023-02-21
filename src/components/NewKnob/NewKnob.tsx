@@ -160,7 +160,7 @@ const KnobWrapper = styled.div<{
   position: relative;
   height: ${({ size }) => size + 20}px;
   width: ${({ size }) => size + 20}px;
-  border: 1px solid ${Colors.darkBorder};
+  border: 1px solid #151515;
   border-radius: ${({ size }) => size / 2 + 10}px;
   overflow: hidden;
   background-color: ${Colors.darkGreyBackground};
@@ -173,7 +173,7 @@ const Control = styled.div<{
   height: ${({ size }) => size - 3}px;
   width: ${({ size }) => size - 3}px;
   border-radius: ${({ size }) => size / 2}px;
-  background-color: ${Colors.knobBackground};
+  background-color: #353535;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -212,7 +212,7 @@ export const KnobText = styled.span<{
   text-transform: uppercase;
   margin-top: 8px;
   letter-spacing: 1px;
-  font-weight: 500;
+  font-weight: 700;
   ${({ glowColor, bypassed }) =>
     glowColor && !bypassed && `text-shadow: 0 0 5px ${glowColor};`}
   cursor: pointer;

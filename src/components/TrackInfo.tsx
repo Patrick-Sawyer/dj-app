@@ -20,13 +20,13 @@ export function TrackInfo({
     <Wrapper>
       <Body>
         <Row>
-          <Cell opacity={0.5} color={color}>
+          <Cell opacity={0.9} color={color}>
             {"Artist:"}
           </Cell>
           <Cell bold width={"100%"}>
             <Ellipsis>{artist}</Ellipsis>
           </Cell>
-          <Cell opacity={0.5} color={color} hideOnSmallScreen>
+          <Cell opacity={0.9} color={color} hideOnSmallScreen>
             {"Dur:"}
           </Cell>
           <Cell
@@ -41,13 +41,13 @@ export function TrackInfo({
           </Cell>
         </Row>
         <Row>
-          <Cell opacity={0.5} color={color}>
+          <Cell opacity={0.9} color={color}>
             {"Title:"}
           </Cell>
           <Cell bold width={"100%"}>
             <Ellipsis>{title}</Ellipsis>
           </Cell>
-          <Cell opacity={0.5} color={color} hideOnSmallScreen>
+          <Cell opacity={0.9} color={color} hideOnSmallScreen>
             {"Pos:"}
           </Cell>
           <Cell

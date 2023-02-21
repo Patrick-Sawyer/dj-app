@@ -3,19 +3,20 @@ import { Colors } from "../utils/theme";
 import { DECKS, PlaybackStates } from "../webaudio/deckWebAudio";
 import { TuneData } from "../App";
 import { DeleteIcon } from "./Svg";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useRef } from "react";
 
 interface Props {
   data: TuneData;
   deleteTrack?: (reactKey: string) => void;
-  handleUpload?: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const TuneTableRow = ({ data, deleteTrack, handleUpload }: Props) => {
+export const TuneTableRow = ({ data, deleteTrack }: Props) => {
   const { artist, title, genre, bitrate, bpm, key } = data;
+  const disabled = useRef(false);
 
-  const onDoubleClick = () => {
-    if (!data.blob) return;
+  const onClick = () => {
+    if (!data.blob || disabled.current) return;
+    disabled.current = true;
     if (DECKS.deckA.playbackState === PlaybackStates.EMPTY) {
       DECKS.deckA.loadTrack(data.blob);
       DECKS.deckA.metaData = data;
@@ -23,83 +24,31 @@ export const TuneTableRow = ({ data, deleteTrack, handleUpload }: Props) => {
       DECKS.deckB.loadTrack(data.blob);
       DECKS.deckB.metaData = data;
     }
-  };
-
-  const UploadCell = ({
-    text,
-    hideBelow,
-  }: {
-    text: string;
-    hideBelow?: number;
-  }) => {
-    return (
-      <Cell hideBelow={hideBelow}>
-        <Label>
-          <Input
-            type="file"
-            name="file"
-            onChange={handleUpload}
-            accept=".wav, .aiff, .aif, .aac, .pcm, .mp3, .m4a, .wma, .flac"
-            multiple
-          />
-        </Label>
-        {text}
-      </Cell>
-    );
+    setTimeout(() => {
+      disabled.current = false;
+    }, 500);
   };
 
   return (
-    <Row onDoubleClick={onDoubleClick}>
-      {!!handleUpload ? (
-        <>
-          <UploadCell text={"Upload some tracks..."} />
-          <UploadCell text={"Upload some tracks..."} />
-          <UploadCell text={"..."} />
-          <UploadCell text={"..."} />
-          <UploadCell text={"..."} />
-          <UploadCell hideBelow={1000} text={"..."} />
-          <Cell>
-            <IconWrapper>
-              <DeleteIcon />
-            </IconWrapper>
-          </Cell>
-        </>
-      ) : (
-        <>
-          <Cell>{artist}</Cell>
-          <Cell>{title}</Cell>
-          <Cell>{genre}</Cell>
-          <Cell>{bpm}</Cell>
-          <Cell>{key}</Cell>
-          <Cell hideBelow={1000}>{bitrate}</Cell>
-          <Cell
-            onPointerDown={() => {
-              deleteTrack && deleteTrack(data.reactKey);
-            }}
-          >
-            <IconWrapper>
-              <DeleteIcon />
-            </IconWrapper>
-          </Cell>
-        </>
-      )}
+    <Row onClick={onClick}>
+      <Cell>{artist}</Cell>
+      <Cell>{title}</Cell>
+      <Cell>{genre}</Cell>
+      <Cell>{bpm}</Cell>
+      <Cell>{key}</Cell>
+      <Cell hideBelow={1000}>{bitrate}</Cell>
+      <Cell
+        onPointerDown={() => {
+          deleteTrack && deleteTrack(data.reactKey);
+        }}
+      >
+        <IconWrapper>
+          <DeleteIcon />
+        </IconWrapper>
+      </Cell>
     </Row>
   );
 };
-
-const Label = styled.label`
-  width: 100%;
-  position: absolute;
-  height: 100%;
-  cursor: pointer;
-  background-color: transparent;
-`;
-
-const Input = styled.input`
-  display: none;
-  margin: 0;
-  padding: 0;
-`;
 
 const IconWrapper = styled.div`
   height: 15px;
@@ -109,7 +58,7 @@ const IconWrapper = styled.div`
   &:hover {
     opacity: 0.8;
     path {
-      fill: white;
+      fill: ${Colors.white};
     }
   }
 `;
@@ -120,8 +69,8 @@ const Row = styled.tr`
 
   &:hover {
     td {
-      background-color: #646464;
-      color: white;
+      background-color: #1a1a1a;
+      color: ${Colors.deckB};
     }
   }
 `;
@@ -133,10 +82,10 @@ const Cell = styled.td<{
   padding: 7px 10px;
   color: white;
 
-  background-color: ${Colors.tableBackground};
+  background-color: #232323;
   color: rgba(255, 255, 255, 0.7);
-  font-weight: 300;
   height: 15px;
+  font-weight: 600;
 
   ${({ hideBelow }) =>
     !!hideBelow &&

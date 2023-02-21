@@ -81,7 +81,7 @@ const Input = styled.input<{
     height: 60px;
     background: ${Colors.knobBackground};
     border: 1px solid var(--SliderColor);
-    border-radius: 1px;
+    border-radius: 3px;
     cursor: pointer;
     -webkit-appearance: none;
     box-shadow: inset 0px -6px 11px -2px ${Colors.dirtyBrown};
@@ -109,7 +109,7 @@ const Input = styled.input<{
     width: 25px;
     height: 60px;
     background: ${Colors.knobBackground};
-    border-radius: 1px;
+    border-radius: 3px;
     border: 1.5px solid var(--SliderColor);
     cursor: pointer;
     box-shadow: inset 0px -6px 11px -2px ${Colors.dirtyBrown};

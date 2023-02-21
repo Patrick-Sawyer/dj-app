@@ -8,7 +8,6 @@ interface Props {
   tunes: TuneData[];
   deleteTrack: (reactKey: string) => void;
   loading: boolean;
-  handleUpload: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const columnFields: Array<keyof TuneMetaDataTableColumns> = [
@@ -20,12 +19,7 @@ const columnFields: Array<keyof TuneMetaDataTableColumns> = [
   "bitrate",
 ];
 
-export function TuneTable({
-  tunes,
-  deleteTrack,
-  loading,
-  handleUpload,
-}: Props) {
+export function TuneTable({ tunes, deleteTrack, loading }: Props) {
   const [sortType, setSortType] = useState<
     { index: number; down: boolean } | undefined
   >({
@@ -102,45 +96,15 @@ export function TuneTable({
         </tr>
       </Head>
       <Body>
-        {tunesToShow.length ? (
-          tunesToShow.map((tune) => {
-            return (
-              <TuneTableRow
-                deleteTrack={deleteTrack}
-                key={tune.reactKey}
-                data={tune}
-              />
-            );
-          })
-        ) : loading ? (
-          <TuneTableRow
-            key="loading"
-            data={{
-              artist: "Loading...",
-              title: "Loading...",
-              reactKey: "Loading",
-              bpm: "...",
-              bitrate: "...",
-              key: "...",
-              genre: "...",
-            }}
-          />
-        ) : (
-          <TuneTableRow
-            deleteTrack={deleteTrack}
-            handleUpload={handleUpload}
-            key={"no-tunes"}
-            data={{
-              artist: "Upload some tracks...",
-              title: "Upload some tracks...",
-              reactKey: "upload-some-tracks",
-              bpm: "...",
-              bitrate: "...",
-              key: "...",
-              genre: "...",
-            }}
-          />
-        )}
+        {tunesToShow.map((tune) => {
+          return (
+            <TuneTableRow
+              deleteTrack={deleteTrack}
+              key={tune.reactKey}
+              data={tune}
+            />
+          );
+        })}
       </Body>
     </Wrapper>
   );
@@ -177,11 +141,15 @@ const Head = styled.thead`
     cursor: pointer;
   }
 
-  background: #252525;
-  border-bottom: 2px solid #3b3b3b;
+  background: #151515;
+  border-bottom: 2px solid ${Colors.mainBackground};
 
   th:not(:last-child) {
-    border-right: 2px solid #3b3b3b;
+    border-right: 2px solid ${Colors.mainBackground};
+  }
+
+  th:last-child {
+    min-width: 15px;
   }
 `;
 
@@ -198,7 +166,7 @@ const HeadCell = styled.th<{
   hideBelow?: number;
 }>`
   font-size: 11px;
-  opacity: 0.7;
+  opacity: 0.9;
   padding: 10px;
   font-weight: 600;
   ${({ width }) => width && `width: ${width};`}
@@ -214,15 +182,15 @@ const HeadCell = styled.th<{
 
 const COLUMNS = [
   {
-    name: "ARTIST",
+    name: "Artist",
     width: "30%",
   },
   {
-    name: "TITLE",
+    name: "Title",
     width: "40%",
   },
   {
-    name: "GENRE",
+    name: "Genre",
     width: "15%",
   },
   {
@@ -230,11 +198,11 @@ const COLUMNS = [
     width: "5%",
   },
   {
-    name: "KEY",
+    name: "Key",
     width: "5%",
   },
   {
-    name: "BITRATE",
+    name: "Bitrate",
     width: "5%",
   },
   {

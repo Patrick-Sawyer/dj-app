@@ -44,7 +44,7 @@ export function AudioConfig({ router }: Props) {
   };
 
   return (
-    <Fragment>
+    <Wrapper>
       <EmbossedLabel text={"AUDIO:"} />
       <Pair>
         <HighlightedLabel
@@ -110,7 +110,7 @@ export function AudioConfig({ router }: Props) {
           debounceTime={100}
         />
       </Pair>
-    </Fragment>
+    </Wrapper>
   );
 }
 
@@ -139,4 +139,12 @@ const Text = styled.span`
   &:active {
     opacity: 0.3;
   }
+`;
+
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 15px;
+  padding: 0 5px;
 `;

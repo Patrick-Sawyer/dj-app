@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { Colors } from "../utils/theme";
 import { Button } from "./Button";
 import { TrackInfo } from "./TrackInfo";
 import { Waveform } from "./Waveform";
@@ -8,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { PitchControl } from "./PitchControl";
 import { TuneMetaData } from "../App";
 import { NewJogWheel } from "./NewJogWheel/NewJogWheel";
+import { Colors } from "../utils/theme";
 
 interface Props {
   color: string;
@@ -315,7 +315,7 @@ const Left = styled.div`
   display: flex;
   height: 100%;
   flex-direction: column;
-  background-color: ${Colors.darkGreyBackground};
+  background-color: ${Colors.darkBorder};
 `;
 
 const Top = styled.div`

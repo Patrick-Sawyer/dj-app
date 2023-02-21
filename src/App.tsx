@@ -7,10 +7,10 @@ import { Mixer } from "./components/Mixer";
 import { Colors } from "./utils/theme";
 import { DECKS } from "./webaudio/deckWebAudio";
 import { FX } from "./components/FX";
-import { Upload } from "./components/Upload";
 import { AudioConfig } from "./components/AudioConfig";
 import { audioRouter } from "./webaudio/webAudio";
 import * as musicMetadata from "music-metadata-browser";
+import { DropZone } from "./components/Dropzone";
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
 window.process = window.process || require("process");
@@ -23,30 +23,6 @@ export interface TuneMetaDataTableColumns {
   bpm?: string;
   key?: string;
 }
-
-const parseData = (data?: string | number | null, removeWhiteSpace = false) => {
-  const trimmed = data ? data.toString()?.trim() : "-";
-  return removeWhiteSpace ? trimmed.replace(/\s/g, "") : trimmed;
-};
-
-const parseBitRate = (bitrate: number | undefined): string | undefined => {
-  if (!bitrate) return undefined;
-  return Math.round(bitrate / 1000) + "kB";
-};
-
-function create_UUID() {
-  var dt = new Date().getTime();
-  var uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
-    /[xy]/g,
-    function (c) {
-      var r = (dt + Math.random() * 16) % 16 | 0;
-      dt = Math.floor(dt / 16);
-      return (c == "x" ? r : (r & 0x3) | 0x8).toString(16);
-    }
-  );
-  return uuid;
-}
-
 export interface TuneMetaData extends TuneMetaDataTableColumns {
   image?: musicMetadata.IPicture;
 }
@@ -59,7 +35,7 @@ export interface TuneData extends TuneMetaData {
 export interface DeckType {}
 
 function App() {
-  const [tunes, setTunes] = useState<any[]>([]);
+  const [tunes, setTunes] = useState<TuneData[]>([]);
   const [tunesLoading, setTunesLoading] = useState(false);
   const [deckApitch, setDeckAPitch] = useState(1);
   const [deckAInitBpm, setDeckAInitBpm] = useState<number>();
@@ -71,59 +47,6 @@ function App() {
       ({ reactKey }) => reactKey !== reactKeyToDelete
     );
     setTunes(newTunes);
-  };
-
-  const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
-    setTunesLoading(true);
-
-    await new Promise((r) => setTimeout(r, 10));
-
-    if (e.target.files) {
-      const tracks = Object.values(e.target.files);
-      const tunesToUpload = tracks.map((track) => URL.createObjectURL(track));
-
-      const promises: Array<Promise<TuneData | null>> = tunesToUpload.map(
-        async (tune) => {
-          try {
-            const data = await fetch(tune);
-            const blob = await data.blob();
-            const metadata = await musicMetadata.parseBlob(blob);
-            const { artist, title, bpm, key } = metadata.common;
-            const image =
-              musicMetadata.selectCover(metadata.common.picture) || undefined;
-            const genre = metadata.common.genre?.join(", ");
-            const bitrate = parseBitRate(metadata.format.bitrate);
-            const reactKey =
-              (artist || "no-artist") +
-              "-" +
-              (title || "no-title") +
-              "-" +
-              create_UUID();
-
-            return {
-              blob,
-              artist: parseData(artist),
-              title: parseData(title),
-              bpm: parseData(bpm, true),
-              key: parseData(key, true),
-              image,
-              genre: parseData(genre),
-              bitrate: parseData(bitrate, true),
-              reactKey,
-            };
-          } catch {
-            return null;
-          }
-        }
-      );
-
-      const tunesWithData = await Promise.all(promises);
-      const filtered = tunesWithData.filter((tune) => !!tune);
-      const newTunes = [...tunes].concat(filtered);
-      setTunes(newTunes);
-      await new Promise((r) => setTimeout(r, 10));
-      setTunesLoading(false);
-    }
   };
 
   return (
@@ -159,14 +82,16 @@ function App() {
           setDeckAPitch={setDeckAPitch}
           setDeckBPitch={setDeckBPitch}
         />
-        <ConfigAndUpload>
-          <Upload handleUpload={handleUpload} />
-          <AudioConfig router={audioRouter} />
-        </ConfigAndUpload>
       </Wrapper>
+      <DropZone
+        tunes={tunes}
+        setTunes={setTunes}
+        setTunesLoading={setTunesLoading}
+        tunesLoading={tunesLoading}
+      />
+      <AudioConfig router={audioRouter} />
       <TableWrapper>
         <TuneTable
-          handleUpload={handleUpload}
           loading={tunesLoading}
           deleteTrack={deleteTrack}
           tunes={tunes}
@@ -225,23 +150,23 @@ function App() {
 
 const Link = styled.a`
   text-decoration: underline;
+
   appearance: none;
   cursor: pointer;
-  color: ${Colors.white};
+  color: rgba(255, 255, 255, 0.5);
 
   :hover {
     color: ${Colors.deckA};
   }
 
   :active {
-    color: ${Colors.white};
+    color: rgba(255, 255, 255, 0.5);
   }
 `;
 
 const BlurbText = styled.p`
-  color: ${Colors.white};
+  color: rgba(255, 255, 255, 0.5);
   font-size: 12px;
-  opacity: 0.5;
   text-align: left;
   padding: 0 15px;
 `;
@@ -260,14 +185,6 @@ const Blurb = styled.div`
   max-width: 1340px;
 `;
 
-const ConfigAndUpload = styled.div`
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  margin-top: 15px;
-  padding: 0 5px;
-`;
-
 const Outer = styled.div`
   display: flex;
   justify-content: center;
@@ -276,6 +193,7 @@ const Outer = styled.div`
   align-items: center;
   width: 100%;
   min-width: 750px;
+  background-color: ${Colors.mainBackground};
   padding-bottom: 500px;
   overflow: hidden;
 

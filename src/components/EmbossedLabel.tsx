@@ -24,8 +24,8 @@ const Text = styled.span<{
   hide: boolean;
 }>`
   font-size: ${(props) => props.fontSize || "13px"};
-  text-shadow: 0px 1px 1px #57524f;
-  color: ${Colors.darkBorder};
+  text-shadow: 0px 1px 1px #5a5654;
+  color: #090909;
   font-weight: 500;
   white-space: no-wrap;
 

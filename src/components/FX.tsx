@@ -273,7 +273,7 @@ const Pad = styled.div<{
   glowColor: string;
   disabled: boolean;
 }>`
-  background-color: ${Colors.darkGreyBackground};
+  background-color: #222222;
   height: 55px;
   width: 75px;
   border-radius: 6px;
@@ -282,6 +282,7 @@ const Pad = styled.div<{
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.75);
   text-shadow: 0 0 10px ${({ glowColor }) => glowColor};
   margin-top: 2px;
   cursor: ${({ disabled }) => (disabled ? "auto" : "pointer")};
@@ -297,12 +298,11 @@ const Pad = styled.div<{
   @media screen and (pointer: fine) {
     &:hover {
       border: 1px solid ${({ color }) => color};
-      box-shadow: 0 0 4px 0 ${({ glowColor }) => glowColor};
+      box-shadow: 0 0 5px 0 ${({ glowColor }) => glowColor};
     }
 
     &:active {
       border: 1px solid transparent;
-      box-shadow: none;
     }
   }
 

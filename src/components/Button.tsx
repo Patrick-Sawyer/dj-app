@@ -46,18 +46,18 @@ const Wrapper = styled.button<{
   height: 35px;
   min-width: 65px;
   text-transform: uppercase;
-  background-color: #4a4a4a;
+  background-color: ${Colors.knobBackground};
   ${({ width }) => width && `width: ${width}`};
   border-radius: 2px;
   color: ${Colors.dirtyBrown};
   letter-spacing: 1px;
   font-size: 12px;
   font-weight: 500;
-  text-shadow: 0px 1px 1px #57524f;
+  text-shadow: 0px 1px 1px #3f3f3f;
 
   text-decoration: none;
-  border: 1px solid ${Colors.darkBorder};
-  box-shadow: inset 0px -6px 11px -2px ${Colors.dirtyBrown};
+  border: 1px solid #212121;
+  box-shadow: inset 0px -3px 4px -2px ${Colors.dirtyBrown};
   ${({ glowColor, disabled }) =>
     !disabled && glowColor && `text-shadow: 0px 0px 7px ${glowColor};`}
   ${({ disabled, color }) =>
