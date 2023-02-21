@@ -139,8 +139,9 @@ class AudioRouter {
     };
     this.audioMerger.connect(CONTEXT.destination);
     this.changeHeadphonesVolume = (value: number) => {
+      this.headphonesInput.gain.cancelScheduledValues(0);
       const nextValue = (value + 50) / 100;
-      this.headphonesInput.gain.value = nextValue;
+      this.headphonesInput.gain.linearRampToValueAtTime(nextValue, CONTEXT.currentTime + FADE_IN_OUT_TIME);
     };
 
   }

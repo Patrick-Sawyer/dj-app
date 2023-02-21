@@ -496,7 +496,7 @@ export class Deck {
     };
     this.changeEQ = (eq: BiquadFilterNode, value: number) => {
       const nextValue = value < 0 ? value : value / 5;
-      eq.gain.value = nextValue;
+      eq.gain.linearRampToValueAtTime(nextValue, CONTEXT.currentTime + FADE_IN_OUT_TIME);
     };
   }
 }

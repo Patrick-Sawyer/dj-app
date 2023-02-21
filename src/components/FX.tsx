@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { Colors } from "../utils/theme";
 import { Deck } from "../webaudio/deckWebAudio";
+import { CONTEXT, FADE_IN_OUT_TIME } from "../webaudio/webAudio";
 import { KnobText, NewKnob } from "./NewKnob/NewKnob";
 
 interface TouchpadProps {
@@ -87,8 +88,8 @@ export function FX({
             onChange={(input: number) => {
               const wetValue = convertVal(input);
               const dryValue = 1 - wetValue;
-              deckA.wetEffects.gain.value = wetValue;
-              deckA.dryValue.gain.value = dryValue;
+              deckA.wetEffects.gain.linearRampToValueAtTime(wetValue, CONTEXT.currentTime + FADE_IN_OUT_TIME);
+              deckA.dryValue.gain.linearRampToValueAtTime(dryValue, CONTEXT.currentTime + FADE_IN_OUT_TIME);
             }}
             doubleClickValue={-50}
           />
@@ -100,7 +101,7 @@ export function FX({
             fromZero
             onChange={(input: number) => {
               const value = convertVal(input);
-              deckA.effects.reverbLevel.gain.value = value;
+              deckA.effects.reverbLevel.gain.linearRampToValueAtTime(value, CONTEXT.currentTime + FADE_IN_OUT_TIME);
             }}
             doubleClickValue={-50}
           />
@@ -112,7 +113,7 @@ export function FX({
             fromZero
             onChange={(input: number) => {
               const value = convertVal(input);
-              deckA.effects.delay.feedback.gain.value = value;
+              deckA.effects.delay.feedback.gain.linearRampToValueAtTime(value, CONTEXT.currentTime + FADE_IN_OUT_TIME);
             }}
             doubleClickValue={-50}
           />
@@ -174,8 +175,8 @@ export function FX({
             onChange={(input) => {
               const wetValue = convertVal(input);
               const dryValue = 1 - wetValue;
-              deckB.wetEffects.gain.value = wetValue;
-              deckB.dryValue.gain.value = dryValue;
+              deckB.wetEffects.gain.linearRampToValueAtTime(wetValue, CONTEXT.currentTime + FADE_IN_OUT_TIME);
+              deckB.dryValue.gain.linearRampToValueAtTime(dryValue, CONTEXT.currentTime + FADE_IN_OUT_TIME);
             }}
             doubleClickValue={-50}
           />
@@ -187,7 +188,7 @@ export function FX({
             fromZero
             onChange={(input) => {
               const value = convertVal(input);
-              deckB.effects.reverbLevel.gain.value = value;
+              deckB.effects.reverbLevel.gain.linearRampToValueAtTime(value, CONTEXT.currentTime + FADE_IN_OUT_TIME);
             }}
             doubleClickValue={-50}
           />
@@ -199,7 +200,7 @@ export function FX({
             fromZero
             onChange={(input) => {
               const value = convertVal(input);
-              deckB.effects.delay.feedback.gain.value = value;
+              deckB.effects.delay.feedback.gain.linearRampToValueAtTime(value, CONTEXT.currentTime + FADE_IN_OUT_TIME);
             }}
             doubleClickValue={-50}
           />

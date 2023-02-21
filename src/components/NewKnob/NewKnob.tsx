@@ -213,7 +213,7 @@ export const KnobText = styled.span<{
   text-transform: uppercase;
   margin-top: 8px;
   letter-spacing: 1px;
-  font-weight: 700;
+  font-weight: 600;
   ${({ glowColor, bypassed }) =>
     glowColor && !bypassed && `text-shadow: 0 0 5px ${glowColor};`}
   cursor: pointer;
