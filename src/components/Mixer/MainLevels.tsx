@@ -1,11 +1,11 @@
 import { memo } from "react";
 import styled from "styled-components";
-import { Colors } from "../utils/theme";
-import { DECKS } from "../webaudio/deckWebAudio";
-import { changeMasterVolume } from "../webaudio/webAudio";
+import { Colors } from "../../utils/theme";
+import { DECKS } from "../../webaudio/deckWebAudio";
+import { changeMasterVolume } from "../../webaudio/webAudio";
 import { ChannelMeter } from "./ChannelMeter";
-import { EmbossedLabel } from "./EmbossedLabel";
-import { NewKnob } from "./NewKnob/NewKnob";
+import { EmbossedLabel } from "../EmbossedLabel";
+import { NewKnob } from "../NewKnob/NewKnob";
 
 interface Props {
   decks: typeof DECKS;

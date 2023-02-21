@@ -1,11 +1,11 @@
 import { Fragment, memo, SetStateAction, useState } from "react";
 import styled from "styled-components";
-import { Colors } from "../utils/theme";
-import { DECKS } from "../webaudio/deckWebAudio";
-import { audioRouter, CONTEXT } from "../webaudio/webAudio";
-import { EmbossedLabel } from "./EmbossedLabel";
-import { HighlightedLabel } from "./HighlightedLabel";
-import { NewKnob } from "./NewKnob/NewKnob";
+import { Colors } from "../../utils/theme";
+import { DECKS } from "../../webaudio/deckWebAudio";
+import { audioRouter, CONTEXT } from "../../webaudio/webAudio";
+import { EmbossedLabel } from "../EmbossedLabel";
+import { HighlightedLabel } from "../HighlightedLabel";
+import { NewKnob } from "../NewKnob/NewKnob";
 
 interface Props {
   router: typeof audioRouter;

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { DECKS, PlaybackStates } from "../../webaudio/deckWebAudio";
 import { memo, useEffect, useRef, useState } from "react";
-import { PitchControl } from "../PitchControl";
+import { PitchControl } from "../PitchControl/PitchControl";
 import { TuneMetaData } from "../../App";
 import { NewJogWheel } from "../NewJogWheel/NewJogWheel";
 import { Colors } from "../../utils/theme";

@@ -1,6 +1,6 @@
 import { memo } from "react";
 import styled from "styled-components";
-import { Colors } from "../utils/theme";
+import { Colors } from "../../utils/theme";
 
 const BlurbComponent = () => {
   return (

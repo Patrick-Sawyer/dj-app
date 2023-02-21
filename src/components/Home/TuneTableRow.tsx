@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import { Colors } from "../utils/theme";
-import { DECKS, PlaybackStates } from "../webaudio/deckWebAudio";
-import { TuneData } from "../App";
-import { DeleteIcon } from "./Svg";
-import { ChangeEvent, memo, useCallback, useRef } from "react";
+import { Colors } from "../../utils/theme";
+import { DECKS, PlaybackStates } from "../../webaudio/deckWebAudio";
+import { TuneData } from "../../App";
+import { DeleteIcon } from "../Svg";
+import { memo, useCallback, useRef } from "react";
 
 interface Props {
   data: TuneData;

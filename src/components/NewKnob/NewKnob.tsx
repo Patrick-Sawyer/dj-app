@@ -1,4 +1,5 @@
 import {
+  memo,
   PointerEventHandler,
   useCallback,
   useEffect,
@@ -35,7 +36,7 @@ const limitValue = (value: number) => {
   return value;
 };
 
-export function NewKnob({
+function NewKnobComponent({
   text,
   color,
   onChange,
@@ -221,3 +222,5 @@ export const KnobText = styled.span<{
   color: ${({ color, bypassed }) =>
     bypassed ? Colors.darkGreyBackground : color};
 `;
+
+export const NewKnob = memo(NewKnobComponent);

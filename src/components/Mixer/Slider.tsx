@@ -1,8 +1,8 @@
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { debouncer } from "../utils/debouncer";
-import { Colors } from "../utils/theme";
-import { EmbossedLabel } from "./EmbossedLabel";
+import { debouncer } from "../../utils/debouncer";
+import { Colors } from "../../utils/theme";
+import { EmbossedLabel } from "../EmbossedLabel";
 
 interface Props {
   onChange: (value: number) => void;

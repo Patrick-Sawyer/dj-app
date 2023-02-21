@@ -1,16 +1,16 @@
 import "./App.css";
 import styled from "styled-components";
 import { useState } from "react";
-import { TuneTable } from "./components/TuneTable";
-import { Mixer } from "./components/Mixer";
+import { TuneTable } from "./components/Home/TuneTable";
+import { Mixer } from "./components/Mixer/Mixer";
 import { Colors } from "./utils/theme";
 import { DECKS } from "./webaudio/deckWebAudio";
-import { FX } from "./components/FX";
-import { AudioConfig } from "./components/AudioConfig";
+import { FX } from "./components/Effects/FX";
+import { AudioConfig } from "./components/Home/AudioConfig";
 import { audioRouter } from "./webaudio/webAudio";
 import * as musicMetadata from "music-metadata-browser";
-import { DropZone } from "./components/Dropzone";
-import { Blurb } from "./components/Blurb";
+import { DropZone } from "./components/Home/Dropzone";
+import { Blurb } from "./components/Home/Blurb";
 import { Deck } from "./components/Deck/Deck";
 
 window.Buffer = window.Buffer || require("buffer").Buffer;

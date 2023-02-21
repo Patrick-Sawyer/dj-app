@@ -1,9 +1,9 @@
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { debouncer } from "../utils/debouncer";
-import { Colors } from "../utils/theme";
-import { DECKS } from "../webaudio/deckWebAudio";
-import { CONTEXT } from "../webaudio/webAudio";
+import { debouncer } from "../../utils/debouncer";
+import { Colors } from "../../utils/theme";
+import { DECKS } from "../../webaudio/deckWebAudio";
+import { CONTEXT } from "../../webaudio/webAudio";
 import { PitchBackground } from "./PitchBackground";
 import { PitchSlider } from "./PitchSlider";
 

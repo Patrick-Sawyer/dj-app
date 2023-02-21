@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { Colors } from "../utils/theme";
-import { DECKS, PlaybackStates } from "../webaudio/deckWebAudio";
+import { Colors } from "../../utils/theme";
+import { DECKS, PlaybackStates } from "../../webaudio/deckWebAudio";
 
 interface Props {
   deck: typeof DECKS.deckA;

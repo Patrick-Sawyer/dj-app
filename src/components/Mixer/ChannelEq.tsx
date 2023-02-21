@@ -1,12 +1,9 @@
 import styled from "styled-components";
-import { Colors } from "../utils/theme";
-import { EmbossedLabel } from "./EmbossedLabel";
-import { DECKS } from "../webaudio/deckWebAudio";
-import {
-  audioRouter,
-  CONTEXT,
-} from "../webaudio/webAudio";
-import { KnobText, NewKnob } from "./NewKnob/NewKnob";
+import { Colors } from "../../utils/theme";
+import { EmbossedLabel } from "../EmbossedLabel";
+import { DECKS } from "../../webaudio/deckWebAudio";
+import { audioRouter, CONTEXT } from "../../webaudio/webAudio";
+import { KnobText, NewKnob } from "../NewKnob/NewKnob";
 import { useState } from "react";
 
 interface Props {
@@ -18,14 +15,7 @@ interface Props {
   isDeckA?: boolean;
 }
 
-export function ChannelEq({
-  deck,
-  color,
-  label,
-  glowColor,
-  router,
-}: Props) {
-
+export function ChannelEq({ deck, color, label, glowColor, router }: Props) {
   const [cued, setIsCued] = useState(false);
 
   const handleGain = (nextValue: number) => {

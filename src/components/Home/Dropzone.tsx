@@ -1,10 +1,10 @@
 import { useDropzone } from "react-dropzone";
 import * as musicMetadata from "music-metadata-browser";
-import { TuneData } from "../App";
+import { TuneData } from "../../App";
 import { memo, useCallback, useState } from "react";
 import styled from "styled-components";
-import { Colors } from "../utils/theme";
-import { UploadMultiple, UploadMusic } from "./Svg";
+import { Colors } from "../../utils/theme";
+import { UploadMultiple, UploadMusic } from "../Svg";
 
 interface Props {
   setTunesLoading: (value: boolean) => void;
@@ -154,14 +154,20 @@ const Wrapper = styled.div<{
   }
 
   &:active {
+    opacity: 0.3;
     background-color: #151515;
 
-    svg,
     span {
-      color: ${Colors.lightGrey};
+      opacity: 1;
+      color: ${Colors.deckB};
     }
+
+    svg {
+      opacity: 1;
+    }
+
     path {
-      fill: ${Colors.lightGrey};
+      fill: ${Colors.deckA};
     }
   }
 

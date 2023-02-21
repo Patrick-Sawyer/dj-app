@@ -1,7 +1,7 @@
 import { ChangeEvent, memo, useCallback, useState } from "react";
 import styled from "styled-components";
-import { TuneData, TuneMetaData, TuneMetaDataTableColumns } from "../App";
-import { Colors } from "../utils/theme";
+import { TuneData, TuneMetaData, TuneMetaDataTableColumns } from "../../App";
+import { Colors } from "../../utils/theme";
 import { TuneTableRow } from "./TuneTableRow";
 
 interface Props {

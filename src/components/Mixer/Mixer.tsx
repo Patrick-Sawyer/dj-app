@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import { Colors } from "../utils/theme";
-import { DECKS } from "../webaudio/deckWebAudio";
-import { audioRouter } from "../webaudio/webAudio";
+import { Colors } from "../../utils/theme";
+import { DECKS } from "../../webaudio/deckWebAudio";
+import { audioRouter } from "../../webaudio/webAudio";
 import { ChannelEq } from "./ChannelEq";
 import { MainLevels } from "./MainLevels";
 import { Slider } from "./Slider";
