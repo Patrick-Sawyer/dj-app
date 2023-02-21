@@ -8,7 +8,6 @@ import { HighlightedLabel } from "./HighlightedLabel";
 import { NewKnob } from "./NewKnob/NewKnob";
 
 interface Props {
-  decks: typeof DECKS;
   router: typeof audioRouter;
 }
 
@@ -16,7 +15,7 @@ const channelsToString = (left: number) => {
   return `${left + 1} & ${left + 2}`;
 };
 
-export function AudioConfig({ decks, router }: Props) {
+export function AudioConfig({ router }: Props) {
   const [mainChannels, setMainChannels] = useState<number>(0);
   const [headphonesChannels, setHeadphonesChannels] = useState<number>(2);
 

@@ -161,7 +161,7 @@ function App() {
         />
         <ConfigAndUpload>
           <Upload handleUpload={handleUpload} />
-          <AudioConfig decks={DECKS} router={audioRouter} />
+          <AudioConfig router={audioRouter} />
         </ConfigAndUpload>
       </Wrapper>
       <TableWrapper>
