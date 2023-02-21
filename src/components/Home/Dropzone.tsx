@@ -133,7 +133,7 @@ const Wrapper = styled.div<{
   box-sizing: border-box;
 
   svg {
-    opacity: 0.4;
+    opacity: 0;
   }
 
   &:hover {

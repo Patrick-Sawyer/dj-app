@@ -12,6 +12,7 @@ import * as musicMetadata from "music-metadata-browser";
 import { DropZone } from "./components/Home/Dropzone";
 import { Blurb } from "./components/Home/Blurb";
 import { Deck } from "./components/Deck/Deck";
+import { Logo } from "./components/Home/Logo";
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
 window.process = window.process || require("process");
@@ -83,12 +84,16 @@ function App() {
         />
       </Wrapper>
       <AudioConfig router={audioRouter} />
-      <DropZone
-        tunes={tunes}
-        setTunes={setTunes}
-        setTunesLoading={setTunesLoading}
-        tunesLoading={tunesLoading}
-      />
+      <Blah>
+        <Logo />
+        <DropZone
+          tunes={tunes}
+          setTunes={setTunes}
+          setTunesLoading={setTunesLoading}
+          tunesLoading={tunesLoading}
+        />
+        <Logo />
+      </Blah>
       <TableWrapper>
         <TuneTable
           loading={tunesLoading}
@@ -100,6 +105,14 @@ function App() {
     </Outer>
   );
 }
+
+const Blah = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  width: calc(100% - 70px);
+  max-width: 1200px;
+`;
 
 const Outer = styled.div`
   display: flex;

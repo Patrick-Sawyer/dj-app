@@ -17,3 +17,8 @@ code {
   font-family: "Digital";
   src: local("Digital"), url("./assets/digital.ttf") format("truetype");
 }
+
+@font-face {
+  font-family: "Graf";
+  src: local("Graf"), url("./assets/TheBattleCont.ttf") format("truetype");
+}
