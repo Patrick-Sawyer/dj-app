@@ -13,7 +13,6 @@ interface Props {
   glowColor: string;
   deck: typeof DECKS.deckA;
   reverse?: boolean;
-
   setPitch: (val: number) => void;
   setBpm: (val: number | undefined) => void;
 }
@@ -107,8 +106,6 @@ function DeckComponent({
     deck.setPlaybackState = setPlaybackState;
     deck.setCuePoint = setCuePoint;
   }, []);
-
-  console.log("I AM RENDERING");
 
   return (
     <Wrapper reverse={reverse}>

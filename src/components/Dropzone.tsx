@@ -131,7 +131,6 @@ const Wrapper = styled.div<{
   padding: 10px;
   min-width: 500px;
   box-sizing: border-box;
-  transition: 0.3s;
 
   svg {
     opacity: 0.4;
@@ -155,8 +154,12 @@ const Wrapper = styled.div<{
   }
 
   &:active {
-    transform: scale(1.1);
+    background-color: #151515;
 
+    svg,
+    span {
+      color: ${Colors.lightGrey};
+    }
     path {
       fill: ${Colors.lightGrey};
     }

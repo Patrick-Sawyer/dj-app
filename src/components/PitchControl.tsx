@@ -110,11 +110,14 @@ export function PitchControl({
     };
   }, []);
 
-  const handleTrackClick = useCallback((isAbove: boolean) => {
-    setOffset(isAbove ? offset + 1 : offset - 1 / devicePixelRatio);
-  }, []);
+  const handleTrackClick = useCallback(
+    (isAbove: boolean) => {
+      setOffset(isAbove ? offset + 1 : offset - 1 / devicePixelRatio);
+    },
+    [offset]
+  );
 
-  const debouncedSetPitch = useCallback(debouncer(setPitch, 100), []);
+  const debouncedSetPitch = useCallback(debouncer(setPitch, 500), []);
 
   useEffect(() => {
     const nextPitch = 1 - (offset * sensitivity) / (HEIGHT / 2 - 47);
