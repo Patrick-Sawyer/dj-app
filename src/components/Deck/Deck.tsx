@@ -1,13 +1,12 @@
 import styled from "styled-components";
-import { Button } from "./Button";
-import { TrackInfo } from "./TrackInfo";
-import { Waveform } from "./Waveform";
-import { DECKS, PlaybackStates } from "../webaudio/deckWebAudio";
+import { DECKS, PlaybackStates } from "../../webaudio/deckWebAudio";
 import { useEffect, useRef, useState } from "react";
-import { PitchControl } from "./PitchControl";
-import { TuneMetaData } from "../App";
-import { NewJogWheel } from "./NewJogWheel/NewJogWheel";
-import { Colors } from "../utils/theme";
+import { PitchControl } from "../PitchControl";
+import { TuneMetaData } from "../../App";
+import { NewJogWheel } from "../NewJogWheel/NewJogWheel";
+import { Colors } from "../../utils/theme";
+import { DeckTop } from "./DeckTop";
+import { DeckButtons } from "./DeckButtons";
 
 interface Props {
   color: string;
@@ -60,19 +59,6 @@ const jogFuncGen = (handleJogWheel: (value: number, zoom: number) => void) => {
   };
 };
 
-export const debouncer = (callback: (value: any) => void, time = 40) => {
-  let lastCalled = 0;
-
-  return (value: any) => {
-    const now = Date.now();
-
-    if (now - lastCalled > time) {
-      callback(value);
-      lastCalled = now;
-    }
-  };
-};
-
 export function Deck({
   color,
   glowColor,
@@ -83,28 +69,13 @@ export function Deck({
   setBpm,
 }: Props) {
   const [playbackState, setPlaybackState] = useState(PlaybackStates.EMPTY);
-  const [position, setPosition] = useState<number>(0);
-  const duration = deck.loadedTrack?.buffer?.duration;
   const [metaData, setMetaData] = useState<TuneMetaData>({});
-  const [waveform, setWaveform] = useState<number[]>();
   const [sensitivityIndex, setSensitivityIndex] = useState(0);
   const [cuePoint, setCuePoint] = useState<number | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const zoom = useRef({
     value: 1,
   });
-
-  const handleEject = () => {
-    if (deck.playbackState === PlaybackStates.PAUSED) {
-      deck.eject();
-      setMetaData({});
-      return;
-    }
-  };
-
-  const handlePlayPause = () => {
-    deck.handlePlayPause();
-  };
 
   const changeSensitivity = () => {
     setSensitivityIndex(
@@ -135,31 +106,21 @@ export function Deck({
 
   useEffect(() => {
     deck.setPlaybackState = setPlaybackState;
-    deck.setWaveform = setWaveform;
     deck.setCuePoint = setCuePoint;
-    deck.updatePosition = debouncer(setPosition, 20);
   }, []);
+
+  console.log("I AM RENDERING");
 
   return (
     <Wrapper reverse={reverse}>
       <Left>
-        <Top>
-          <TrackInfo
-            {...metaData}
-            duration={duration}
-            color={color}
-            position={position}
-          />
-          <WaveformWrapper>
-            <Waveform
-              cuePoint={cuePoint}
-              position={position}
-              color={color}
-              data={waveform}
-              zoomInParent={zoom}
-            />
-          </WaveformWrapper>
-        </Top>
+        <DeckTop
+          deck={deck}
+          color={color}
+          cuePoint={cuePoint}
+          zoom={zoom}
+          metaData={metaData}
+        />
         <Pitch ref={ref}>
           <NewJogWheel
             playbackState={playbackState}
@@ -179,50 +140,14 @@ export function Deck({
             <span>{SENSITIVITIES[sensitivityIndex].label}</span>
           </PitchButton>
         </Pitch>
-        <Buttons>
-          <Button
-            color={color}
-            glowColor={glowColor}
-            disabled={
-              playbackState === PlaybackStates.LOADING ||
-              playbackState === PlaybackStates.EMPTY
-            }
-            width={"15%"}
-            text={"rew"}
-            onClick={deck.restart}
-          />
-          <Button
-            color={color}
-            glowColor={glowColor}
-            disabled={
-              playbackState === PlaybackStates.LOADING ||
-              playbackState === PlaybackStates.EMPTY
-            }
-            text={playbackState === PlaybackStates.PLAYING ? "pause" : "play"}
-            width={"35%"}
-            onClick={handlePlayPause}
-          />
-          <Button
-            color={color}
-            glowColor={glowColor}
-            disabled={
-              playbackState === PlaybackStates.LOADING ||
-              (playbackState === PlaybackStates.PLAYING && cuePoint === null) ||
-              playbackState === PlaybackStates.EMPTY
-            }
-            text={"cue"}
-            width={"35%"}
-            onClick={deck.handleCuePoint}
-          />
-          <Button
-            color={color}
-            glowColor={glowColor}
-            width={"15%"}
-            disabled={playbackState !== PlaybackStates.PAUSED}
-            text={"Eject"}
-            onClick={handleEject}
-          />
-        </Buttons>
+        <DeckButtons
+          color={color}
+          glowColor={glowColor}
+          deck={deck}
+          playbackState={playbackState}
+          cuePoint={cuePoint}
+          setMetaData={setMetaData}
+        />
       </Left>
       <PitchControl
         reverse={!!reverse}
@@ -313,40 +238,6 @@ const Left = styled.div`
   background-color: ${Colors.darkBorder};
 `;
 
-const Top = styled.div`
-  display: flex;
-  flex-direction: column;
-  background-color: black;
-  padding: 10px 10px 15px 10px;
-
-  gap: 5px;
-
-  height: 115px;
-  min-height: 115px;
-  max-height: 115px;
-  justify-content: space-between;
-  position: relative;
-
-  @media screen and (max-width: 1000px) {
-    padding-top: 5px;
-    height: 100px;
-    min-height: 100px;
-    max-height: 100px;
-  }
-`;
-
-const Buttons = styled.div`
-  display: flex;
-  justify-content: space-between;
-  flex: 1;
-  position: relative;
-  padding: 8px;
-  gap: 8px;
-  @media screen and (max-width: 1000px) {
-    flex-wrap: wrap;
-  }
-`;
-
 const SENSITIVITIES = [
   {
     value: 0.08,
@@ -373,10 +264,3 @@ const SENSITIVITIES = [
     label: "100%",
   },
 ];
-
-const WaveformWrapper = styled.div`
-  position: absolute;
-  left: 0px;
-  right: 0px;
-  bottom: 15px;
-`;

@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, memo, useCallback, useState } from "react";
 import styled from "styled-components";
 import { TuneData, TuneMetaData, TuneMetaDataTableColumns } from "../App";
 import { Colors } from "../utils/theme";
@@ -19,14 +19,17 @@ const columnFields: Array<keyof TuneMetaDataTableColumns> = [
   "bitrate",
 ];
 
-export function TuneTable({ tunes, deleteTrack, loading }: Props) {
-  const [sortType, setSortType] = useState<
-    { index: number; down: boolean } | undefined
-  >({
-    index: 0,
-    down: false,
-  });
+interface Sort {
+  index: number;
+  down: boolean;
+}
 
+interface HeaderProps {
+  sortType?: Sort;
+  setSortType: (sort?: Sort) => void;
+}
+
+function TableHeader({ sortType, setSortType }: HeaderProps) {
   const handleSort = (index: number) => {
     if (sortType?.index === index) {
       if (sortType.down === false) {
@@ -44,6 +47,41 @@ export function TuneTable({ tunes, deleteTrack, loading }: Props) {
       });
     }
   };
+
+  return (
+    <Head>
+      <tr>
+        {COLUMNS.map((column, index) => {
+          return (
+            <HeadCell
+              hideBelow={index === 5 ? 1000 : undefined}
+              key={column.name}
+              width={column.width}
+              onClick={() => {
+                if (index < COLUMNS.length - 1) handleSort(index);
+              }}
+            >
+              <HeadCellContent>
+                {column.name}
+                {sortType?.index === index ? (
+                  <Arrow down={sortType.down} />
+                ) : null}
+              </HeadCellContent>
+            </HeadCell>
+          );
+        })}
+      </tr>
+    </Head>
+  );
+}
+
+const Header = memo(TableHeader);
+
+export function TuneTable({ tunes, deleteTrack, loading }: Props) {
+  const [sortType, setSortType] = useState<Sort | undefined>({
+    index: 0,
+    down: false,
+  });
 
   const copyOfTunes = [...tunes];
 
@@ -72,29 +110,7 @@ export function TuneTable({ tunes, deleteTrack, loading }: Props) {
 
   return (
     <Wrapper>
-      <Head>
-        <tr>
-          {COLUMNS.map((column, index) => {
-            return (
-              <HeadCell
-                hideBelow={index === 5 ? 1000 : undefined}
-                key={column.name}
-                width={column.width}
-                onClick={() => {
-                  if (index < COLUMNS.length - 1) handleSort(index);
-                }}
-              >
-                <HeadCellContent>
-                  {column.name}
-                  {sortType?.index === index ? (
-                    <Arrow down={sortType.down} />
-                  ) : null}
-                </HeadCellContent>
-              </HeadCell>
-            );
-          })}
-        </tr>
-      </Head>
+      <Header sortType={sortType} setSortType={setSortType} />
       <Body>
         {tunesToShow.map((tune) => {
           return (

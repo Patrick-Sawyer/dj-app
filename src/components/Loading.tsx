@@ -1,3 +1,4 @@
+import { memo } from "react";
 import styled from "styled-components";
 import { Colors } from "../utils/theme";
 
@@ -6,40 +7,36 @@ interface Props {
   color: string;
 }
 
-interface LineProps {
-  color: string;
-}
-
-const Thing = ({ color }: LineProps) => {
+const Thing = () => {
   return (
     <Inner>
-      <Line color={color} />
+      <Line />
     </Inner>
   );
 };
 
-export const Loading = ({ isLoading, color }: Props) => {
+const LoadingComponent = ({ color }: Props) => {
   return (
-    <Wrapper isLoading={isLoading}>
-      <Thing color={color} />
-      <Thing color={color} />
-      <Thing color={color} />
-      <Thing color={color} />
-      <Thing color={color} />
-      <Thing color={color} />
-      <Thing color={color} />
-      <Thing color={color} />
-      <Thing color={color} />
-      <Thing color={color} />
-      <Thing color={color} />
-      <Thing color={color} />
+    <Wrapper>
+      <Thing />
+      <Thing />
+      <Thing />
+      <Thing />
+      <Thing />
+      <Thing />
+      <Thing />
+      <Thing />
+      <Thing />
+      <Thing />
+      <Thing />
+      <Thing />
     </Wrapper>
   );
 };
 
-const Wrapper = styled.div<{
-  isLoading: boolean;
-}>`
+export const Loading = memo(LoadingComponent);
+
+const Wrapper = styled.div`
   height: 100%;
   width: 100%;
   top: 0;
@@ -50,12 +47,10 @@ const Wrapper = styled.div<{
   border-radius: 50%;
   background-color: rgba(0, 0, 0, 0.7);
   transform: scale(1.1);
-  opacity: ${({ isLoading }) => (isLoading ? 1 : 0)};
   transition: 0.1s;
 
   > div {
-    animation: ${({ isLoading }) =>
-      isLoading ? `lds-spinner 1.2s linear infinite` : "none"};
+    animation: lds-spinner 1.2s linear infinite;
   }
 
   & div:nth-child(1) {
@@ -116,7 +111,7 @@ const Wrapper = styled.div<{
   }
 `;
 
-const Line = styled.div<LineProps>`
+const Line = styled.div`
   width: 5px;
   height: 20px;
   background-color: white;
@@ -124,7 +119,6 @@ const Line = styled.div<LineProps>`
   border-radius: 10px;
   position: relative;
   top: 25px;
-  box-shadow: 0 0 10px 2px ${({ color }) => color};
 `;
 
 const Inner = styled.div`

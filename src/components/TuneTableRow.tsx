@@ -3,18 +3,18 @@ import { Colors } from "../utils/theme";
 import { DECKS, PlaybackStates } from "../webaudio/deckWebAudio";
 import { TuneData } from "../App";
 import { DeleteIcon } from "./Svg";
-import { ChangeEvent, useRef } from "react";
+import { ChangeEvent, memo, useCallback, useRef } from "react";
 
 interface Props {
   data: TuneData;
   deleteTrack?: (reactKey: string) => void;
 }
 
-export const TuneTableRow = ({ data, deleteTrack }: Props) => {
+const TuneTableRowComponent = ({ data, deleteTrack }: Props) => {
   const { artist, title, genre, bitrate, bpm, key } = data;
   const disabled = useRef(false);
 
-  const onClick = () => {
+  const onClick = useCallback(() => {
     if (!data.blob || disabled.current) return;
     disabled.current = true;
     if (DECKS.deckA.playbackState === PlaybackStates.EMPTY) {
@@ -27,7 +27,7 @@ export const TuneTableRow = ({ data, deleteTrack }: Props) => {
     setTimeout(() => {
       disabled.current = false;
     }, 500);
-  };
+  }, []);
 
   return (
     <Row onClick={onClick}>
@@ -49,6 +49,8 @@ export const TuneTableRow = ({ data, deleteTrack }: Props) => {
     </Row>
   );
 };
+
+export const TuneTableRow = memo(TuneTableRowComponent);
 
 const IconWrapper = styled.div`
   height: 15px;

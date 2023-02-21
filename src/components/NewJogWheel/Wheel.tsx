@@ -9,8 +9,8 @@ import {
   useRef,
   useState,
 } from "react";
-import { debouncer } from "../Deck";
 import { AnimatedImage } from "./AnimatedImage";
+import { debouncer } from "../../utils/debouncer";
 
 interface Props {
   playbackState: PlaybackStates;
@@ -50,7 +50,7 @@ export function Wheel({
   const currentRotate = useRef<number>(0);
   const ref = useRef<HTMLDivElement>(null);
 
-  const getCentre = (): Coord | undefined => {
+  const getCentre = useCallback((): Coord | undefined => {
     if (ref.current) {
       const { top, height, left, width } = ref.current.getBoundingClientRect();
 
@@ -59,7 +59,7 @@ export function Wheel({
         pageY: top + height / 2 + window.scrollY,
       };
     }
-  };
+  }, []);
 
   const onPointerDown: PointerEventHandler<HTMLDivElement> = useCallback(
     (e) => {

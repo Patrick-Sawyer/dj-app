@@ -1,3 +1,4 @@
+import { memo } from "react";
 import styled from "styled-components";
 import { Colors } from "../utils/theme";
 import { DECKS } from "../webaudio/deckWebAudio";
@@ -10,7 +11,7 @@ interface Props {
   decks: typeof DECKS;
 }
 
-export function MainLevels({ decks }: Props) {
+function MainLevelsComponent({ decks }: Props) {
   return (
     <Wrapper>
       <EmbossedLabel text={"MAIN"} />
@@ -30,6 +31,8 @@ export function MainLevels({ decks }: Props) {
     </Wrapper>
   );
 }
+
+export const MainLevels = memo(MainLevelsComponent);
 
 const Levels = styled.div`
   display: flex;

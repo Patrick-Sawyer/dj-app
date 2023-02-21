@@ -1,7 +1,6 @@
 import "./App.css";
 import styled from "styled-components";
-import { Deck } from "./components/Deck";
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
 import { TuneTable } from "./components/TuneTable";
 import { Mixer } from "./components/Mixer";
 import { Colors } from "./utils/theme";
@@ -12,6 +11,7 @@ import { audioRouter } from "./webaudio/webAudio";
 import * as musicMetadata from "music-metadata-browser";
 import { DropZone } from "./components/Dropzone";
 import { Blurb } from "./components/Blurb";
+import { Deck } from "./components/Deck/Deck";
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
 window.process = window.process || require("process");

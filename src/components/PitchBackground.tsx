@@ -1,3 +1,4 @@
+import { memo } from "react";
 import styled from "styled-components";
 
 interface Props {
@@ -6,7 +7,7 @@ interface Props {
   offset: number;
 }
 
-export function PitchBackground({ height, onClick, offset }: Props) {
+function PitchBackgroundComponent({ height, onClick, offset }: Props) {
   return (
     <Wrapper
       height={height}
@@ -37,6 +38,8 @@ export function PitchBackground({ height, onClick, offset }: Props) {
     </Wrapper>
   );
 }
+
+export const PitchBackground = memo(PitchBackgroundComponent);
 
 const Wrapper = styled.div<{
   zIndex?: number;

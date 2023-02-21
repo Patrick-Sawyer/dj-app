@@ -1,3 +1,4 @@
+import { memo } from "react";
 import styled from "styled-components";
 
 interface Props {
@@ -6,7 +7,7 @@ interface Props {
   reset: () => void;
 }
 
-export function PitchSlider({ offset, onMouseDown, reset }: Props) {
+function PitchSliderComponent({ offset, onMouseDown, reset }: Props) {
   return (
     <Wrapper
       onPointerDown={onMouseDown}
@@ -23,6 +24,8 @@ export function PitchSlider({ offset, onMouseDown, reset }: Props) {
     </Wrapper>
   );
 }
+
+export const PitchSlider = memo(PitchSliderComponent);
 
 const Wrapper = styled.div`
   background-color: #ababab;

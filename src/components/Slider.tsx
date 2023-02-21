@@ -1,7 +1,7 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+import { debouncer } from "../utils/debouncer";
 import { Colors } from "../utils/theme";
-import { debouncer } from "./Deck";
 import { EmbossedLabel } from "./EmbossedLabel";
 
 interface Props {
@@ -17,7 +17,7 @@ export function Slider({ onChange, text }: Props) {
     setValue(parseInt(e.target.value));
   };
 
-  const debounced = debouncer(onChange);
+  const debounced = useCallback(debouncer(onChange), []);
 
   useEffect(() => {
     if (ref.current) {

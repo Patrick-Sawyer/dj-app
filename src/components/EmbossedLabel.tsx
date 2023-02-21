@@ -1,3 +1,4 @@
+import { memo } from "react";
 import styled from "styled-components";
 import { Colors } from "../utils/theme";
 
@@ -7,7 +8,7 @@ interface Props {
   hideOnSmallScreen?: boolean;
 }
 
-export function EmbossedLabel({
+function EmbossedLabelComponent({
   text,
   fontSize = "13px",
   hideOnSmallScreen = false,
@@ -18,6 +19,8 @@ export function EmbossedLabel({
     </Text>
   );
 }
+
+export const EmbossedLabel = memo(EmbossedLabelComponent);
 
 const Text = styled.span<{
   fontSize?: string;

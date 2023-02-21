@@ -1,6 +1,66 @@
+import { memo } from "react";
 import styled from "styled-components";
-import { TuneMetaData } from "../App";
-import { Ellipsis } from "./Ellipsis";
+import { TuneMetaData } from "../../App";
+import { Ellipsis } from "../Ellipsis";
+
+interface ArtistProps {
+  duration?: number;
+  color: string;
+  artist: string;
+}
+
+function ArtistComponent({ duration, color, artist }: ArtistProps) {
+  const durationString = getTimeAsString(duration);
+
+  return (
+    <Row>
+      <Cell opacity={0.9} color={color}>
+        {"Artist:"}
+      </Cell>
+      <Cell bold width={"100%"}>
+        <Ellipsis>{artist}</Ellipsis>
+      </Cell>
+      <Cell opacity={0.9} color={color} hideOnSmallScreen>
+        {"Dur:"}
+      </Cell>
+      <Cell
+        opacity={duration ? 1 : "0"}
+        digital
+        width={"100%"}
+        fontSize={"14px"}
+        textAlign={"right"}
+        hideOnSmallScreen
+      >
+        {durationString}
+      </Cell>
+    </Row>
+  );
+}
+
+const Artist = memo(ArtistComponent);
+
+interface TitleProps {
+  color: string;
+  title: string;
+}
+
+function TitleComponent({ color, title }: TitleProps) {
+  return (
+    <>
+      <Cell opacity={0.9} color={color}>
+        {"Title:"}
+      </Cell>
+      <Cell bold width={"100%"}>
+        <Ellipsis>{title}</Ellipsis>
+      </Cell>
+      <Cell opacity={0.9} color={color} hideOnSmallScreen>
+        {"Pos:"}
+      </Cell>
+    </>
+  );
+}
+
+const Title = memo(TitleComponent);
 
 export function TrackInfo({
   artist = "",
@@ -13,43 +73,14 @@ export function TrackInfo({
   color: string;
   position: number;
 }) {
-  const durationString = getTimeAsString(duration);
   const positionString = getTimeAsString(position * (duration || 0));
 
   return (
     <Wrapper>
       <Body>
+        <Artist duration={duration} color={color} artist={artist} />
         <Row>
-          <Cell opacity={0.9} color={color}>
-            {"Artist:"}
-          </Cell>
-          <Cell bold width={"100%"}>
-            <Ellipsis>{artist}</Ellipsis>
-          </Cell>
-          <Cell opacity={0.9} color={color} hideOnSmallScreen>
-            {"Dur:"}
-          </Cell>
-          <Cell
-            opacity={duration ? 1 : "0"}
-            digital
-            width={"100%"}
-            fontSize={"14px"}
-            textAlign={"right"}
-            hideOnSmallScreen
-          >
-            {durationString}
-          </Cell>
-        </Row>
-        <Row>
-          <Cell opacity={0.9} color={color}>
-            {"Title:"}
-          </Cell>
-          <Cell bold width={"100%"}>
-            <Ellipsis>{title}</Ellipsis>
-          </Cell>
-          <Cell opacity={0.9} color={color} hideOnSmallScreen>
-            {"Pos:"}
-          </Cell>
+          <Title color={color} title={title} />
           <Cell
             opacity={position && duration ? 1 : "0"}
             hideOnSmallScreen

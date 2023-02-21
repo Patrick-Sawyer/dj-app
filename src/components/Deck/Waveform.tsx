@@ -1,7 +1,6 @@
 import { RefObject, useRef, useState } from "react";
 import styled from "styled-components";
-import { Colors } from "../utils/theme";
-import { DECKS, PlaybackStates } from "../webaudio/deckWebAudio";
+import { Colors } from "../../utils/theme";
 import { WaveFormData } from "./WaveformData";
 
 interface Props {

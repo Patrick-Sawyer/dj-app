@@ -6,8 +6,8 @@ import {
   useState,
 } from "react";
 import styled from "styled-components";
+import { debouncer } from "../../utils/debouncer";
 import { Colors } from "../../utils/theme";
-import { debouncer } from "../Deck";
 import { Lights } from "./Lights";
 
 interface Props {
@@ -104,7 +104,8 @@ export function NewKnob({
     };
   }, []);
 
-  const handleOnChange = !!onChange && debouncer(onChange, debounceTime);
+  const handleOnChange =
+    !!onChange && useCallback(debouncer(onChange, debounceTime), []);
 
   useEffect(() => {
     !bypassed && handleOnChange && handleOnChange(percentage);

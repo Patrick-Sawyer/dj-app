@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+import { debouncer } from "../utils/debouncer";
 import { Colors } from "../utils/theme";
 import { DECKS } from "../webaudio/deckWebAudio";
 import { CONTEXT } from "../webaudio/webAudio";
-import { debouncer } from "./Deck";
-import { HighlightedLabel } from "./HighlightedLabel";
 import { PitchBackground } from "./PitchBackground";
 import { PitchSlider } from "./PitchSlider";
 
@@ -18,6 +17,44 @@ interface Props {
 }
 
 const HEIGHT = CONTEXT.destination.maxChannelCount >= 4 ? 550 : 520;
+
+interface SideProps {
+  handleTrackClick: (value: boolean) => void;
+  reverse: boolean;
+  color: string;
+  lightOn: boolean;
+}
+
+function SideComponent({
+  handleTrackClick,
+  reverse,
+  color,
+  lightOn,
+}: SideProps) {
+  return (
+    <PlusMinus height={HEIGHT} reverse={!!reverse}>
+      <Text
+        onPointerDown={(e) => {
+          handleTrackClick(true);
+        }}
+      >
+        {"-"}
+      </Text>
+      <VerticalLine />
+      <Light reverse={reverse} color={color} lightOn={lightOn} />
+      <VerticalLine />
+      <Text
+        onPointerDown={(e) => {
+          handleTrackClick(false);
+        }}
+      >
+        {"+"}
+      </Text>
+    </PlusMinus>
+  );
+}
+
+const Side = memo(SideComponent);
 
 export function PitchControl({
   deck,
@@ -61,11 +98,11 @@ export function PitchControl({
     }
   }, 100);
 
-  const reset = () => {
+  const reset = useCallback(() => {
     mouseState.current.startPosition = 0;
     mouseState.current.offsetAtStart = 0;
     setOffset(0);
-  };
+  }, []);
 
   useEffect(() => {
     window.addEventListener("pointerup", handleMouseUp);
@@ -74,38 +111,26 @@ export function PitchControl({
     };
   }, []);
 
-  const handleTrackClick = (isAbove: boolean) => {
+  const handleTrackClick = useCallback((isAbove: boolean) => {
     setOffset(isAbove ? offset + 1 : offset - 1 / devicePixelRatio);
-  };
+  }, []);
+
+  const debouncedSetPitch = useCallback(debouncer(setPitch, 100), []);
 
   useEffect(() => {
     const nextPitch = 1 - (offset * sensitivity) / (HEIGHT / 2 - 47);
     deck.setPlayBackSpeed(nextPitch);
-    setPitch(nextPitch);
+    debouncedSetPitch(nextPitch);
   }, [offset, sensitivity]);
 
   return (
     <Wrapper reverse={reverse}>
-      <PlusMinus height={HEIGHT} reverse={!!reverse}>
-        <Text
-          onPointerDown={(e) => {
-            handleTrackClick(true);
-          }}
-        >
-          {"-"}
-        </Text>
-        <VerticalLine />
-        <Light reverse={reverse} color={color} lightOn={lightOn} />
-        <VerticalLine />
-        <Text
-          onPointerDown={(e) => {
-            handleTrackClick(false);
-          }}
-        >
-          {"+"}
-        </Text>
-      </PlusMinus>
-
+      <Side
+        color={color}
+        lightOn={lightOn}
+        handleTrackClick={handleTrackClick}
+        reverse={!!reverse}
+      />
       <Inner height={HEIGHT} onPointerMove={handleMouseMove}>
         <PitchBackground
           onClick={handleTrackClick}
