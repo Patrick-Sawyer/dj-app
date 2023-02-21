@@ -7,10 +7,6 @@ import { WaveFormData } from "./WaveformData";
 interface Props {
   data?: number[];
   color: string;
-  playbackState: PlaybackStates;
-  duration?: number;
-  deck: typeof DECKS.deckA;
-  setPosition: (position: number) => void;
   position: number;
   cuePoint: null | number;
   zoomInParent: RefObject<{ value: number }>;
@@ -24,10 +20,6 @@ const OFFSET = 50;
 export function Waveform({
   data,
   color,
-  playbackState,
-  deck,
-  duration,
-  setPosition,
   position,
   cuePoint,
   zoomInParent,

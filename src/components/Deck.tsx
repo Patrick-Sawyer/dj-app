@@ -14,7 +14,6 @@ interface Props {
   glowColor: string;
   deck: typeof DECKS.deckA;
   reverse?: boolean;
-  // setBpm: (bpm: number) => void;
   pitch: number;
   setPitch: (val: number) => void;
   setBpm: (val: number | undefined) => void;
@@ -155,10 +154,6 @@ export function Deck({
             <Waveform
               cuePoint={cuePoint}
               position={position}
-              setPosition={setPosition}
-              duration={duration}
-              deck={deck}
-              playbackState={playbackState}
               color={color}
               data={waveform}
               zoomInParent={zoom}
