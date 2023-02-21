@@ -152,6 +152,7 @@ const Wrapper = styled.div`
   user-select: none;
   touch-action: none;
   position: relative;
+  z-index: 50;
 `;
 
 const KnobWrapper = styled.div<{
