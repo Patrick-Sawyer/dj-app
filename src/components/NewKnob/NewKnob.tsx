@@ -70,6 +70,7 @@ function NewKnobComponent({
 
   const onPointerMove = useCallback(
     debouncer((e: PointerEvent) => {
+      e.preventDefault();
       if (
         state.current.mouseDownPosition !== undefined &&
         state.current.percentageAtMouseDown !== undefined
@@ -154,6 +155,7 @@ const Wrapper = styled.div`
   user-select: none;
   touch-action: none;
   position: relative;
+  z-index: 50;
 `;
 
 const KnobWrapper = styled.div<{

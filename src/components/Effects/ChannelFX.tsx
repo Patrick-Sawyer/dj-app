@@ -1,7 +1,8 @@
 import { memo, useCallback } from "react";
 import styled from "styled-components";
+import { debouncer } from "../../utils/debouncer";
 import { Deck } from "../../webaudio/deckWebAudio";
-import { CONTEXT, FADE_IN_OUT_TIME } from "../../webaudio/webAudio";
+import { CONTEXT, FADE_IN_OUT_TIME, ZERO } from "../../webaudio/webAudio";
 import { NewKnob } from "../NewKnob/NewKnob";
 import { Touchpad } from "./Touchpad";
 
@@ -32,55 +33,68 @@ function ChannelFXComponent({
   initBpm,
   setPitch,
 }: Props) {
-  const handleDryWet = useCallback((input: number) => {
-    const wetValue = convertVal(input);
-    const dryValue = 1 - wetValue;
-    deck.wetEffects.gain.linearRampToValueAtTime(
-      wetValue,
-      CONTEXT.currentTime + FADE_IN_OUT_TIME
-    );
-    deck.dryValue.gain.linearRampToValueAtTime(
-      dryValue,
-      CONTEXT.currentTime + FADE_IN_OUT_TIME
-    );
-  }, []);
+  const handleDryWet = useCallback(
+    debouncer((input: number) => {
+      const trueWetValue = convertVal(input);
+      const trueDryValue = 1 - trueWetValue;
+      const wetValue = trueWetValue < ZERO ? ZERO : trueWetValue;
+      const dryValue = trueDryValue < ZERO ? ZERO : trueDryValue;
 
-  const handleReverb = useCallback((input: number) => {
-    const value = convertVal(input);
-    deck.effects.reverbLevel.gain.linearRampToValueAtTime(
-      value,
-      CONTEXT.currentTime + FADE_IN_OUT_TIME
-    );
-  }, []);
+      deck.wetEffects.gain.linearRampToValueAtTime(
+        wetValue,
+        CONTEXT.currentTime + 0.1
+      );
+      deck.dryValue.gain.linearRampToValueAtTime(
+        dryValue,
+        CONTEXT.currentTime + 0.1
+      );
+    }, 101),
+    []
+  );
 
-  const handleFeedback = useCallback((input: number) => {
-    const value = convertVal(input);
-    deck.effects.delay.feedback.gain.linearRampToValueAtTime(
-      value,
-      CONTEXT.currentTime + FADE_IN_OUT_TIME
-    );
-  }, []);
+  const handleReverb = useCallback(
+    debouncer((input: number) => {
+      const value = convertVal(input);
 
-  const handleSyncDelay = useCallback(() => {
+      deck.effects.reverbLevel.gain.linearRampToValueAtTime(
+        value,
+        CONTEXT.currentTime + FADE_IN_OUT_TIME
+      );
+    }, 101),
+    []
+  );
+
+  const handleFeedback = useCallback(
+    debouncer((input: number) => {
+      const value = convertVal(input);
+      deck.effects.delay.feedback.gain.linearRampToValueAtTime(
+        value,
+        CONTEXT.currentTime + FADE_IN_OUT_TIME
+      );
+    }, 101),
+    []
+  );
+
+  const handleSyncDelay = () => {
     thisDeckBpm && deck.effects.delay.handleChange(60 / thisDeckBpm);
-  }, [thisDeckBpm]);
+  };
 
-  const handleTap = useCallback(() => {
+  const handleTap = () => {
     deck.effects.delay.tapDelay();
-  }, []);
+  };
 
-  const handleX2 = useCallback(() => {
+  const handleX2 = () => {
     deck.effects.delay.handle2X();
-  }, []);
+  };
 
-  const handleSyncDecks = useCallback(() => {
+  const handleSyncDecks = () => {
     if (otherDeckBpm && initBpm) {
       const nextPitch = Number(otherDeckBpm) / Number(deck.metaData.bpm);
       deck.setPlayBackSpeed(nextPitch);
       deck.effects.delay.handleChange(60 / otherDeckBpm);
       setPitch(nextPitch);
     }
-  }, [otherDeckBpm, initBpm, deck.metaData.bpm]);
+  };
 
   return (
     <Wrapper>

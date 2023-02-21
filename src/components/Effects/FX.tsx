@@ -1,10 +1,7 @@
 import styled from "styled-components";
 import { Colors } from "../../utils/theme";
 import { Deck } from "../../webaudio/deckWebAudio";
-import { CONTEXT, FADE_IN_OUT_TIME } from "../../webaudio/webAudio";
-import { KnobText, NewKnob } from "../NewKnob/NewKnob";
 import { ChannelFX } from "./ChannelFX";
-import { Touchpad } from "./Touchpad";
 
 interface Props {
   deckA: Deck;
@@ -16,10 +13,6 @@ interface Props {
   setDeckAPitch: (val: number) => void;
   setDeckBPitch: (val: number) => void;
 }
-
-const convertVal = (val: number): number => {
-  return (val + 50) / 100;
-};
 
 export function FX({
   deckA,

@@ -27,11 +27,11 @@ class DelayUnit {
 class Delay {
   input: GainNode;
   delayOne: DelayUnit;
-  delayTwo: DelayUnit;
+  // delayTwo: DelayUnit;
   handleChange: (value: number) => void;
   feedback: GainNode;
   output: GainNode;
-  currentLiveUnit: 1 | 2;
+  // currentLiveUnit: 1 | 2;
   currentDelayTime: number;
   handle2X: () => void;
   lastTap: number;
@@ -45,55 +45,61 @@ class Delay {
     this.output = CONTEXT.createGain();
     this.output.gain.value = 1;
     this.delayOne = new DelayUnit(1);
-    this.delayTwo = new DelayUnit(ZERO);
+    // this.delayTwo = new DelayUnit(ZERO);
     this.input.connect(this.feedback);
     this.feedback.connect(this.delayOne.input);
-    this.feedback.connect(this.delayTwo.input);
+    // this.feedback.connect(this.delayTwo.input);
     this.delayOne.output.connect(this.feedback);
     this.delayOne.output.connect(this.output);
-    this.delayTwo.output.connect(this.feedback);
-    this.delayTwo.output.connect(this.output);
-    this.currentLiveUnit = 1;
+    // this.delayTwo.output.connect(this.feedback);
+    // this.delayTwo.output.connect(this.output);
+    // this.currentLiveUnit = 1;
     this.currentDelayTime = 0.5;
 
     this.handleChange = (value: number) => {
-      const delayOneIsLiveNext = this.currentLiveUnit == 1;
+      this.delayOne.delay.delayTime.linearRampToValueAtTime(
+        value,
+        CONTEXT.currentTime + FADE_IN_OUT_TIME
+      );
+      this.currentDelayTime = value;
 
-      if (delayOneIsLiveNext) {
-        this.delayOne.delay.delayTime.value = value;
-      } else {
-        this.delayTwo.delay.delayTime.value = value;
-      }
+      // const delayOneIsLiveNext = this.currentLiveUnit == 1;
 
-      setTimeout(() => {
-        this.delayOne.input.gain.cancelAndHoldAtTime(CONTEXT.currentTime);
-        this.delayOne.output.gain.cancelAndHoldAtTime(CONTEXT.currentTime);
-        this.delayTwo.input.gain.cancelAndHoldAtTime(CONTEXT.currentTime);
-        this.delayTwo.output.gain.cancelAndHoldAtTime(CONTEXT.currentTime);
+      // if (delayOneIsLiveNext) {
+      //   this.delayOne.delay.delayTime.value = value;
+      // } else {
+      //   this.delayTwo.delay.delayTime.value = value;
+      // }
 
-        this.delayOne.input.gain.linearRampToValueAtTime(
-          delayOneIsLiveNext ? 1 : ZERO,
-          CONTEXT.currentTime + FADE_IN_OUT_TIME
-        );
+      // setTimeout(() => {
+      //   this.delayOne.input.gain.cancelAndHoldAtTime(CONTEXT.currentTime);
+      //   this.delayOne.output.gain.cancelAndHoldAtTime(CONTEXT.currentTime);
+      //   this.delayTwo.input.gain.cancelAndHoldAtTime(CONTEXT.currentTime);
+      //   this.delayTwo.output.gain.cancelAndHoldAtTime(CONTEXT.currentTime);
 
-        this.delayOne.output.gain.linearRampToValueAtTime(
-          delayOneIsLiveNext ? 1 : ZERO,
-          CONTEXT.currentTime + FADE_IN_OUT_TIME
-        );
+      //   this.delayOne.input.gain.linearRampToValueAtTime(
+      //     delayOneIsLiveNext ? 1 : ZERO,
+      //     CONTEXT.currentTime + FADE_IN_OUT_TIME
+      //   );
 
-        this.delayTwo.input.gain.linearRampToValueAtTime(
-          delayOneIsLiveNext ? ZERO : 1,
-          CONTEXT.currentTime + FADE_IN_OUT_TIME
-        );
+      //   this.delayOne.output.gain.linearRampToValueAtTime(
+      //     delayOneIsLiveNext ? 1 : ZERO,
+      //     CONTEXT.currentTime + FADE_IN_OUT_TIME
+      //   );
 
-        this.delayTwo.output.gain.linearRampToValueAtTime(
-          delayOneIsLiveNext ? ZERO : 1,
-          CONTEXT.currentTime + FADE_IN_OUT_TIME
-        );
+      //   this.delayTwo.input.gain.linearRampToValueAtTime(
+      //     delayOneIsLiveNext ? ZERO : 1,
+      //     CONTEXT.currentTime + FADE_IN_OUT_TIME
+      //   );
 
-        this.currentLiveUnit = delayOneIsLiveNext ? 1 : 2;
-        this.currentDelayTime = value;
-      }, 5);
+      //   this.delayTwo.output.gain.linearRampToValueAtTime(
+      //     delayOneIsLiveNext ? ZERO : 1,
+      //     CONTEXT.currentTime + FADE_IN_OUT_TIME
+      //   );
+
+      //   this.currentLiveUnit = delayOneIsLiveNext ? 1 : 2;
+      //   this.currentDelayTime = value;
+      // }, 5);
     };
 
     this.handle2X = () => {
