@@ -59,7 +59,6 @@ function App() {
             deck={DECKS.deckA}
             color={Colors.deckA}
             glowColor={Colors.deckAGlow}
-            pitch={deckApitch}
             setPitch={setDeckAPitch}
             setBpm={setDeckAInitBpm}
           />
@@ -68,7 +67,6 @@ function App() {
             deck={DECKS.deckB}
             color={Colors.deckB}
             glowColor={Colors.deckbGlow}
-            pitch={deckBpitch}
             setPitch={setDeckBPitch}
             setBpm={setDeckBInitBpm}
           />

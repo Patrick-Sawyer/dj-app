@@ -1,7 +1,7 @@
 import { useDropzone } from "react-dropzone";
 import * as musicMetadata from "music-metadata-browser";
 import { TuneData } from "../App";
-import { useCallback, useState } from "react";
+import { memo, useCallback, useState } from "react";
 import styled from "styled-components";
 import { Colors } from "../utils/theme";
 import { UploadMultiple, UploadMusic } from "./Svg";
@@ -36,7 +36,7 @@ function create_UUID() {
   return uuid;
 }
 
-export function DropZone({
+function DropZoneComponent({
   setTunesLoading,
   tunes,
   setTunes,
@@ -105,11 +105,17 @@ export function DropZone({
     <Wrapper {...getRootProps()} highlight={isDragActive || tunesLoading}>
       <input {...getInputProps()} />
       <UploadMusic />
-      <Text>{tunesLoading ? "Loading tracks, please wait..." : "Click or drop files here to import music"}</Text>
+      <Text>
+        {tunesLoading
+          ? "Loading tracks, please wait..."
+          : "Click or drop files here to import music"}
+      </Text>
       <UploadMultiple />
     </Wrapper>
   );
 }
+
+export const DropZone = memo(DropZoneComponent);
 
 const Wrapper = styled.div<{
   highlight: boolean;
@@ -156,7 +162,9 @@ const Wrapper = styled.div<{
     }
   }
 
-  ${({highlight}) => !!highlight && `
+  ${({ highlight }) =>
+    !!highlight &&
+    `
     background-color: #151515;
 
     span {

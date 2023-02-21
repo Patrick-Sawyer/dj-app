@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { DECKS, PlaybackStates } from "../../webaudio/deckWebAudio";
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { PitchControl } from "../PitchControl";
 import { TuneMetaData } from "../../App";
 import { NewJogWheel } from "../NewJogWheel/NewJogWheel";
@@ -13,7 +13,7 @@ interface Props {
   glowColor: string;
   deck: typeof DECKS.deckA;
   reverse?: boolean;
-  pitch: number;
+
   setPitch: (val: number) => void;
   setBpm: (val: number | undefined) => void;
 }
@@ -59,12 +59,11 @@ const jogFuncGen = (handleJogWheel: (value: number, zoom: number) => void) => {
   };
 };
 
-export function Deck({
+function DeckComponent({
   color,
   glowColor,
   deck,
   reverse,
-  pitch,
   setPitch,
   setBpm,
 }: Props) {
@@ -128,9 +127,6 @@ export function Deck({
             image={metaData.image}
             onChange={handlePitchJog}
           />
-          <PitchLabel reverse={!reverse} color={color} bottom={"10px"}>
-            {(pitch >= 1 ? "+" : "") + (100 * pitch - 100).toFixed(2) + "%"}
-          </PitchLabel>
           <PitchButton
             reverse={reverse}
             color={color}
@@ -151,7 +147,6 @@ export function Deck({
       </Left>
       <PitchControl
         reverse={!!reverse}
-        lightOn={pitch === 1}
         sensitivity={SENSITIVITIES[sensitivityIndex].value}
         setPitch={setPitch}
         deck={deck}
@@ -160,6 +155,8 @@ export function Deck({
     </Wrapper>
   );
 }
+
+export const Deck = memo(DeckComponent);
 
 const Wrapper = styled.div<{
   reverse?: boolean;
@@ -204,22 +201,6 @@ const PitchButton = styled.button<{
     box-shadow: none;
     border: 1px solid rgba(255, 255, 255, 0.05);
   }
-`;
-
-const PitchLabel = styled.span<{
-  color?: string;
-  reverse?: boolean;
-  bottom?: string;
-  top?: string;
-}>`
-  color: ${({ color }) => color};
-  font-size: 15px;
-  width: 55px;
-  display: flex;
-  position: absolute;
-  ${({ bottom }) => bottom && `bottom: ${bottom}`};
-  ${({ top }) => top && `top: ${top}`};
-  ${({ reverse }) => (reverse ? "left: 25px;" : "right: 25px;")}
 `;
 
 const Pitch = styled.div`

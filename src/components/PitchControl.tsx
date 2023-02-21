@@ -13,7 +13,6 @@ interface Props {
   sensitivity: number;
   reverse?: boolean;
   color: string;
-  lightOn: boolean;
 }
 
 const HEIGHT = CONTEXT.destination.maxChannelCount >= 4 ? 550 : 520;
@@ -62,9 +61,9 @@ export function PitchControl({
   sensitivity,
   reverse,
   color,
-  lightOn,
 }: Props) {
   const [offset, setOffset] = useState<number>(0);
+  const [lightOn, setLightOn] = useState(true);
 
   const mouseState = useRef({
     mouseDown: false,
@@ -121,6 +120,7 @@ export function PitchControl({
     const nextPitch = 1 - (offset * sensitivity) / (HEIGHT / 2 - 47);
     deck.setPlayBackSpeed(nextPitch);
     debouncedSetPitch(nextPitch);
+    setLightOn(nextPitch === 1);
   }, [offset, sensitivity]);
 
   return (

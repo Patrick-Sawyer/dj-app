@@ -1,4 +1,4 @@
-import { Fragment, SetStateAction, useState } from "react";
+import { Fragment, memo, SetStateAction, useState } from "react";
 import styled from "styled-components";
 import { Colors } from "../utils/theme";
 import { DECKS } from "../webaudio/deckWebAudio";
@@ -15,7 +15,7 @@ const channelsToString = (left: number) => {
   return `${left + 1} & ${left + 2}`;
 };
 
-export function AudioConfig({ router }: Props) {
+function AudioConfigComponent({ router }: Props) {
   const [mainChannels, setMainChannels] = useState<number>(0);
   const [headphonesChannels, setHeadphonesChannels] = useState<number>(2);
 
@@ -117,6 +117,8 @@ export function AudioConfig({ router }: Props) {
     </Wrapper>
   );
 }
+
+export const AudioConfig = memo(AudioConfigComponent);
 
 const Pair = styled.div`
   display: flex;
