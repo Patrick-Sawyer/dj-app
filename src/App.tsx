@@ -11,6 +11,7 @@ import { AudioConfig } from "./components/AudioConfig";
 import { audioRouter } from "./webaudio/webAudio";
 import * as musicMetadata from "music-metadata-browser";
 import { DropZone } from "./components/Dropzone";
+import { Blurb } from "./components/Blurb";
 
 window.Buffer = window.Buffer || require("buffer").Buffer;
 window.process = window.process || require("process");
@@ -97,93 +98,10 @@ function App() {
           tunes={tunes}
         />
       </TableWrapper>
-      <Blurb>
-        <BlurbHeader>{"How does it work?"}</BlurbHeader>
-        <BlurbText>
-          {
-            "This DJ App has been designed so you can upload any of your own audio tracks and mix them online. It will work with most common audio formats."
-          }
-        </BlurbText>
-        <BlurbText>
-          {
-            "Click the uplpoad button to upload tracks, then double click on the track in the list to load it into an empty deck."
-          }
-        </BlurbText>
-        <BlurbHeader>{"Can I use headphones?"}</BlurbHeader>
-        <BlurbText>
-          {
-            "You will need a 4 channel audio setup to be able to have a separate headphones output. On launch, the app checks how many audio outputs are available and configures the app accordingly. If you add a sound card with 4 or more audio tracks and refresh the browser you will see cue / headphones controls and an audio config."
-          }
-        </BlurbText>
-        <BlurbHeader>{"Will it work on all devices?"}</BlurbHeader>
-        <BlurbText>
-          {
-            "This has been optimised for use in Chrome on a desktop / laptop. Other devices & browsers may not work as well."
-          }
-        </BlurbText>
-        <BlurbHeader>{"Online synth"}</BlurbHeader>
-        <BlurbText>
-          {`While you're here, why don't you check out our `}
-          <Link
-            target="_blank"
-            href="https://www.disco-computer.com/synthesizer/synth.html"
-          >
-            {"online synth"}
-          </Link>
-          {` too.`}
-        </BlurbText>
-        <BlurbHeader>{"Developer"}</BlurbHeader>
-        <BlurbText>
-          {`This app was created by `}
-          <Link
-            target="_blank"
-            href="https://www.linkedin.com/in/patrickrobertsawyer/"
-          >
-            {"Patrick Sawyer"}
-          </Link>
-          {"."}
-        </BlurbText>
-      </Blurb>
+      <Blurb />
     </Outer>
   );
 }
-
-const Link = styled.a`
-  text-decoration: underline;
-
-  appearance: none;
-  cursor: pointer;
-  color: rgba(255, 255, 255, 0.5);
-
-  :hover {
-    color: ${Colors.deckA};
-  }
-
-  :active {
-    color: rgba(255, 255, 255, 0.5);
-  }
-`;
-
-const BlurbText = styled.p`
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 12px;
-  text-align: left;
-  padding: 0 15px;
-`;
-
-const BlurbHeader = styled.p`
-  color: ${Colors.white};
-  font-size: 13px;
-  font-weight: 500;
-  text-align: left;
-  padding: 0 15px;
-  opacity: 0.9;
-`;
-
-const Blurb = styled.div`
-  width: 100%;
-  max-width: 1340px;
-`;
 
 const Outer = styled.div`
   display: flex;

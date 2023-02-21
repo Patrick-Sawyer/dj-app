@@ -141,7 +141,6 @@ const Head = styled.thead`
     cursor: pointer;
   }
 
-  background: #151515;
   border-bottom: 2px solid ${Colors.mainBackground};
 
   th:not(:last-child) {
@@ -167,6 +166,8 @@ const HeadCell = styled.th<{
 }>`
   font-size: 11px;
   opacity: 0.9;
+  background: #151515;
+  border-radius: 3px;
   padding: 10px;
   font-weight: 600;
   ${({ width }) => width && `width: ${width};`}
