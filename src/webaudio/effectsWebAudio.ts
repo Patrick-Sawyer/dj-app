@@ -71,21 +71,24 @@ class Delay {
         this.delayTwo.input.gain.cancelAndHoldAtTime(CONTEXT.currentTime);
         this.delayTwo.output.gain.cancelAndHoldAtTime(CONTEXT.currentTime);
 
-        this.delayOne.input.gain.exponentialRampToValueAtTime(
+        this.delayOne.input.gain.linearRampToValueAtTime(
           delayOneIsLiveNext ? 1 : ZERO,
-          CONTEXT.currentTime + 1
+          CONTEXT.currentTime + FADE_IN_OUT_TIME
         );
-        this.delayOne.output.gain.exponentialRampToValueAtTime(
+
+        this.delayOne.output.gain.linearRampToValueAtTime(
           delayOneIsLiveNext ? 1 : ZERO,
-          CONTEXT.currentTime + 1
+          CONTEXT.currentTime + FADE_IN_OUT_TIME
         );
-        this.delayTwo.input.gain.exponentialRampToValueAtTime(
+
+        this.delayTwo.input.gain.linearRampToValueAtTime(
           delayOneIsLiveNext ? ZERO : 1,
-          CONTEXT.currentTime + 1
+          CONTEXT.currentTime + FADE_IN_OUT_TIME
         );
-        this.delayTwo.output.gain.exponentialRampToValueAtTime(
+
+        this.delayTwo.output.gain.linearRampToValueAtTime(
           delayOneIsLiveNext ? ZERO : 1,
-          CONTEXT.currentTime + 1
+          CONTEXT.currentTime + FADE_IN_OUT_TIME
         );
 
         this.currentLiveUnit = delayOneIsLiveNext ? 1 : 2;

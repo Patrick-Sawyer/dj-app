@@ -68,6 +68,7 @@ const Wrapper = styled.div`
   border-bottom: 1px solid ${Colors.darkBorder};
   padding: 20px;
   justify-content: space-between;
+  position: relative;
 `;
 
 const Section = styled.div`
