@@ -84,13 +84,13 @@ function App() {
           setDeckBPitch={setDeckBPitch}
         />
       </Wrapper>
+      <AudioConfig router={audioRouter} />
       <DropZone
         tunes={tunes}
         setTunes={setTunes}
         setTunesLoading={setTunesLoading}
         tunesLoading={tunesLoading}
       />
-      <AudioConfig router={audioRouter} />
       <TableWrapper>
         <TuneTable
           loading={tunesLoading}

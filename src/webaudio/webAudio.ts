@@ -27,10 +27,7 @@ export const changeMasterVolume = (nextValue: number) => {
 };
 
 class AudioRouter {
-  // cueInput: GainNode;
   mainInput: GainNode;
-  // cueVolume: GainNode;
-  // cueMixVolume: GainNode;
   setCueMix: (value: number) => void;
   audioMerger: ChannelMergerNode;
   mainSplitter: ChannelSplitterNode;
@@ -40,38 +37,17 @@ class AudioRouter {
   deckA: GainNode;
   deckB: GainNode;
   headphonesInput: GainNode;
-  // changeheadphonesInput: (value: number) => void;
   changeHeadphonesVolume: (value: number) => void;
   handleHeadphoneVolumes: () => void;
   headphonesCueMixAmount: number;
 
-
   constructor() {
     this.deckA = CONTEXT.createGain();
-    this.deckA.gain.value = 0;
+    this.deckA.gain.value = 0.49;
     this.deckB = CONTEXT.createGain();
-    this.deckB.gain.value = 0;
-    // this.cueInput = CONTEXT.createGain();
-    // this.deckA.connect(this.cueInput);
-    // this.deckB.connect(this.cueInput);
+    this.deckB.gain.value = 0.49;
     this.mainInput = CONTEXT.createGain();
     this.mainInput.gain.value = 1;
-    // this.cueInput.gain.value = 1;
-    // this.cueVolume = CONTEXT.createGain();
-    // this.cueVolume.gain.value = 1;
-    // this.cueInput.connect(this.cueVolume);
-    // this.cueMixVolume = CONTEXT.createGain();
-    // this.cueMixVolume.gain.value = 0;
-
-    // TAKE THE 2 TRACKS AS INPUTS, AT FULL VOLUME
-    // GET THE VOLUME OF EACH FROM THE DECK OR WHEREVER
-    // TO GET THE TRUE VOLUME OF EACH TRACK
-      // - IF CUED THE OTHER VOLUME IS 1, if not it is zero
-      // APPLY SOME MATHS
-
-    // this.headphonesVolume = CONTEXT.createGain();
-    // this.headphonesVolume.gain.value = 0.5;
-
     this.headphonesCueMixAmount = 0;
 
     this.handleHeadphoneVolumes = () => {
@@ -91,19 +67,13 @@ class AudioRouter {
       const deckACueVolume = cueVolume * cueVolumeDeckA;
       const deckBCueVolume = cueVolume * cueVolumeDeckB;
 
-      // console.log("DECK A MIX", deckAMixVolume);
-      // console.log("DECK B MIX", deckBMixVolume);
-      // console.log("DECK A CUE", deckACueVolume);
-      // console.log("DECK B CUE", deckBCueVolume);
-
-      //CUE SQUARED PLUS MIX SQUARED = 1
-
+      // COMBINED
       const deckACalculatedVolume = Math.pow(deckACueVolume, 2) +  Math.pow(deckAMixVolume, 2);
       const deckBCalculatedVolume = Math.pow(deckBCueVolume, 2) +  Math.pow(deckBMixVolume, 2);
-
       this.deckA.gain.cancelScheduledValues(0);
       this.deckB.gain.cancelScheduledValues(0);
 
+      // SET VALUES
       if (isFireFox) {
         this.deckA.gain.linearRampToValueAtTime(
           deckACalculatedVolume < ZERO ? ZERO : deckACalculatedVolume,
@@ -137,12 +107,9 @@ class AudioRouter {
     this.mainSplitter = CONTEXT.createChannelSplitter(2);
     this.cueSplitter = CONTEXT.createChannelSplitter(2);
     this.headphonesInput = CONTEXT.createGain();
-    // this.cueVolume.connect(this.headphonesInput);
-    // this.cueMixVolume.connect(this.headphonesInput);
     this.headphonesInput.connect(this.cueSplitter);
     this.headphonesInput.gain.value = 0.5;
     this.mainInput.connect(this.mainSplitter);
-    // this.mainInput.connect(this.cueMixVolume);
     this.mainSplitter.connect(this.audioMerger, 0, 0);
     this.mainSplitter.connect(this.audioMerger, 1, 1);
     this.deckA.gain.value = 0.7 * 0.7;
@@ -171,17 +138,16 @@ class AudioRouter {
       }
     };
     this.audioMerger.connect(CONTEXT.destination);
-    // this.changeheadphonesInput = (value: number) => {
-    //   const nextValue = (value + 50) / 100;
-    //   this.headphonesInput.gain.value = nextValue;
-    // };
     this.changeHeadphonesVolume = (value: number) => {
       const nextValue = (value + 50) / 100;
       this.headphonesInput.gain.value = nextValue;
     };
+
   }
 }
 
 export const audioRouter = new AudioRouter();
+setTimeout(() => {
+  audioRouter.handleHeadphoneVolumes();
+}, 1000)
 MAIN_VOLUME.connect(audioRouter.mainInput);
-// MASTER_VOLUME.connect(audioRouter.cueMixVolume);

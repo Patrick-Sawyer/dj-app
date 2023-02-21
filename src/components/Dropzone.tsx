@@ -1,7 +1,7 @@
 import { useDropzone } from "react-dropzone";
 import * as musicMetadata from "music-metadata-browser";
 import { TuneData } from "../App";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import styled from "styled-components";
 import { Colors } from "../utils/theme";
 import { UploadMultiple, UploadMusic } from "./Svg";
@@ -99,19 +99,21 @@ export function DropZone({
     [tunes, tunesLoading]
   );
 
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   return (
-    <Wrapper {...getRootProps()}>
+    <Wrapper {...getRootProps()} highlight={isDragActive || tunesLoading}>
       <input {...getInputProps()} />
       <UploadMusic />
-      <Text>{"Click or drop files here to import music"}</Text>
+      <Text>{tunesLoading ? "Loading tracks, please wait..." : "Click or drop files here to import music"}</Text>
       <UploadMultiple />
     </Wrapper>
   );
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{
+  highlight: boolean;
+}>`
   cursor: pointer;
   border-radius: 7px;
   gap: 40px;
@@ -121,7 +123,7 @@ const Wrapper = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 10px;
-  max-width: 700px;
+  min-width: 500px;
   box-sizing: border-box;
   transition: 0.3s;
 
@@ -153,6 +155,23 @@ const Wrapper = styled.div`
       fill: ${Colors.lightGrey};
     }
   }
+
+  ${({highlight}) => !!highlight && `
+    background-color: #151515;
+
+    span {
+      opacity: 1;
+      color: ${Colors.deckB};
+    }
+
+    svg {
+      opacity: 1;
+    }
+
+    path {
+      fill: ${Colors.deckA};
+    }
+  `}
 `;
 
 const Text = styled.span`

@@ -23,7 +23,6 @@ export const UploadMusic = ({ color = "white", size = "50" }) => {
     <svg
       xmlnsXlink="http://www.w3.org/1999/xlink"
       xmlns="http://www.w3.org/2000/svg"
-      enable-background="new 0 0 24 24"
       height={size}
       width={size}
       viewBox="0 0 24 24"

@@ -45,12 +45,13 @@ export function AudioConfig({ router }: Props) {
 
   return (
     <Wrapper>
-      <EmbossedLabel text={"AUDIO:"} />
+      <EmbossedLabel text={"AUDIO CONFIG:"} />
       <Pair>
         <HighlightedLabel
           color={Colors.orange}
           glowColor={Colors.orangeGlow}
           text={"MAIN MIX:"}
+          bold
         />
         <Text
           onPointerDown={() => {
@@ -69,7 +70,8 @@ export function AudioConfig({ router }: Props) {
           color={Colors.orange}
           glowColor={Colors.orangeGlow}
           text={"CUE:"}
-        />{" "}
+          bold
+        />
         <Text
           onPointerDown={() => {
             changeChannels(
@@ -88,6 +90,7 @@ export function AudioConfig({ router }: Props) {
           color={Colors.orange}
           glowColor={Colors.orangeGlow}
           text={"PHONES"}
+          bold
         />
         <NewKnob
           color={Colors.orange}
@@ -102,6 +105,7 @@ export function AudioConfig({ router }: Props) {
           color={Colors.orange}
           glowColor={Colors.orangeGlow}
           text={"CUE / MIX"}
+          bold
         />
         <NewKnob
           color={Colors.orange}
@@ -124,16 +128,16 @@ const Text = styled.span`
   font-size: 13px;
   color: white;
   white-space: no-wrap;
-  opacity: 0.3;
+  opacity: 0.5;
   transition: 0.1s;
-  font-weight: 300;
+  font-weight: 700;
   position: relative;
   min-width: 35px;
   bottom: 1px;
   cursor: pointer;
 
   &:hover {
-    opacity: 0.8;
+    opacity: 1;
   }
 
   &:active {
@@ -143,8 +147,11 @@ const Text = styled.span`
 
 const Wrapper = styled.div`
   display: flex;
+  width: 100%;
+  max-width: 1300px;
   justify-content: space-around;
   align-items: center;
   margin-top: 15px;
   padding: 0 5px;
+  gap: 10px;
 `;

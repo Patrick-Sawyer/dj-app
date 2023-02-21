@@ -5,11 +5,12 @@ interface Props {
   text: string;
   color?: string;
   glowColor?: string;
+  bold?: boolean;
 }
 
-export function HighlightedLabel ({ text, color = Colors.deckA, glowColor }: Props) {
+export function HighlightedLabel ({ text, color = Colors.deckA, glowColor, bold }: Props) {
   return (
-    <Wrapper color={color} glowColor={glowColor}>
+    <Wrapper color={color} glowColor={glowColor} bold={bold}>
       {text}
     </Wrapper>
   )
@@ -18,8 +19,9 @@ export function HighlightedLabel ({ text, color = Colors.deckA, glowColor }: Pro
 const Wrapper = styled.div<{
   glowColor?: string;
   color: string;
+  bold?: boolean;
 }>`
-  font-weight: 500;
+  font-weight: ${({bold})=>  bold ? 700 : 500};
   font-size: 12px;
   color: ${({ color }) => color};
   ${({ glowColor }) => glowColor && `

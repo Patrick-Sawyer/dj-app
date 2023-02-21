@@ -2,15 +2,12 @@ import styled from "styled-components";
 import { Colors } from "../utils/theme";
 import { EmbossedLabel } from "./EmbossedLabel";
 import { DECKS } from "../webaudio/deckWebAudio";
-import { useEffect, useState } from "react";
 import {
   audioRouter,
   CONTEXT,
-  FADE_IN_OUT_TIME,
-  isFireFox,
-  ZERO,
 } from "../webaudio/webAudio";
 import { KnobText, NewKnob } from "./NewKnob/NewKnob";
+import { useState } from "react";
 
 interface Props {
   color: string;
@@ -27,9 +24,9 @@ export function ChannelEq({
   label,
   glowColor,
   router,
-  isDeckA,
 }: Props) {
-  const [cue, setCue] = useState(false);
+
+  const [cued, setIsCued] = useState(false);
 
   const handleGain = (nextValue: number) => {
     const value = (nextValue + 50) / 100;
@@ -41,30 +38,11 @@ export function ChannelEq({
   };
 
   const handleCueClick = () => {
-    const nextState = !cue;
-    setCue(nextState);
+    const nextState = !deck.isCued;
     deck.isCued = nextState;
+    router.handleHeadphoneVolumes();
+    setIsCued(nextState);
   };
-
-  useEffect(() => {
-    if (CONTEXT.state === "suspended") CONTEXT.resume();
-    router[isDeckA ? "deckA" : "deckB"].gain.cancelScheduledValues(
-      CONTEXT.currentTime
-    );
-    const level = cue ? 1 : ZERO;
-    const time = CONTEXT.currentTime + FADE_IN_OUT_TIME;
-    if (isFireFox) {
-      router[isDeckA ? "deckA" : "deckB"].gain.linearRampToValueAtTime(
-        level,
-        time
-      );
-    } else {
-      router[isDeckA ? "deckA" : "deckB"].gain.exponentialRampToValueAtTime(
-        level,
-        time
-      );
-    }
-  }, [cue]);
 
   return (
     <EqWrapper>
@@ -113,7 +91,7 @@ export function ChannelEq({
           fontSize="14px"
           glowColor={Colors.orangeGlow}
           color={Colors.orange}
-          bypassed={!cue}
+          bypassed={!cued}
           onClick={handleCueClick}
         >
           {"CUE"}
